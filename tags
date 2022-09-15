@@ -1,0 +1,110 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/mnt/nfs/homes/alorain/Documents/ft_containers/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	//
+$(NAME)	Makefile	/^$(NAME) : $(OBJ_DIR) $(OBJS)$/;"	t
+$(OBJ_DIR)	Makefile	/^$(OBJ_DIR) :$/;"	t
+$(OBJ_DIR)%.o	Makefile	/^$(OBJ_DIR)%.o : $(SRC_DIR)%.cpp$/;"	t
+CC	Makefile	/^CC = c++$/;"	m
+CPPFLAGS	Makefile	/^CPPFLAGS = -Wall -Werror -Wextra -std=c++98$/;"	m
+DEPENDS	Makefile	/^DEPENDS = $(OBJS:.o=.d)$/;"	m
+INCPATH	Makefile	/^INCPATH = -I$(INC_DIR)$/;"	m
+INC_DIR	Makefile	/^INC_DIR = include\/$/;"	m
+ITERATOR_HPP	include/Iterator.hpp	/^# define ITERATOR_HPP$/;"	d
+ITERATOR_TRAITS_HPP	include/iterator_traits.hpp	/^# define ITERATOR_TRAITS_HPP$/;"	d
+NAME	Makefile	/^NAME = containers $/;"	m
+OBJS	Makefile	/^OBJS = $(addprefix $(OBJ_DIR), $(SRCS:.cpp=.o))$/;"	m
+OBJ_DIR	Makefile	/^OBJ_DIR = bin\/$/;"	m
+SRCS	Makefile	/^SRCS = main.cpp $/;"	m
+SRC_DIR	Makefile	/^SRC_DIR = src\/$/;"	m
+VECTOR_TPP	include/Vector.hpp	/^# define VECTOR_TPP$/;"	d
+Vector	include/Vector.hpp	/^			Vector (const Vector& x) : _end(x._end), _start(x._start) {}$/;"	f	class:ft::Vector
+Vector	include/Vector.hpp	/^			explicit Vector (const Allocator& alloc = Allocator())$/;"	f	class:ft::Vector
+Vector	include/Vector.hpp	/^			explicit Vector (size_type n, const T& val = T(),$/;"	f	class:ft::Vector
+Vector	include/Vector.hpp	/^class Vector $/;"	c	namespace:ft
+_alloc	include/Vector.hpp	/^			allocator_type _alloc;$/;"	m	class:ft::Vector	typeref:typename:allocator_type
+_end	include/Vector.hpp	/^			pointer _end;$/;"	m	class:ft::Vector	typeref:typename:pointer
+_iter	include/Iterator.hpp	/^		Iterator _iter;$/;"	m	class:ft::simple_iterator	typeref:typename:Iterator
+_size	include/Vector.hpp	/^			size_t	_size;$/;"	m	class:ft::Vector	typeref:typename:size_t
+_start	include/Vector.hpp	/^			pointer _start;$/;"	m	class:ft::Vector	typeref:typename:pointer
+_traits	include/Iterator.hpp	/^		typedef	ft::iterator_traits<Iterator> _traits;$/;"	t	class:ft::simple_iterator	typeref:typename:ft::iterator_traits<Iterator>
+all	Makefile	/^all: $(NAME)$/;"	t
+allocator_type	include/Vector.hpp	/^			typedef Allocator 		allocator_type;$/;"	t	class:ft::Vector	typeref:typename:Allocator
+begin	include/Vector.hpp	/^			iterator begin(void) const$/;"	f	class:ft::Vector	typeref:typename:iterator
+bidirectional_iterator_tag	include/iterator_traits.hpp	/^  struct bidirectional_iterator_tag : public forward_iterator_tag {};$/;"	s	namespace:ft
+clean	Makefile	/^clean :$/;"	t
+const_pointer	include/Vector.hpp	/^			typedef typename Allocator::const_pointer 		const_pointer;$/;"	t	class:ft::Vector	typeref:typename:Allocator::const_pointer
+const_reference	include/Vector.hpp	/^			typedef typename Allocator::const_reference 	const_reference;$/;"	t	class:ft::Vector	typeref:typename:Allocator::const_reference
+difference_type	include/Iterator.hpp	/^		typedef typename _traits::difference_type	difference_type;$/;"	t	class:ft::simple_iterator	typeref:typename:_traits::difference_type
+difference_type	include/Vector.hpp	/^			typedef typename Allocator::difference_type 	difference_type;$/;"	t	class:ft::Vector	typeref:typename:Allocator::difference_type
+difference_type	include/iterator_traits.hpp	/^		typedef ptrdiff_t					difference_type;$/;"	t	struct:ft::iterator_traits	typeref:typename:ptrdiff_t
+difference_type	include/iterator_traits.hpp	/^		typedef typename Iterator::difference_type		difference_type;$/;"	t	struct:ft::iterator_traits	typeref:typename:Iterator::difference_type
+difference_type	include/iterator_traits.hpp	/^	typedef Distance	difference_type;$/;"	t	struct:ft::iterator	typeref:typename:Distance
+end	include/Vector.hpp	/^			iterator end(void) const$/;"	f	class:ft::Vector	typeref:typename:iterator
+fclean	Makefile	/^fclean : clean$/;"	t
+forward_iterator_tag	include/iterator_traits.hpp	/^  struct forward_iterator_tag : public input_iterator_tag {};$/;"	s	namespace:ft
+ft	include/Iterator.hpp	/^namespace ft$/;"	n
+ft	include/Vector.hpp	/^namespace ft$/;"	n
+ft	include/iterator_traits.hpp	/^namespace ft$/;"	n
+input_iterator_tag	include/iterator_traits.hpp	/^  struct input_iterator_tag {};$/;"	s	namespace:ft
+iterator	include/Vector.hpp	/^			typedef ft::simple_iterator<pointer> iterator;$/;"	t	class:ft::Vector	typeref:typename:ft::simple_iterator<pointer>
+iterator	include/iterator_traits.hpp	/^struct iterator$/;"	s	namespace:ft
+iterator_category	include/Iterator.hpp	/^		typedef typename _traits::iterator_category	iterator_category;$/;"	t	class:ft::simple_iterator	typeref:typename:_traits::iterator_category
+iterator_category	include/iterator_traits.hpp	/^		typedef random_access_iterator_tag	iterator_category;$/;"	t	struct:ft::iterator_traits	typeref:typename:random_access_iterator_tag
+iterator_category	include/iterator_traits.hpp	/^		typedef typename Iterator::iterator_category	iterator_category;$/;"	t	struct:ft::iterator_traits	typeref:typename:Iterator::iterator_category
+iterator_category	include/iterator_traits.hpp	/^	typedef Category	iterator_category;$/;"	t	struct:ft::iterator	typeref:typename:Category
+iterator_traits	include/iterator_traits.hpp	/^struct iterator_traits$/;"	s	namespace:ft
+iterator_traits	include/iterator_traits.hpp	/^struct iterator_traits<T* const>$/;"	s	namespace:ft
+iterator_traits	include/iterator_traits.hpp	/^struct iterator_traits<T*>$/;"	s	namespace:ft
+iterator_traits	include/iterator_traits.hpp	/^struct iterator_traits<const T*>$/;"	s	namespace:ft
+main	src/main.cpp	/^int main(void)$/;"	f	typeref:typename:int
+operator !=	include/Iterator.hpp	/^		bool operator!=(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator *	include/Iterator.hpp	/^		reference operator*()$/;"	f	class:ft::simple_iterator	typeref:typename:reference
+operator +	include/Iterator.hpp	/^		simple_iterator operator+(const difference_type n)$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator ++	include/Iterator.hpp	/^		simple_iterator operator++( int )$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator ++	include/Iterator.hpp	/^		simple_iterator operator++()$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator +=	include/Iterator.hpp	/^		simple_iterator & operator+=(const difference_type n)$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator &
+operator -	include/Iterator.hpp	/^		simple_iterator operator-(const difference_type n)$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator --	include/Iterator.hpp	/^		simple_iterator operator--( int )$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator --	include/Iterator.hpp	/^		simple_iterator operator--()$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator
+operator -=	include/Iterator.hpp	/^		simple_iterator & operator-=(const difference_type n)$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator &
+operator ->	include/Iterator.hpp	/^		pointer operator->()$/;"	f	class:ft::simple_iterator	typeref:typename:pointer
+operator <	include/Iterator.hpp	/^		bool operator<(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator <=	include/Iterator.hpp	/^		bool operator<=(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator =	include/Iterator.hpp	/^		simple_iterator & operator=(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:simple_iterator &
+operator ==	include/Iterator.hpp	/^		bool operator==(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator >	include/Iterator.hpp	/^		bool operator>(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator >=	include/Iterator.hpp	/^		bool operator>=(const simple_iterator & rhs)$/;"	f	class:ft::simple_iterator	typeref:typename:bool
+operator []	include/Iterator.hpp	/^		reference operator[](difference_type n)$/;"	f	class:ft::simple_iterator	typeref:typename:reference
+output_iterator_tag	include/iterator_traits.hpp	/^  struct output_iterator_tag {};$/;"	s	namespace:ft
+pointer	include/Iterator.hpp	/^		typedef typename _traits::pointer			pointer;$/;"	t	class:ft::simple_iterator	typeref:typename:_traits::pointer
+pointer	include/Vector.hpp	/^			typedef typename Allocator::pointer				pointer;$/;"	t	class:ft::Vector	typeref:typename:Allocator::pointer
+pointer	include/iterator_traits.hpp	/^		typedef T*							pointer;$/;"	t	struct:ft::iterator_traits	typeref:typename:T *
+pointer	include/iterator_traits.hpp	/^		typedef typename Iterator::pointer 				pointer;$/;"	t	struct:ft::iterator_traits	typeref:typename:Iterator::pointer
+pointer	include/iterator_traits.hpp	/^	typedef Pointer		pointer;$/;"	t	struct:ft::iterator	typeref:typename:Pointer
+ptrdiff_t	include/iterator_traits.hpp	/^	typedef std::ptrdiff_t ptrdiff_t;$/;"	t	namespace:ft	typeref:typename:std::ptrdiff_t
+random_access_iterator_tag	include/iterator_traits.hpp	/^  struct random_access_iterator_tag : public bidirectional_iterator_tag {};$/;"	s	namespace:ft
+re	Makefile	/^re : fclean all$/;"	t
+reference	include/Iterator.hpp	/^		typedef typename _traits::reference			reference;$/;"	t	class:ft::simple_iterator	typeref:typename:_traits::reference
+reference	include/Vector.hpp	/^			typedef typename Allocator::reference			reference;$/;"	t	class:ft::Vector	typeref:typename:Allocator::reference
+reference	include/iterator_traits.hpp	/^		typedef T&							reference;$/;"	t	struct:ft::iterator_traits	typeref:typename:T &
+reference	include/iterator_traits.hpp	/^		typedef typename Iterator::reference			reference;$/;"	t	struct:ft::iterator_traits	typeref:typename:Iterator::reference
+reference	include/iterator_traits.hpp	/^	typedef Reference	reference;$/;"	t	struct:ft::iterator	typeref:typename:Reference
+simple_iterator	include/Iterator.hpp	/^		explicit simple_iterator(pointer ptr) : _iter(ptr) {}$/;"	f	class:ft::simple_iterator
+simple_iterator	include/Iterator.hpp	/^		simple_iterator(simple_iterator<T> & iter) : _iter(iter._iter) {}$/;"	f	class:ft::simple_iterator
+simple_iterator	include/Iterator.hpp	/^		simple_iterator(void) : _iter(Iterator()) {}$/;"	f	class:ft::simple_iterator
+simple_iterator	include/Iterator.hpp	/^class simple_iterator : public iterator< typename iterator_traits<Iterator>::iterator_category,$/;"	c	namespace:ft
+size_type	include/Vector.hpp	/^			typedef typename Allocator::size_type 			size_type;$/;"	t	class:ft::Vector	typeref:typename:Allocator::size_type
+value_type	include/Iterator.hpp	/^		typedef typename _traits::value_type		value_type;$/;"	t	class:ft::simple_iterator	typeref:typename:_traits::value_type
+value_type	include/Vector.hpp	/^			typedef T 				value_type;$/;"	t	class:ft::Vector	typeref:typename:T
+value_type	include/iterator_traits.hpp	/^		typedef T 							value_type;$/;"	t	struct:ft::iterator_traits	typeref:typename:T
+value_type	include/iterator_traits.hpp	/^		typedef typename Iterator::value_type			value_type;$/;"	t	struct:ft::iterator_traits	typeref:typename:Iterator::value_type
+value_type	include/iterator_traits.hpp	/^	typedef T			value_type;$/;"	t	struct:ft::iterator	typeref:typename:T
+~Vector	include/Vector.hpp	/^			~Vector (void)$/;"	f	class:ft::Vector

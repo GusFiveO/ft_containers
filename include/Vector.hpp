@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/13 19:19:54 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/15 18:35:57 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 namespace ft
 {
+
+# include "Iterator.hpp"
+# include "utils.hpp"
 
 template<class T, class Allocator = std::allocator<T> >
 class Vector 
@@ -35,51 +38,77 @@ class Vector
 			typedef typename Allocator::const_pointer 		const_pointer;
 
 			//typedef	reverse_iterator;
-			//typedef iterator;
+			typedef ft::simple_iterator<pointer> iterator;
 			//typedef const_iterator;
 			//typedef const_reverse_iterator;
+		public:
 
 			explicit Vector (const Allocator& alloc = Allocator())
 			{
 				this->_alloc = alloc;
-				this->_start = alloc.allocate(0);
+				this->_start = this->_alloc.allocate(0);
 				this->_size = 0;
 			}
 
 			explicit Vector (size_type n, const T& val = T(),
-					 const Allocator& alloc = Allocator()) : _size(n)
+					 const Allocator& alloc = Allocator())
 			{
 				pointer tmp;
 				this->_alloc = alloc;
 				this->_start = this->_alloc.allocate(n);
-				for (tmp = this->_start; tmp != this->_start + this->_size; tmp++)
+				this->_finish = this->_start + n;
+				for (tmp = this->_start; tmp != this->_finish; tmp++)
 					*tmp = val;
 			}
 
 			template <class InputIterator>
 			Vector (InputIterator first, InputIterator last,
-					 const Allocator& alloc = Allocator());
+					 const Allocator& alloc = Allocator())
+			{
+				difference_type size = last - first;
+				difference_type i = 0;
+				this->_alloc = alloc;
+				this->_start = this->_alloc.allocate(size);
+				while (i < size)
+				{
+					this->_start[i++] = *first++;
+				}
+				this->_finish = &this->_start[i];
+			}
 
-			Vector (const Vector& x) : _size(x._size), _start(x._start) {}
+			Vector (const Vector& x)
+			{
+				difference_type size = distance(x.begin(), x.end());
+				this->_alloc = x._alloc;
+				this->_start = this->_alloc.allocate(size);
+				for (int i = 0; x.begin() + i != x.end(); i++)
+				{
+					this->_alloc.construct(this->_start++, x.begin() + i);//TODO pb
+				}
+			}
 
 			~Vector (void)
 			{
-				this->_alloc.deallocate(this->_start, this->_size);
+				this->_alloc.deallocate(this->_start, this->_finish - this->_start);
 			}
 
-			pointer begin(void) const
+			Vector & operator=(const Vector & assign);
+
+			iterator begin(void) const
 			{
-				return this->_start;
+				return iterator(this->_start);
 			}
 
-			pointer end(void) const
+			iterator end(void) const
 			{
-				return this->_start + this->_size;
+				return iterator(this->_finish);
 			}
 
 		protected:
+
 		private:
 			pointer _start;
+			pointer _finish;
 			size_t	_size;
 			allocator_type _alloc;
 

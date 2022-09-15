@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/13 19:20:22 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/15 18:22:08 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,15 +128,25 @@
 //}
 
 #include "Vector.hpp"
+#include <vector>
+#include "Iterator.hpp"
 
 int main(void)
 {
-	ft::Vector<int> myVector(static_cast<size_t>(5), 5);
-	int *tmp;
+	std::vector<int> myRVector(0);
+	myRVector.push_back(1);
+	myRVector.push_back(2);
+	myRVector.push_back(3);
+	myRVector.push_back(4);
+	myRVector.push_back(5);
+	std::cout <<  myRVector.size() << std::endl;
+	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
+	ft::Vector<int> myVector(myVector2);
+	ft::Vector<int>::iterator tmp;
 	int val = 9;
 	for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
 		*tmp = val;
-	for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
+	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
 		std::cout << *tmp << std::endl;
 	return 0;
 }

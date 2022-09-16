@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/15 18:30:04 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/16 18:58:33 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,11 @@ class simple_iterator : public iterator< typename iterator_traits<Iterator>::ite
 		simple_iterator operator-(const difference_type n)
 		{
 			return simple_iterator(this->_iter - n);
+		}
+
+		difference_type operator-(const simple_iterator& Iter)
+		{
+			return this->_iter - Iter._iter;
 		}
 
 		//

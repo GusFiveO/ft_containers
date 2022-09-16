@@ -8,7 +8,7 @@ DEPENDS = $(OBJS:.o=.d)
 
 NAME = containers 
 
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -g
 INCPATH = -I$(INC_DIR)
 
 CC = c++

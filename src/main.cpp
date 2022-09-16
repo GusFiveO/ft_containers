@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/15 18:22:08 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/16 19:00:16 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,9 +143,9 @@ int main(void)
 	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
 	ft::Vector<int> myVector(myVector2);
 	ft::Vector<int>::iterator tmp;
-	int val = 9;
-	for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
-		*tmp = val;
+	//int val = 9;
+	//for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
+	//	*tmp = val;
 	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
 		std::cout << *tmp << std::endl;
 	return 0;

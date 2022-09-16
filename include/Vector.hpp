@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/15 18:35:57 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/16 19:32:37 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,14 @@ class Vector
 
 			Vector (const Vector& x)
 			{
-				difference_type size = distance(x.begin(), x.end());
+				difference_type size = x.end() - x.begin();
 				this->_alloc = x._alloc;
 				this->_start = this->_alloc.allocate(size);
-				for (int i = 0; x.begin() + i != x.end(); i++)
+				std::cout << this->_finish - this->_start << std::endl;
+				std::cout << size << std::endl;
+				for (iterator tmp = x.begin(); tmp != x.end();tmp++)
 				{
-					this->_alloc.construct(this->_start++, x.begin() + i);//TODO pb
+					this->_alloc.construct(this->_start++, *tmp);
 				}
 			}
 

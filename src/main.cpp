@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/16 19:00:16 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/19 19:23:08 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,14 +139,46 @@ int main(void)
 	myRVector.push_back(3);
 	myRVector.push_back(4);
 	myRVector.push_back(5);
+
 	std::cout <<  myRVector.size() << std::endl;
+
 	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
+	std::vector<int> myRVector2(myRVector.begin(), myRVector.end());
 	ft::Vector<int> myVector(myVector2);
+	ft::Vector<int> test = myVector2;
+
+	std::cout << "size " << test.size() << std::endl;
+	std::cout << "max size " << test.max_size() << std::endl;
+	std::cout << "capacity " << test.capacity() << std::endl;
+
+	test.reserve(20);
+	test.resize(10, 10);
+	test.shrink_to_fit();
+
+	std::cout << "size " << test.size() << std::endl;
+	std::cout << "capacity " << test.capacity() << std::endl;
+
+	myVector2 = test;
 	ft::Vector<int>::iterator tmp;
+
+	
 	//int val = 9;
 	//for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
 	//	*tmp = val;
 	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
 		std::cout << *tmp << std::endl;
+
+	std::cout << "REAL VECTOR" << std::endl;
+
+	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
+
+	myRVector2.reserve(20);
+	myRVector2.resize(10, 10);
+
+	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
+	
+	for (std::vector<int>::iterator tmp2 = myRVector2.begin(); tmp2 != myRVector2.end(); tmp2++)
+		std::cout << *tmp2 << std::endl;
+		
 	return 0;
 }

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/19 19:23:08 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/20 19:13:56 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@
 #include "Vector.hpp"
 #include <vector>
 #include "Iterator.hpp"
+#include "is_integral.hpp"
 
 int main(void)
 {
@@ -141,6 +142,17 @@ int main(void)
 	myRVector.push_back(5);
 
 	std::cout <<  myRVector.size() << std::endl;
+	std::cout <<  myRVector.capacity() << std::endl;
+
+	ft::Vector<int> myVector3(0);
+	myVector3.push_back(1);
+	myVector3.push_back(2);
+	myVector3.push_back(3);
+	myVector3.push_back(4);
+	myVector3.push_back(5);
+
+	std::cout << "size " <<  myVector3.size() << std::endl;
+	std::cout << "capacity " << myVector3.capacity() << std::endl;
 
 	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
 	std::vector<int> myRVector2(myRVector.begin(), myRVector.end());
@@ -152,8 +164,8 @@ int main(void)
 	std::cout << "capacity " << test.capacity() << std::endl;
 
 	test.reserve(20);
-	test.resize(10, 10);
-	test.shrink_to_fit();
+	test.pop_back();
+	test.resize(0, 10);
 
 	std::cout << "size " << test.size() << std::endl;
 	std::cout << "capacity " << test.capacity() << std::endl;
@@ -161,10 +173,23 @@ int main(void)
 	myVector2 = test;
 	ft::Vector<int>::iterator tmp;
 
-	
-	//int val = 9;
-	//for (tmp = myVector.begin(); tmp != myVector.end(); tmp++)
-	//	*tmp = val;
+	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
+		std::cout << *tmp << std::endl;
+
+	std::cout << "capacity " << myVector2.capacity() << std::endl;
+
+	myVector2.clear();
+
+	std::cout << "clear done" << std::endl << std::endl;
+
+	std::cout << "size " << myVector2.size() << std::endl;
+	std::cout << "capacity " << myVector2.capacity() << std::endl << std::endl;
+
+	myVector2.push_back(10);
+
+	std::cout << "size " << myVector2.size() << std::endl;
+	std::cout << "capacity " << myVector2.capacity() << std::endl;
+
 	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
 		std::cout << *tmp << std::endl;
 
@@ -173,7 +198,7 @@ int main(void)
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 
 	myRVector2.reserve(20);
-	myRVector2.resize(10, 10);
+	myRVector2.resize(0, 10);
 
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 	

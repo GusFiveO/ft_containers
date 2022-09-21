@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/21 11:52:34 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/21 15:52:26 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Vector
 			typedef ft::simple_iterator<pointer> iterator;
 			//typedef const_iterator;
 			//typedef const_reverse_iterator;
+
 		public:
 
 			explicit Vector (const Allocator& alloc = Allocator())
@@ -184,12 +185,12 @@ class Vector
 					tmpStart != this->_finish && i < n ; i++, tmp++, tmpStart++)
 				{
 					this->_alloc.construct(tmp, *tmpStart);
-					this->_alloc.destroy(tmpStart);
 				}
 				while (i++ < n)
 				{
 					this->_alloc.construct(tmp++, val);
 				}
+				this->clear();
 				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 				this->_start = tmpNewStart;
 				this->_finish = this->_start + n;
@@ -211,15 +212,80 @@ class Vector
 						tmpStart != this->_finish; tmp++, tmpStart++)
 					{
 						this->_alloc.construct(tmp, *tmpStart);
-						this->_alloc.destroy(tmpStart);
 					}
+					this->clear();
 					this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 					this->_start = tmpNewStart;
 					this->_finish = this->_start + size;
 					this->_endOfStorage = this->_start + n;
 				}
 			}
+
+			//ACCESSORS
+
+		protected:
+
+			inline
+			void _range_check(size_type n)
+			{
+				if (n >= this->size())
+					throw std::out_of_range("vector::_range_check out of range");
+			}
+
+		public:
+
+			reference operator[](size_type pos)
+			{
+				return *(this->_start + pos);
+			}
+
+			const_reference operator[](size_type pos) const
+			{
+				return *(this->_start + pos);
+			}
+
+			reference at(size_type pos)
+			{
+				_range_check(pos);
+				return (*this)[pos];
+			}
 			
+			const_reference at(size_type pos) const
+			{
+				_range_check(pos);
+				return (*this)[pos];
+			}
+
+			reference front(void)
+			{
+				return *(this->begin());
+			}
+
+			const reference front(void) const
+			{
+				return *(this->begin());
+			}
+
+			reference back(void)
+			{
+				return *(this->end() - 1);
+			}
+
+			const reference back(void) const
+			{
+				return *(this->end() - 1);
+			}
+
+			pointer data(void)
+			{
+				return &front(); 
+			}
+
+			const_pointer data(void) const
+			{
+				return &front(); 
+			}
+
 			//MODIFIERS
 
 			void clear(void)
@@ -262,6 +328,18 @@ class Vector
 				this->_alloc.destroy(this->_finish--);
 			}
 
+			iterator insert(iterator pos, const T& value)
+			{
+				size_type idx = pos - this->begin();
+
+				if (this->capacity() == this->size())
+					this->reserve(this->capacity() * 2);
+
+				for (size_type i = this->size() - 1; i >= idx; i--)
+					(*this)[i + 1] = (*this)[i];
+				(*this)[idx] = value;
+				return iterator(&(*this)[idx]);
+			}
 
 				
 

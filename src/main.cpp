@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/21 11:36:40 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/21 15:52:20 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,27 +135,41 @@
 int main(void)
 {
 	std::vector<int> myRVector(0);
+	
+
 	myRVector.push_back(1);
 	myRVector.push_back(2);
 	myRVector.push_back(3);
 	myRVector.push_back(4);
 	myRVector.push_back(5);
-
+	
 	std::cout <<  myRVector.size() << std::endl;
 	std::cout <<  myRVector.capacity() << std::endl;
 
 	ft::Vector<int> myVector3(0);
+
 	myVector3.push_back(1);
 	myVector3.push_back(2);
 	myVector3.push_back(3);
 	myVector3.push_back(4);
 	myVector3.push_back(5);
 
+	ft::Vector<int>::pointer ptr = myVector3.data();
+
+	std::cout << "*ptr value " << *ptr << std::endl;
+
 	std::cout << "size " <<  myVector3.size() << std::endl;
 	std::cout << "capacity " << myVector3.capacity() << std::endl;
 
 	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
 	std::vector<int> myRVector2(myRVector.begin(), myRVector.end());
+
+	std::cout << "before insert capacity " << myRVector2.capacity() << std::endl;
+
+	myRVector2.insert(std::vector<int>::iterator(&myRVector2[1]), 133);
+
+	std::cout << "after insert capacity " << myRVector2.capacity() << std::endl;
+
 	ft::Vector<int> myVector(myVector2);
 	ft::Vector<int> test = myVector2;
 
@@ -165,13 +179,21 @@ int main(void)
 
 	test.reserve(20);
 	test.pop_back();
-	test.resize(0, 10);
+	test.resize(10, 10);
+
+	std::cout << "back " << test.back() << std::endl;
+	std::cout << "front " << test.front() << std::endl;
 
 	std::cout << "size " << test.size() << std::endl;
 	std::cout << "capacity " << test.capacity() << std::endl;
 
 	myVector2 = test;
 	ft::Vector<int>::iterator tmp;
+
+	std::cout << "before insert size " << myVector2.size() << std::endl;
+	std::cout << "before insert capacity " << myVector2.capacity() << std::endl;
+
+	myVector2.insert(ft::Vector<int>::iterator(&myVector2[1]) , 133);
 
 	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
 		std::cout << *tmp << std::endl;
@@ -198,12 +220,32 @@ int main(void)
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 
 	myRVector2.reserve(20);
-	myRVector2.resize(0, 10);
+	myRVector2.resize(10, 10);
+
+	std::cout << "back " << myRVector2.back() << std::endl;
+	std::cout << "front " << myRVector2.front() << std::endl;
 
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 	
 	for (std::vector<int>::iterator tmp2 = myRVector2.begin(); tmp2 != myRVector2.end(); tmp2++)
 		std::cout << *tmp2 << std::endl;
+	
+	try
+	{
+		myRVector2.at(11);
+	}
+	catch(std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	try
+	{
+		myVector2.at(10);
+	}
+	catch(std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 		
 	return 0;
 }

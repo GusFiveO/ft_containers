@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/20 19:15:59 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/21 11:52:34 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,21 +108,22 @@ class Vector
 			{
 				if (this == &assign)
 					return *this;
+
 				this->clear();
-				this->_alloc.deallocate(this->_start, this->_finish - this->_start);
+				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 				this->_alloc = assign._alloc;
-				difference_type size = assign.end() - assign.begin();
+				difference_type size = assign.size();
 				size_type capacity = assign.capacity();
 				this->_alloc = assign._alloc;
-				pointer tmpStart = this->_alloc.allocate(size);
-				this->_start = tmpStart;
-				this->_finish = &(*(this->_start + size));
-				this->_endOfStorage = &(*(this->_start + capacity));
-				pointer tmp_start = this->_start;
-				for (iterator tmp = assign.begin(); tmp != assign.end();tmp++)
+				pointer tmpStart = this->_alloc.allocate(capacity);
+				pointer tmp = tmpStart;
+				for (iterator it = assign.begin(); it != assign.end(); it++)
 				{
-					this->_alloc.construct(tmp_start++, *tmp);
+					this->_alloc.construct(tmp++, *it);
 				}
+				this->_start = tmpStart;
+				this->_finish = this->_start + size;
+				this->_endOfStorage = this->_start + capacity;
 				return *this;
 			}
 
@@ -246,16 +247,14 @@ class Vector
 						this->_alloc.construct(tmpNewStart, *tmpStart);
 					}
 					this->_alloc.construct(tmpNewStart++, value);
+					this->clear();
 					this->_alloc.deallocate(this->_start, capacity);
 					this->_start = newStart;
 					this->_finish = newStart + size + 1;
 					this->_endOfStorage = newStart + (capacity * 2);
 				}
 				else
-				{
-					this->_alloc.construct(this->_finish, value);
-					this->_finish++;
-				}
+					this->_alloc.construct(this->_finish++, value);
 			}
 
 			void pop_back(void)
@@ -263,7 +262,6 @@ class Vector
 				this->_alloc.destroy(this->_finish--);
 			}
 
-			//TODO fix quand je clear mon vector il fait de la merde sur push_back
 
 				
 

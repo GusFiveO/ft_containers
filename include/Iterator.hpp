@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/16 18:58:33 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/22 12:48:28 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,130 @@ class simple_iterator : public iterator< typename iterator_traits<Iterator>::ite
 			this->_iter--;
 			return *this;
 		}
+
+		const simple_iterator& base(void)
+		{
+			return this->iter;
+		}
+
 };
+
+//FORWARD ITERATOR REQUIREMENTS
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator==(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() == rhs.base();
+}
+
+template<typename It>
+inline bool
+operator==(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() == rhs.base();
+}
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator!=(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() != rhs.base();
+}
+
+template<typename It>
+inline bool
+operator!=(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() != rhs.base();
+}
+
+//RANDOM ACCESS ITERATOR REQUIREMENTS
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator<(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() < rhs.base();
+}
+
+template<typename It>
+inline bool
+operator<(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() < rhs.base();
+}
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator>(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() > rhs.base();
+}
+
+template<typename It>
+inline bool
+operator>(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() > rhs.base();
+}
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator<=(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() == rhs.base();
+}
+
+template<typename It>
+inline bool
+operator<=(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() == rhs.base();
+}
+
+template<typename ItLeft, typename ItRight>
+inline bool
+operator>=(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() != rhs.base();
+}
+
+template<typename It>
+inline bool
+operator>=(const simple_iterator<It>& lhs,
+		const simple_iterator<It>& rhs)
+{
+	return lhs.base() != rhs.base();
+}
+
+template<typename ItLeft, typename ItRight>
+inline typename simple_iterator<ItLeft>::difference_type
+operator-(const simple_iterator<ItLeft>& lhs,
+		const simple_iterator<ItRight>& rhs)
+{
+	return lhs.base() - rhs.base();
+}
+
+template<typename It>
+inline simple_iterator<It>
+operator+(typename simple_iterator<It>::difference_type n,
+		const simple_iterator<It>& lhs)
+{
+	return simple_iterator<It>(lhs.base() + n);
+}
+
 
 }
 

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/20 14:35:02 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/20 16:37:42 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/22 18:16:20 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,18 +32,6 @@ namespace ft
 	{
 		static const bool value = true;
 	};
-
-	//template<>
-	//struct is_integral<char16_t>
-	//{
-	//	static const bool value = true;
-	//};
-
-	//template<>
-	//struct is_integral<char32_t>
-	//{
-	//	static const bool value = true;
-	//};
 
 	template<>
 	struct is_integral<wchar_t>

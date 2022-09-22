@@ -6,12 +6,14 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/21 15:52:26 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/22 19:19:01 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_TPP
 # define VECTOR_TPP
+
+# include <memory>
 
 namespace ft
 {
@@ -41,7 +43,7 @@ class Vector
 
 			//typedef	reverse_iterator;
 			typedef ft::simple_iterator<pointer> iterator;
-			//typedef const_iterator;
+			typedef ft::simple_iterator<const_pointer> const_iterator;
 			//typedef const_reverse_iterator;
 
 		public:
@@ -328,22 +330,77 @@ class Vector
 				this->_alloc.destroy(this->_finish--);
 			}
 
-			iterator insert(iterator pos, const T& value)
+			iterator insert(iterator pos, const value_type& value)
 			{
 				size_type idx = pos - this->begin();
+				size_type prevSize = this->size();
 
 				if (this->capacity() == this->size())
 					this->reserve(this->capacity() * 2);
 
 				for (size_type i = this->size() - 1; i >= idx; i--)
-					(*this)[i + 1] = (*this)[i];
-				(*this)[idx] = value;
+					this->_alloc.construct(this->_start + i + 1, *(this->_start + i));
+				this->_alloc.construct(this->_start + idx, value);
+				this->_finish = this->_start + prevSize + 1; 
 				return iterator(&(*this)[idx]);
 			}
 
-				
+			void insert(iterator pos, size_type n, const value_type& val)
+			{
+				size_type idx = pos - this->begin();
+				size_type prevSize = this->size();
 
+				if (this->capacity() == this->size())
+					this->reserve(this->capacity() + n);
+
+				for (size_type i = this->size() - 1; i >= idx; i--)
+					this->_alloc.construct(this->_start + i + n, *(this->_start + i));
+				std::uninitialized_fill(this->_start + idx, this->_start + idx + n, val);
+				this->_finish = this->_start + prevSize + n; 
+			}
+
+			template <typename InputIt>
+			void insert (iterator pos, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last)
+			{
+				_insert_range(pos, first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+			}
+
+		private:
 			
+			template<typename ForwardIt>
+			void _insert_range(iterator pos, ForwardIt first, ForwardIt last, std::forward_iterator_tag)
+			{
+				size_type idx = pos - this->begin();
+				size_type prevSize = this->size();
+				size_type rangeLen = last - first;
+
+				if (this->capacity() == this->size())
+					this->reserve(this->capacity() + rangeLen);
+
+				for (size_type i = this->size() - 1; i >= idx; i--)
+					this->_alloc.construct(this->_start + i + rangeLen, *(this->_start + i));
+				for (size_type i = 0; i < rangeLen; i++)
+					this->_alloc.construct(this->_start + idx + i, *(first + i));
+				this->_finish = this->_start + prevSize + rangeLen;
+			}
+
+			template<typename InputIt>
+			void _insert_range(iterator pos, InputIT first, InputIt last, std::input_iterator_tag)
+			{
+				Vector tmp;
+
+				tmp.reserve(this->start - pos);
+				std::uninitialized_copy(pos, this->_finish, tmp.begin());
+				for (pointer p = pos.base(); p != this->_finish; p++)
+					this->_alloc.destroy(p);
+				this->_finish = pos;
+				for (; first != last; first++)
+					this->push_back(*first);
+				this->reserve(this->size() + tmp.size());
+				std::uninitialized_copy(tmp.begin(), tmp.end(), this->_finish);
+			}
+
+
 
 
 		protected:

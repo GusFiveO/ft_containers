@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 17:42:48 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/15 16:32:53 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/22 18:29:34 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ struct iterator_traits<T*>
 {
 		typedef T 							value_type;
 		typedef ptrdiff_t					difference_type;
-		typedef random_access_iterator_tag	iterator_category;
+		typedef std::random_access_iterator_tag	iterator_category;
 		typedef T*							pointer;
 		typedef T&							reference;
 };
@@ -74,7 +74,7 @@ struct iterator_traits<const T*>
 {
 		typedef T 							value_type;
 		typedef ptrdiff_t					difference_type;
-		typedef random_access_iterator_tag	iterator_category;
+		typedef std::random_access_iterator_tag	iterator_category;
 		typedef T*							pointer;
 		typedef T&							reference;
 };
@@ -84,7 +84,7 @@ struct iterator_traits<T* const>
 {
 		typedef T 							value_type;
 		typedef ptrdiff_t					difference_type;
-		typedef random_access_iterator_tag	iterator_category;
+		typedef std::random_access_iterator_tag	iterator_category;
 		typedef T*							pointer;
 		typedef T&							reference;
 };

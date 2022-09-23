@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/22 12:48:28 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/23 12:51:55 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,9 @@ class simple_iterator : public iterator< typename iterator_traits<Iterator>::ite
 			return *this;
 		}
 
-		const simple_iterator& base(void)
+		Iterator& base(void)
 		{
-			return this->iter;
+			return this->_iter;
 		}
 
 };

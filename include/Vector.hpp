@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/22 19:19:01 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/23 13:07:05 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,14 +385,14 @@ class Vector
 			}
 
 			template<typename InputIt>
-			void _insert_range(iterator pos, InputIT first, InputIt last, std::input_iterator_tag)
+			void _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag)
 			{
 				Vector tmp;
 
-				tmp.reserve(this->start - pos);
+				tmp.reserve(this->_finish - pos);
 				std::uninitialized_copy(pos, this->_finish, tmp.begin());
-				for (pointer p = pos.base(); p != this->_finish; p++)
-					this->_alloc.destroy(p);
+				for (pointer ptr = pos.base(); ptr != this->_finish; ptr++)
+					this->_alloc.destroy(ptr);
 				this->_finish = pos;
 				for (; first != last; first++)
 					this->push_back(*first);
@@ -400,6 +400,28 @@ class Vector
 				std::uninitialized_copy(tmp.begin(), tmp.end(), this->_finish);
 			}
 
+		public:
+
+			iterator erase(iterator pos)
+			{
+				if (pos + 1 != this->end())
+					std::copy(pos + 1, this->end(), pos);
+				this->_finish--;
+				return pos;
+			}
+
+			iterator erase(iterator first, iterator last)
+			{
+				size_type dist = std::distance(first, last);
+				if (first != last)
+				{
+					for (iterator tmp = std::copy(last, this->end(), first);
+						tmp != this->end(); tmp++)
+						this->_alloc.destroy(tmp.base());
+				}
+				this->_finish = this->_finish - dist;
+				return last + 1;
+			}
 
 
 

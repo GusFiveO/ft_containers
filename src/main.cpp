@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/22 18:30:58 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/23 13:13:31 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ int main(void)
 	std::cout << "before insert capacity " << myRVector2.capacity() << std::endl;
 	std::cout << "before insert size " << myRVector2.size() << std::endl;
 
-	myRVector2.insert(std::vector<int>::iterator(&myRVector2[1]), 3, 133);
+	//myRVector2.insert(std::vector<int>::iterator(&myRVector2[1]), 3, 133);
 
 	std::cout << "after insert capacity " << myRVector2.capacity() << std::endl;
 	std::cout << "after insert size " << myRVector2.size() << std::endl;
@@ -195,7 +195,9 @@ int main(void)
 	std::cout << "before insert size " << myVector2.size() << std::endl;
 	std::cout << "before insert capacity " << myVector2.capacity() << std::endl;
 
-	myVector2.insert(ft::Vector<int>::iterator(&myVector2[1]), myVector.begin(), myVector.end());
+	ft::Vector<int>::iterator ret =  myVector2.erase( ft::Vector<int>::iterator(&myVector2[3]), myVector2.end());
+
+	std::cout << std::endl << std::boolalpha << (ret == myVector2.end()) << std::endl << std::endl;
 
 	std::cout << "after insert capacity " << myVector2.capacity() << std::endl;
 	std::cout << "after insert size " << myVector2.size() << std::endl;
@@ -225,13 +227,18 @@ int main(void)
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 
 	myRVector2.reserve(20);
+	myRVector2.pop_back();
 	myRVector2.resize(10, 10);
 
+
+	std::cout << "R size " << myRVector2.size() << std::endl;
 	std::cout << "back " << myRVector2.back() << std::endl;
 	std::cout << "front " << myRVector2.front() << std::endl;
 
 	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
 	
+	myRVector2.erase(std::vector<int>::iterator(&myRVector2[3]), myRVector2.end());
+
 	for (std::vector<int>::iterator tmp2 = myRVector2.begin(); tmp2 != myRVector2.end(); tmp2++)
 		std::cout << *tmp2 << std::endl;
 	

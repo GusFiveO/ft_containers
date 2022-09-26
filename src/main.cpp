@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/26 19:30:16 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/26 21:12:04 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,7 @@
 #include "Iterator.hpp"
 #include "is_integral.hpp"
 #include "tests.hpp"
+#include "bench.hpp"
 
 int main(void)
 {

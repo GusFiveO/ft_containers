@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:49:22 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/26 19:33:15 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/26 21:12:01 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,10 @@
 
 void vector_assign_test(void)
 {
+	ft::Bench bench;
+
+	bench.start();
+
 	std::cout << "\tMY VECTOR:" << std::endl;
 	ft::vector<int> vect;
 	int tab[5] = {6, 2, 7, 4, 9};
@@ -29,10 +33,14 @@ void vector_assign_test(void)
 
 	tested.assign(13, 56);
 
-	printContent<int>(tested);
-	printInfo<int>(tested);
+	printContent(tested);
+	printInfo(tested);
+
+	bench.displayTime();
 
 	namespace ft = std;
+	
+	bench.reset();
 
 	std::cout << std::endl << "\tREAL VECTOR:" << std::endl;
 
@@ -51,5 +59,7 @@ void vector_assign_test(void)
 
 	printContent(testedR);
 	printInfo(testedR);
+
+	bench.displayTime();
 }
 

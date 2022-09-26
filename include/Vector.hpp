@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Vector.hpp                                         :+:      :+:    :+:   */
+/*   vector.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/23 13:07:05 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/26 19:31:38 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,18 @@
 
 # include <memory>
 
-namespace ft
-{
-
 # include "Iterator.hpp"
 # include "utils.hpp"
 # include "enable_if.hpp"
 # include "is_integral.hpp"
+# include "algorithm.hpp"
+
+namespace ft
+{
+
 
 template<class T, class Allocator = std::allocator<T> >
-class Vector 
+class vector 
 	{
 		public:
 		// MEMBER TYPES
@@ -48,16 +50,15 @@ class Vector
 
 		public:
 
-			explicit Vector (const Allocator& alloc = Allocator())
+			explicit vector (const Allocator& alloc = Allocator())
 			{
 				this->_alloc = alloc;
 				this->_start = this->_alloc.allocate(0);
 				this->_finish = this->_start;
 				this->_endOfStorage = this->_start;
-				this->_size = 0;
 			}
 
-			explicit Vector (size_type n, const T& val = T(),
+			explicit vector (size_type n, const T& val = T(),
 					 const Allocator& alloc = Allocator())
 			{
 				pointer tmp;
@@ -67,26 +68,18 @@ class Vector
 				this->_finish = this->_start + n;
 				this->_endOfStorage = this->_start + n;
 				for (tmp = this->_start; tmp != this->_finish; tmp++)
-					*tmp = val;
+					this->_alloc.construct(tmp, val);
 			}
 
 			template <class InputIterator>
-			Vector (InputIterator first, InputIterator last,
+			vector (InputIterator first, InputIterator last,
 					 const Allocator& alloc = Allocator())
 			{
-				difference_type size = last - first;
-				difference_type i = 0;
 				this->_alloc = alloc;
-				this->_start = this->_alloc.allocate(size);
-				while (i < size)
-				{
-					this->_start[i++] = *first++;
-				}
-				this->_finish = &this->_start[i];
-				this->_endOfStorage = &this->_start[i];
+				_assign_range(first, last, typename ft::iterator_traits<InputIterator>::iterator_category());
 			}
 
-			Vector (const Vector& x)
+			vector (const vector& x)
 			{
 				size_type capacity = x.capacity();
 				difference_type size = x.end() - x.begin();
@@ -102,12 +95,14 @@ class Vector
 				}
 			}
 
-			~Vector (void)
+			~vector (void)
 			{
+				for (pointer tmp = this->_start; tmp != this->_finish; tmp++)
+					this->_alloc.destroy(tmp);
 				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 			}
 
-			Vector & operator=(const Vector & assign)
+			vector & operator=(const vector & assign)
 			{
 				if (this == &assign)
 					return *this;
@@ -135,11 +130,45 @@ class Vector
 				return this->_alloc;
 			}
 
-			void assign(size_type count, const T& value);
+			void assign(size_type count, const T& value)
+			{
+				vector tmp(count, value);
+
+				this->swap(tmp);
+			}
 			
 			template<class InputIt>
 			void assign(typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first,
-							 InputIt last);
+							 InputIt last)
+			{
+				_assign_range(first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+			}
+
+		private:
+			
+			template<typename InputIt>
+			void _assign_range(InputIt first, InputIt last, std::input_iterator_tag)
+			{
+				vector tmp;
+
+				for (; first != last; first++)
+					tmp.push_back(*first);
+				this->swap(tmp);
+			}
+
+			template<typename ForwIt>
+			void _assign_range(ForwIt first, ForwIt last, std::forward_iterator_tag)
+			{
+				this->clear();
+				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
+				this->_start = this->_alloc.allocate(last - first); 
+				std::uninitialized_copy(first, last, this->_start);
+				this->_finish = this->_start + (last - first);
+				this->_endOfStorage = this->_start + (last - first);
+			}
+
+
+		public:
 
 			iterator begin(void) const
 			{
@@ -387,7 +416,7 @@ class Vector
 			template<typename InputIt>
 			void _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag)
 			{
-				Vector tmp;
+				vector tmp;
 
 				tmp.reserve(this->_finish - pos);
 				std::uninitialized_copy(pos, this->_finish, tmp.begin());
@@ -423,6 +452,15 @@ class Vector
 				return last + 1;
 			}
 
+			void swap(vector& other)
+			{
+				std::swap(this->_start, other._start);
+				std::swap(this->_finish, other._finish);
+				std::swap(this->_endOfStorage, other._endOfStorage);
+				std::swap(this->_alloc, other._alloc);
+			}
+		
+
 
 
 		protected:
@@ -431,10 +469,57 @@ class Vector
 			pointer _start;
 			pointer _finish;
 			pointer _endOfStorage;
-			size_t	_size;
 			allocator_type _alloc;
 
 	};
+
+template<typename T, typename Allocator>
+inline bool
+operator==(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return (lhs.size() == rhs.size() && equal(lhs.begin(), lhs.end(), rhs.begin()));
+}
+
+template<typename T, typename Allocator>
+inline bool
+operator<(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+}
+
+template<typename T, typename Allocator>
+inline bool
+operator!=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return !(lhs == rhs);
+}
+
+template<typename T, typename Allocator>
+inline bool
+operator>(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return (rhs < lhs);
+}
+
+template<typename T, typename Allocator>
+inline bool
+operator<=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return !(rhs < lhs);
+}
+ 
+template<typename T, typename Allocator>
+inline bool
+operator>=(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
+{
+	return !(lhs < rhs);
+}
+
+template<class T, class Alloc>
+void swap(vector<T, Alloc>& lhs, vector<T, Alloc>& rhs)
+{
+	lhs.swap(rhs);
+}
 
 }
 #endif

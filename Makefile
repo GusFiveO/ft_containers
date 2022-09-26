@@ -2,13 +2,13 @@ OBJ_DIR = bin/
 INC_DIR = include/
 SRC_DIR = src/
 
-SRCS = main.cpp 
+SRCS = main.cpp vector_assign_test.cpp 
 OBJS = $(addprefix $(OBJ_DIR), $(SRCS:.cpp=.o))
 DEPENDS = $(OBJS:.o=.d)
 
-NAME = containers 
+NAME = containers
 
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -g
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
 INCPATH = -I$(INC_DIR)
 
 CC = c++

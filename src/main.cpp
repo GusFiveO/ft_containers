@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/23 13:13:31 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/26 19:30:16 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,137 +127,14 @@
 //	return (0);
 //}
 
-#include "Vector.hpp"
+#include "vector.hpp"
 #include <vector>
 #include "Iterator.hpp"
 #include "is_integral.hpp"
+#include "tests.hpp"
 
 int main(void)
 {
-	std::vector<int> myRVector(0);
-	
-
-	myRVector.push_back(1);
-	myRVector.push_back(2);
-	myRVector.push_back(3);
-	myRVector.push_back(4);
-	myRVector.push_back(5);
-	
-	std::cout <<  myRVector.size() << std::endl;
-	std::cout <<  myRVector.capacity() << std::endl;
-
-	ft::Vector<int> myVector3(0);
-
-	myVector3.push_back(1);
-	myVector3.push_back(2);
-	myVector3.push_back(3);
-	myVector3.push_back(4);
-	myVector3.push_back(5);
-
-	ft::Vector<int>::pointer ptr = myVector3.data();
-
-	std::cout << "*ptr value " << *ptr << std::endl;
-
-	std::cout << "size " <<  myVector3.size() << std::endl;
-	std::cout << "capacity " << myVector3.capacity() << std::endl;
-
-	ft::Vector<int> myVector2(myRVector.begin(), myRVector.end());
-	std::vector<int> myRVector2(myRVector.begin(), myRVector.end());
-
-	std::cout << "before insert capacity " << myRVector2.capacity() << std::endl;
-	std::cout << "before insert size " << myRVector2.size() << std::endl;
-
-	//myRVector2.insert(std::vector<int>::iterator(&myRVector2[1]), 3, 133);
-
-	std::cout << "after insert capacity " << myRVector2.capacity() << std::endl;
-	std::cout << "after insert size " << myRVector2.size() << std::endl;
-
-	ft::Vector<int> myVector(myVector2);
-	ft::Vector<int> test = myVector2;
-
-	std::cout << "size " << test.size() << std::endl;
-	std::cout << "max size " << test.max_size() << std::endl;
-	std::cout << "capacity " << test.capacity() << std::endl;
-
-	test.reserve(20);
-	test.pop_back();
-	test.resize(10, 10);
-
-	std::cout << "back " << test.back() << std::endl;
-	std::cout << "front " << test.front() << std::endl;
-
-	std::cout << "size " << test.size() << std::endl;
-	std::cout << "capacity " << test.capacity() << std::endl;
-
-	myVector2 = test;
-	ft::Vector<int>::iterator tmp;
-
-	std::cout << "before insert size " << myVector2.size() << std::endl;
-	std::cout << "before insert capacity " << myVector2.capacity() << std::endl;
-
-	ft::Vector<int>::iterator ret =  myVector2.erase( ft::Vector<int>::iterator(&myVector2[3]), myVector2.end());
-
-	std::cout << std::endl << std::boolalpha << (ret == myVector2.end()) << std::endl << std::endl;
-
-	std::cout << "after insert capacity " << myVector2.capacity() << std::endl;
-	std::cout << "after insert size " << myVector2.size() << std::endl;
-
-	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
-		std::cout << *tmp << std::endl;
-
-	std::cout << "capacity " << myVector2.capacity() << std::endl;
-
-	myVector2.clear();
-
-	std::cout << "clear done" << std::endl << std::endl;
-
-	std::cout << "size " << myVector2.size() << std::endl;
-	std::cout << "capacity " << myVector2.capacity() << std::endl << std::endl;
-
-	myVector2.push_back(10);
-
-	std::cout << "size " << myVector2.size() << std::endl;
-	std::cout << "capacity " << myVector2.capacity() << std::endl;
-
-	for (tmp = myVector2.begin(); tmp != myVector2.end(); tmp++)
-		std::cout << *tmp << std::endl;
-
-	std::cout << "REAL VECTOR" << std::endl;
-
-	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
-
-	myRVector2.reserve(20);
-	myRVector2.pop_back();
-	myRVector2.resize(10, 10);
-
-
-	std::cout << "R size " << myRVector2.size() << std::endl;
-	std::cout << "back " << myRVector2.back() << std::endl;
-	std::cout << "front " << myRVector2.front() << std::endl;
-
-	std::cout << "R capacity " << myRVector2.capacity() << std::endl;
-	
-	myRVector2.erase(std::vector<int>::iterator(&myRVector2[3]), myRVector2.end());
-
-	for (std::vector<int>::iterator tmp2 = myRVector2.begin(); tmp2 != myRVector2.end(); tmp2++)
-		std::cout << *tmp2 << std::endl;
-	
-	try
-	{
-		myRVector2.at(11);
-	}
-	catch(std::exception &e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-	try
-	{
-		myVector2.at(10);
-	}
-	catch(std::exception &e)
-	{
-		std::cout << e.what() << std::endl;
-	}
-		
+	vector_assign_test();
 	return 0;
 }

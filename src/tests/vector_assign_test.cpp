@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:49:22 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/26 21:12:01 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/27 19:04:42 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,24 @@ void vector_assign_test(void)
 {
 	ft::Bench bench;
 
+	std::cout << std::endl << "\t\tASSIGN" << std::endl;
 	bench.start();
 
-	std::cout << "\tMY VECTOR:" << std::endl;
-	ft::vector<int> vect;
+	NAMESPACE::vector<int> vect;
 	int tab[5] = {6, 2, 7, 4, 9};
 
 	for (int i = 0; i < 5; i++)
 		vect.push_back(tab[i]);
 
-	ft::vector<int> tested;
+	NAMESPACE::vector<int> tested;
+
+	std::cout << "---RESERVE 20" << std::endl;
+	tested.reserve(20);
 
 	tested.assign(vect.begin(), vect.end());
 
-	printContent<int>(tested);
+	printContent(tested);
+	printInfo(tested);
 
 	tested.assign(13, 56);
 
@@ -37,29 +41,4 @@ void vector_assign_test(void)
 	printInfo(tested);
 
 	bench.displayTime();
-
-	namespace ft = std;
-	
-	bench.reset();
-
-	std::cout << std::endl << "\tREAL VECTOR:" << std::endl;
-
-	ft::vector<int> vectR;
-
-	for (int i = 0; i < 5; i++)
-		vectR.push_back(tab[i]);
-
-	ft::vector<int> testedR;
-
-	testedR.assign(vectR.begin(), vectR.end());
-
-	printContent(testedR);
-
-	testedR.assign(13, 56);
-
-	printContent(testedR);
-	printInfo(testedR);
-
-	bench.displayTime();
 }
-

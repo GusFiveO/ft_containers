@@ -2,18 +2,24 @@ OBJ_DIR = bin/
 INC_DIR = include/
 SRC_DIR = src/
 
-SRCS = main.cpp vector_assign_test.cpp 
+TESTS_SRC = $(wildcard src/tests/*.cpp)
+TESTS_SRC := $(TESTS_SRC:$(SRC_DIR)%=%)
+
+SRCS = main.cpp $(TESTS_SRC)
 OBJS = $(addprefix $(OBJ_DIR), $(SRCS:.cpp=.o))
 DEPENDS = $(OBJS:.o=.d)
 
 NAME = containers
 
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -g#-fsanitize=address
 INCPATH = -I$(INC_DIR)
 
 CC = c++
 
 all: $(NAME)
+
+real: CPPFLAGS+= -D OUT_FILE="\"realVector.output\"" -D NAMESPACE=std
+real: all
 
 $(NAME) : $(OBJ_DIR) $(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)
@@ -25,9 +31,10 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.cpp
 
 $(OBJ_DIR) :
 	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_DIR)tests/
 
 clean :
-	rm -rf $(OBJ_DIR)
+	rm -rf $(OBJ_DIR) realVector.output myVector.output
 
 fclean : clean
 	rm -f $(NAME)

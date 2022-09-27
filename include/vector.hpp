@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/26 19:31:38 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/27 19:05:43 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class vector
 			//typedef	reverse_iterator;
 			typedef ft::simple_iterator<pointer> iterator;
 			typedef ft::simple_iterator<const_pointer> const_iterator;
-			//typedef const_reverse_iterator;
+			typedef ft::reverse_iterator<pointer> reverse_iterator;
 
 		public:
 
@@ -134,6 +134,10 @@ class vector
 			{
 				vector tmp(count, value);
 
+				if (this->capacity() > this->size() + count)
+				{
+					tmp.reserve(this->capacity());
+				}
 				this->swap(tmp);
 			}
 			
@@ -159,12 +163,16 @@ class vector
 			template<typename ForwIt>
 			void _assign_range(ForwIt first, ForwIt last, std::forward_iterator_tag)
 			{
+				size_type dist = last - first;
 				this->clear();
-				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
-				this->_start = this->_alloc.allocate(last - first); 
+				if (this->capacity() < this->size() + dist)
+				{
+					this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
+					this->_start = this->_alloc.allocate(last - first); 
+					this->_endOfStorage = this->_start + (last - first);
+				}
 				std::uninitialized_copy(first, last, this->_start);
 				this->_finish = this->_start + (last - first);
-				this->_endOfStorage = this->_start + (last - first);
 			}
 
 
@@ -178,6 +186,26 @@ class vector
 			iterator end(void) const
 			{
 				return iterator(this->_finish);
+			}
+
+			iterator cbegin(void) const
+			{
+				return const_iterator(this->_start);
+			}
+
+			iterator cend(void) const
+			{
+				return const_iterator(this->_finish);
+			}
+
+			iterator rbegin(void) const
+			{
+				return reverse_iterator(this->_start);
+			}
+
+			iterator rend(void) const
+			{
+				return reverse_iterator(this->_finish);
 			}
 
 			size_type size(void) const

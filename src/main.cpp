@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/26 21:12:04 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/27 16:35:34 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,79 @@
 #include "is_integral.hpp"
 #include "tests.hpp"
 #include "bench.hpp"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+//#define TESTED_TYPE int
+//#define TESTED_NAMESPACE ft
+//
+//int     main(void)
+//{
+//    TESTED_NAMESPACE::vector<TESTED_TYPE> vct(7);
+//    TESTED_NAMESPACE::vector<TESTED_TYPE> vct_two(4);
+//    TESTED_NAMESPACE::vector<TESTED_TYPE> vct_three;
+//    TESTED_NAMESPACE::vector<TESTED_TYPE> vct_four;
+//
+//    for (unsigned long int i = 0; i < vct.size(); ++i)
+//        vct[i] = (vct.size() - i) * 3;
+//    for (unsigned long int i = 0; i < vct_two.size(); ++i)
+//        vct_two[i] = (vct_two.size() - i) * 5;
+//    printInfo(vct);
+//    printInfo(vct_two);
+//
+//    vct_three.assign(vct.begin(), vct.end());
+//    vct.assign(vct_two.begin(), vct_two.end());
+//    vct_two.assign(2, 42);
+//    vct_four.assign(4, 21);
+//
+//    std::cout << "\t### After assign(): ###" << std::endl;
+//
+//    printInfo(vct);
+//    printInfo(vct_two);
+//    printInfo(vct_three);
+//    printInfo(vct_four);
+//
+//    vct_four.assign(6, 84);
+//    printInfo(vct_four);
+//
+//    std::cout << "\t### assign() on enough capacity and low size: ###" << std::endl;
+//
+//    vct.assign(5, 53);
+//    vct_two.assign(vct_three.begin(), vct_three.begin() + 3);
+//
+//    printInfo(vct);
+//    printContent(vct);
+//    printInfo(vct_two);
+//    printContent(vct_two);
+//
+//    return (0);
+//}
+
 
 int main(void)
 {
+
+	int save_stdout = dup(STDOUT_FILENO);
+	int fd = open(OUT_FILE, O_RDWR | O_CREAT, 0666);
+
+	dup2(fd,STDOUT_FILENO);
 	vector_assign_test();
+	vector_assign_operator_test();
+	vector_resize_test();
+
+	//namespace ft = std;
+
+	//fd = open("realVector.output", O_RDWR | O_CREAT, 0666);
+
+	//close(STDOUT_FILENO);
+	//dup2(fd,STDOUT_FILENO);
+	//vector_assign_test();
+	//vector_assign_operator_test();
+	//vector_resize_test();
+
+	//close(STDOUT_FILENO);
+	dup2(save_stdout, STDOUT_FILENO);
 	return 0;
 }

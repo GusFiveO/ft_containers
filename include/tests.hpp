@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:50:17 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/27 17:04:51 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/27 23:01:22 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@
 #  define NAMESPACE ft
 # endif
 
-# ifndef OUT_FILE
-#  define OUT_FILE "myVector.output"
-# endif
+//# ifndef OUT_FILE
+//#  define OUT_FILE "myVector.output"
+//# endif
 
 void vector_assign_test(void);
 

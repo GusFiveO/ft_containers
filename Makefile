@@ -18,7 +18,7 @@ CC = c++
 
 all: $(NAME)
 
-real: CPPFLAGS+= -D OUT_FILE="\"realVector.output\"" -D NAMESPACE=std
+real: CPPFLAGS+= -D NAMESPACE=std
 real: all
 
 $(NAME) : $(OBJ_DIR) $(OBJS)
@@ -34,9 +34,12 @@ $(OBJ_DIR) :
 	@mkdir -p $(OBJ_DIR)tests/
 
 clean :
-	rm -rf $(OBJ_DIR) realVector.output myVector.output
+	rm -rf $(OBJ_DIR)
 
-fclean : clean
+clean_test :
+	rm -f realVector.output myVector.output
+
+fclean : clean clean_test
 	rm -f $(NAME)
 
 re : fclean all

@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/27 19:05:43 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/27 20:35:54 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,8 +235,8 @@ class vector
 				}
 				else
 				{
-					tmpNewStart	= this->_alloc.allocate(n);
-					this->_endOfStorage = tmpNewStart + n;
+					tmpNewStart	= this->_alloc.allocate(this->capacity() * 2);
+					this->_endOfStorage = tmpNewStart + (this->capacity() * 2);
 				}
 				pointer tmp, tmpStart;
 				size_type i;

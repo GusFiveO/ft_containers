@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/27 14:32:18 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/27 16:36:08 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/28 12:18:04 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,13 @@ void vector_assign_operator_test(void)
 	bench.start();
 
 	NAMESPACE::vector<int> vect(4);
+	NAMESPACE::vector<int> tested = vect;
 
 	printContent(vect);
 	printInfo(vect);
+
+	printContent(tested);
+	printInfo(tested);
 
 	bench.displayTime();
 }

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 17:42:48 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/22 18:29:34 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/28 19:07:25 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@ namespace ft
 
 template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
 struct iterator
+{
+	typedef T			value_type;
+	typedef Distance	difference_type;
+	typedef Pointer		pointer;
+	typedef Reference	reference;
+	typedef Category	iterator_category;
+};
+
+template <class Category, class T, class Distance = ptrdiff_t, class Pointer = const T*, class Reference = const T&>
+struct const_iterator
 {
 	typedef T			value_type;
 	typedef Distance	difference_type;

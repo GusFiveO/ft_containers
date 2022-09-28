@@ -39,6 +39,9 @@ clean :
 clean_test :
 	rm -f realVector.output myVector.output
 
+clean_error :
+	rm -f realVector.error myVector.error
+
 fclean : clean clean_test
 	rm -f $(NAME)
 

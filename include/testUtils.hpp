@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 19:02:28 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/26 19:27:50 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/28 18:55:42 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void printContent(ft::vector<T, Allocator>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
-	for (ft::vector<int>::iterator tmp = vect.begin(); tmp != vect.end(); tmp++)
+	for (typename ft::vector<T>::iterator tmp = vect.begin(); tmp != vect.end(); tmp++)
 	{
 		std::cout << *tmp ;
 		if (tmp + 1 != vect.end())
@@ -34,7 +34,7 @@ void printContent(std::vector<T, Allocator>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
-	for (std::vector<int>::iterator tmp = vect.begin(); tmp != vect.end(); tmp++)
+	for (typename std::vector<T>::iterator tmp = vect.begin(); tmp != vect.end(); tmp++)
 	{
 		std::cout << *tmp ;
 		if (tmp + 1 != vect.end())

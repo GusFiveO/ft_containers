@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/27 20:35:54 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/28 19:01:28 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ class vector
 		public:
 		// MEMBER TYPES
 
-			typedef T 				value_type;
-			typedef Allocator 		allocator_type;
+			typedef T 										value_type;
+			typedef Allocator 								allocator_type;
 
 			typedef typename Allocator::size_type 			size_type;
 			typedef typename Allocator::difference_type 	difference_type;
@@ -43,10 +43,11 @@ class vector
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer 		const_pointer;
 
-			//typedef	reverse_iterator;
-			typedef ft::simple_iterator<pointer> iterator;
-			typedef ft::simple_iterator<const_pointer> const_iterator;
-			typedef ft::reverse_iterator<pointer> reverse_iterator;
+			typedef ft::simple_iterator<pointer>			iterator;
+			typedef ft::simple_iterator<const_pointer>		const_iterator;
+
+			typedef ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 		public:
 
@@ -73,6 +74,7 @@ class vector
 
 			template <class InputIterator>
 			vector (InputIterator first, InputIterator last,
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = 0,
 					 const Allocator& alloc = Allocator())
 			{
 				this->_alloc = alloc;
@@ -88,6 +90,7 @@ class vector
 				this->_start = tmpStart;
 				this->_finish = &(*(this->_start + size));
 				this->_endOfStorage = &(*(this->_start + capacity));
+				//std::uninitialized_copy(x.begin(), x.end(), this->_start);
 				pointer tmp_start = this->_start;
 				for (iterator tmp = x.begin(); tmp != x.end();tmp++)
 				{
@@ -175,37 +178,66 @@ class vector
 				this->_finish = this->_start + (last - first);
 			}
 
-
 		public:
 
-			iterator begin(void) const
+			iterator begin(void)
 			{
 				return iterator(this->_start);
 			}
 
-			iterator end(void) const
+			iterator end(void)
 			{
 				return iterator(this->_finish);
 			}
 
-			iterator cbegin(void) const
+			const_iterator begin(void) const
 			{
 				return const_iterator(this->_start);
 			}
 
-			iterator cend(void) const
+			const_iterator end(void) const
 			{
 				return const_iterator(this->_finish);
 			}
 
-			iterator rbegin(void) const
+			const_iterator cbegin(void) const
+			{
+				return const_iterator(this->_start);
+			}
+
+			const_iterator cend(void) const
+			{
+				return const_iterator(this->_finish);
+			}
+
+			reverse_iterator rbegin(void)
 			{
 				return reverse_iterator(this->_start);
 			}
 
-			iterator rend(void) const
+			reverse_iterator rend(void)
 			{
 				return reverse_iterator(this->_finish);
+			}
+
+			const_reverse_iterator rbegin(void) const
+			{
+				return const_reverse_iterator(this->_start);
+			}
+
+			const_reverse_iterator rend(void) const
+			{
+				return const_reverse_iterator(this->_finish);
+			}
+
+			const_reverse_iterator crbegin(void) const
+			{
+				return const_reverse_iterator(this->_start);
+			}
+
+			const_reverse_iterator crend(void) const
+			{
+				return const_reverse_iterator(this->_finish);
 			}
 
 			size_type size(void) const
@@ -236,7 +268,8 @@ class vector
 				else
 				{
 					tmpNewStart	= this->_alloc.allocate(this->capacity() * 2);
-					this->_endOfStorage = tmpNewStart + (this->capacity() * 2);
+					//this->_endOfStorage = tmpNewStart + (this->capacity() * 2);
+					this->_endOfStorage = tmpNewStart + n;
 				}
 				pointer tmp, tmpStart;
 				size_type i;
@@ -387,7 +420,7 @@ class vector
 				this->_alloc.destroy(this->_finish--);
 			}
 
-			iterator insert(iterator pos, const value_type& value)
+			void insert(iterator pos, const value_type& value)
 			{
 				size_type idx = pos - this->begin();
 				size_type prevSize = this->size();
@@ -399,7 +432,6 @@ class vector
 					this->_alloc.construct(this->_start + i + 1, *(this->_start + i));
 				this->_alloc.construct(this->_start + idx, value);
 				this->_finish = this->_start + prevSize + 1; 
-				return iterator(&(*this)[idx]);
 			}
 
 			void insert(iterator pos, size_type n, const value_type& val)
@@ -407,8 +439,13 @@ class vector
 				size_type idx = pos - this->begin();
 				size_type prevSize = this->size();
 
-				if (this->capacity() == this->size())
-					this->reserve(this->capacity() + n);
+				if (this->capacity() < this->size() + n)
+				{
+					if (this->capacity() + (n * 2) > this->size() + n)
+						this->reserve(this->capacity() + n * 2);
+					else
+						this->reserve(this->capacity() + n);
+				}
 
 				for (size_type i = this->size() - 1; i >= idx; i--)
 					this->_alloc.construct(this->_start + i + n, *(this->_start + i));
@@ -419,7 +456,7 @@ class vector
 			template <typename InputIt>
 			void insert (iterator pos, typename ft::enable_if<!ft::is_integral<InputIt>::value, InputIt>::type first, InputIt last)
 			{
-				_insert_range(pos, first, last, typename ft::iterator_traits<InputIt>::iterator_category());
+				return	_insert_range(pos, first, last, typename ft::iterator_traits<InputIt>::iterator_category());
 			}
 
 		private:
@@ -431,8 +468,13 @@ class vector
 				size_type prevSize = this->size();
 				size_type rangeLen = last - first;
 
-				if (this->capacity() == this->size())
-					this->reserve(this->capacity() + rangeLen);
+				if (this->capacity() < this->size() + rangeLen)
+				{
+					if (this->capacity() * 2  > this->capacity() + rangeLen)
+						this->reserve(this->capacity() * 2);
+					else
+						this->reserve(this->capacity() + rangeLen);
+				}
 
 				for (size_type i = this->size() - 1; i >= idx; i--)
 					this->_alloc.construct(this->_start + i + rangeLen, *(this->_start + i));
@@ -445,6 +487,7 @@ class vector
 			void _insert_range(iterator pos, InputIt first, InputIt last, std::input_iterator_tag)
 			{
 				vector tmp;
+				size_type idx = pos - this->begin();
 
 				tmp.reserve(this->_finish - pos);
 				std::uninitialized_copy(pos, this->_finish, tmp.begin());
@@ -494,9 +537,9 @@ class vector
 		protected:
 
 		private:
-			pointer _start;
-			pointer _finish;
-			pointer _endOfStorage;
+			T* _start;
+			T* _finish;
+			T* _endOfStorage;
 			allocator_type _alloc;
 
 	};

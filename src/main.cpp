@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/27 23:05:46 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/09/28 12:27:06 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ int main(void)
 	vector_assign_test();
 	vector_assign_operator_test();
 	vector_resize_test();
+	vector_modifiers_test();
 
 	return 0;
 }

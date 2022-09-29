@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/28 19:01:28 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/29 18:03:34 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ class vector
 			typedef typename Allocator::pointer				pointer;
 			typedef typename Allocator::const_pointer 		const_pointer;
 
-			typedef ft::simple_iterator<pointer>			iterator;
-			typedef ft::simple_iterator<const_pointer>		const_iterator;
+			typedef ft::normal_iterator<pointer>			iterator;
+			typedef ft::normal_iterator<const_pointer>		const_iterator;
 
 			typedef ft::reverse_iterator<iterator>			reverse_iterator;
 			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
@@ -90,12 +90,7 @@ class vector
 				this->_start = tmpStart;
 				this->_finish = &(*(this->_start + size));
 				this->_endOfStorage = &(*(this->_start + capacity));
-				//std::uninitialized_copy(x.begin(), x.end(), this->_start);
-				pointer tmp_start = this->_start;
-				for (iterator tmp = x.begin(); tmp != x.end();tmp++)
-				{
-					this->_alloc.construct(tmp_start++, *tmp);
-				}
+				std::uninitialized_copy(x.begin(), x.end(), this->_start);
 			}
 
 			~vector (void)
@@ -420,7 +415,7 @@ class vector
 				this->_alloc.destroy(this->_finish--);
 			}
 
-			void insert(iterator pos, const value_type& value)
+			iterator insert(iterator pos, const value_type& value)
 			{
 				size_type idx = pos - this->begin();
 				size_type prevSize = this->size();
@@ -432,6 +427,7 @@ class vector
 					this->_alloc.construct(this->_start + i + 1, *(this->_start + i));
 				this->_alloc.construct(this->_start + idx, value);
 				this->_finish = this->_start + prevSize + 1; 
+				return this->_start[idx]; 
 			}
 
 			void insert(iterator pos, size_type n, const value_type& val)

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 12:13:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/28 16:22:13 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/29 16:06:03 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void vector_modifiers_test(void)
 
 	NAMESPACE::vector<int>::const_iterator it;// = tested.begin();
 	(void)it;
-	std::cout << *it << std::endl;
+	//std::cout << *it << std::endl;
 
 	int tab[7] = {6, 2, 7, 4, 9, 14, 43};
 

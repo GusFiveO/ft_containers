@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/28 19:18:46 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/29 17:59:15 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,7 @@ namespace ft
 {
 
 template <typename Iterator>
-class simple_iterator //: public iterator< typename iterator_traits<Iterator>::iterator_category,
-					  //  				 typename iterator_traits<Iterator>::value_type,
-					  //  				 typename iterator_traits<Iterator>::difference_type,
-					  //  				 typename iterator_traits<Iterator>::pointer,
-					  //  				 typename iterator_traits<Iterator>::reference >
+class normal_iterator 
 {
 	protected:
 		Iterator _iter;
@@ -37,89 +33,39 @@ class simple_iterator //: public iterator< typename iterator_traits<Iterator>::i
 		typedef typename _traits::reference			reference;
 		typedef typename _traits::iterator_category	iterator_category;
 
-		simple_iterator(void) : _iter(Iterator()) {}
+		normal_iterator(void) : _iter(Iterator()) {}
 		
-		explicit simple_iterator(pointer ptr) : _iter(ptr) {}
+		explicit normal_iterator(pointer ptr) : _iter(ptr) {}
 
 		template <typename Iter>
-		simple_iterator(const simple_iterator<Iter> & iter) : _iter(iter.base()) {}
+			normal_iterator(const normal_iterator<Iter> & iter) : _iter(iter.base()) {}
 
-		~simple_iterator(void) {}
-
-		simple_iterator & operator=(const simple_iterator & rhs)
-		{
-			this->_iter = rhs._iter; 
-			return *this;
-		}
-
-		// comparaison operator overload
-		//bool operator!=(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter == rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator==(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter != rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator<(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter >= rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator<=(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter > rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator>(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter <= rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator>=(const simple_iterator & rhs)
-		//{
-		//	if (this->_iter < rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-		//
+		~normal_iterator(void) {}
 
 		//binary arithmetic operator
-		simple_iterator & operator+=(const difference_type n)
+		normal_iterator & operator+=(const difference_type n)
 		{
 			this->_iter += n;
 			return this;
 		}
 
-		simple_iterator & operator-=(const difference_type n)
+		normal_iterator & operator-=(const difference_type n)
 		{
 			this->_iter -= n;
 			return this;
 		}
 
-		simple_iterator operator+(const difference_type n) const
+		normal_iterator operator+(const difference_type n) const
 		{
-			return simple_iterator(this->_iter + n);
+			return normal_iterator(this->_iter + n);
 		}
 
-		simple_iterator operator-(const difference_type n) const
+		normal_iterator operator-(const difference_type n) const
 		{
-			return simple_iterator(this->_iter - n);
+			return normal_iterator(this->_iter - n);
 		}
 
-		difference_type operator-(const simple_iterator& Iter)
+		difference_type operator-(const normal_iterator& Iter) const
 		{
 			return this->_iter - Iter._iter;
 		}
@@ -135,40 +81,40 @@ class simple_iterator //: public iterator< typename iterator_traits<Iterator>::i
 			return *(this->_iter);
 		}
 
-		reference operator[](difference_type n)
+		reference operator[](difference_type n) const
 		{
 			return this->_iter[n];
 		}
 
-		simple_iterator operator++( int )
+		normal_iterator operator++( int )
 		{
-			simple_iterator tmp = *this;
+			normal_iterator tmp = *this;
 
 			this->_iter++;
 			return tmp;
 		}
 
-		simple_iterator operator++()
+		normal_iterator operator++()
 		{
 			this->_iter++;
 			return *this;
 		}
 
-		simple_iterator operator--( int )
+		normal_iterator operator--( int )
 		{
-			simple_iterator tmp = *this;
+			normal_iterator tmp = *this;
 
 			this->_iter--;
 			return tmp;
 		}
 
-		simple_iterator operator--()
+		normal_iterator operator--()
 		{
 			this->_iter--;
 			return *this;
 		}
 
-		Iterator& base(void) const
+		const Iterator& base(void) const
 		{
 			return this->_iter;
 		}
@@ -179,32 +125,32 @@ class simple_iterator //: public iterator< typename iterator_traits<Iterator>::i
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator==(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator==(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() == rhs.base();
 }
 
 template<typename It>
 inline bool
-operator==(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator==(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return lhs.base() == rhs.base();
 }
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator!=(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator!=(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() != rhs.base();
 }
 
 template<typename It>
 inline bool
-operator!=(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator!=(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return lhs.base() != rhs.base();
 }
@@ -213,90 +159,90 @@ operator!=(const simple_iterator<It>& lhs,
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator<(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator<(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() < rhs.base();
 }
 
 template<typename It>
 inline bool
-operator<(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator<(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return lhs.base() < rhs.base();
 }
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator>(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator>(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() > rhs.base();
 }
 
 template<typename It>
 inline bool
-operator>(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator>(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return lhs.base() > rhs.base();
 }
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator<=(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator<=(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return !(lhs.base() > rhs.base());
 }
 
 template<typename It>
 inline bool
-operator<=(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator<=(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return !(lhs.base() > rhs.base());
 }
 
 template<typename ItLeft, typename ItRight>
 inline bool
-operator>=(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+operator>=(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return !(lhs.base() < rhs.base());
 }
 
 template<typename It>
 inline bool
-operator>=(const simple_iterator<It>& lhs,
-		const simple_iterator<It>& rhs)
+operator>=(const normal_iterator<It>& lhs,
+		const normal_iterator<It>& rhs)
 {
 	return !(lhs.base() < rhs.base());
 }
 
 template<typename ItLeft, typename ItRight>
-inline typename simple_iterator<ItLeft>::difference_type
-operator-(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+inline typename normal_iterator<ItLeft>::difference_type
+operator-(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() - rhs.base();
 }
 
 template<typename ItLeft, typename ItRight>
-inline typename simple_iterator<ItLeft>::difference_type
-operator+(const simple_iterator<ItLeft>& lhs,
-		const simple_iterator<ItRight>& rhs)
+inline typename normal_iterator<ItLeft>::difference_type
+operator+(const normal_iterator<ItLeft>& lhs,
+		const normal_iterator<ItRight>& rhs)
 {
 	return lhs.base() + rhs.base();
 }
 
 template<typename It>
-inline simple_iterator<It>
-operator+(typename simple_iterator<It>::difference_type n,
-		const simple_iterator<It>& lhs)
+inline normal_iterator<It>
+operator+(typename normal_iterator<It>::difference_type n,
+		const normal_iterator<It>& lhs)
 {
-	return simple_iterator<It>(lhs.base() + n);
+	return normal_iterator<It>(lhs.base() + n);
 }
 
 template <typename Iterator>
@@ -329,50 +275,6 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
 			this->_iter = rhs._iter; 
 			return *this;
 		}
-
-		// comparaison operator overload
-		//bool operator!=(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter == rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator==(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter != rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator<(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter >= rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator<=(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter > rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator>(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter <= rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-
-		//bool operator>=(const reverse_iterator & rhs)
-		//{
-		//	if (this->_iter < rhs._iter)
-		//		return false;
-		//	return true;
-		//}
-		//
 
 		//binary arithmetic operator
 		reverse_iterator & operator+=(const difference_type n)

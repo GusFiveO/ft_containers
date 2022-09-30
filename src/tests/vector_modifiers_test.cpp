@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 12:13:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 12:33:04 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 20:05:30 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,19 @@ void vector_modifiers_test(void)
 	NAMESPACE::vector<int> vect;
 	NAMESPACE::vector<int> tested(6);
 
+	std::cout << "---INSERT (on a empty vector)" << std::endl;
+	vect.insert(vect.begin(), 42);
+
+	printInfo(tested);
+
 	int tab[7] = {6, 2, 7, 4, 9, 14, 43};
 
 	for (int i = 0; i < 5; i++)
 		vect.push_back(tab[i]);
 
-	printInfo(tested);
 	
 	std::cout << "---INSERT (iterators)" << std::endl;
-	tested.insert(NAMESPACE::vector<int>::iterator(&(tested[3])), vect.begin(), vect.end());
+	tested.insert(tested.begin() + 3, vect.begin(), vect.end());
 	
 	printContent(tested);
 	printInfo(tested);
@@ -54,7 +58,7 @@ void vector_modifiers_test(void)
 	printInfo(tested);
 
 	std::cout << "---INSERT (5, 24)" << std::endl;
-	tested.insert(NAMESPACE::vector<int>::iterator(&(tested[5])), 5, 24);
+	tested.insert(tested.begin() + 5, 5, 24);
 
 	printContent(tested);
 	printInfo(tested);

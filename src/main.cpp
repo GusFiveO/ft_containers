@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 12:53:24 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 20:06:33 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,35 +137,45 @@
 
 #define TESTED_TYPE int
 
-//int		main(void)
-//{
-//	std::list<TESTED_TYPE> lst;
-//	std::list<TESTED_TYPE>::iterator lst_it;
-//	for (int i = 1; i < 5; ++i)
-//		lst.push_back(i * 3);
-//
-//	NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
-//	printInfo(vct);
-//
-//	lst_it = lst.begin();
-//	for (int i = 1; lst_it != lst.end(); ++i)
-//		*lst_it++ = i * 5;
-//	vct.assign(lst.begin(), lst.end());
-//	printInfo(vct);
-//
-//	vct.insert(vct.end(), lst.rbegin(), lst.rend());
-//	printInfo(vct);
-//	return (0);
-//}
-
-int main(void)
+int		main(void)
 {
+	NAMESPACE::vector<TESTED_TYPE> vct(5);
+	NAMESPACE::vector<TESTED_TYPE> vct2;
+	const int cut = 3;
 
-	vector_assign_test();
-	vector_assign_operator_test();
-	vector_resize_test();
-	vector_modifiers_test();
-	vector_accesors_test();
+	for (unsigned long int i = 0; i < vct.size(); ++i)
+		vct[i] = (vct.size() - i) * 7;
+	printInfo(vct);
+	printContent(vct);
 
-	return 0;
+	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
+	printInfo(vct2);
+	printContent(vct2);
+	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
+	printInfo(vct2);
+	printContent(vct2);
+	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
+	printInfo(vct2);
+	printContent(vct2);
+
+	std::cout << "insert return:" << std::endl;
+
+	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
+	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
+	std::cout << "----------------------------------------" << std::endl;
+
+	printInfo(vct2);
+	printContent(vct2);
+	return (0);
 }
+//int main(void)
+//{
+//
+//	vector_assign_test();
+//	vector_assign_operator_test();
+//	vector_resize_test();
+//	vector_modifiers_test();
+//	vector_accesors_test();
+//
+//	return 0;
+//}

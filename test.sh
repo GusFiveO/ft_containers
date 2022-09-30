@@ -13,7 +13,7 @@ echo "done, launching containers..."
 ./containers > myVector.output
 
 echo "Compiling..."
-make clean real >/dev/null 2>realVector.error
+make real >/dev/null 2>realVector.error
 echo "done, launching containers..."
 ./containers > realVector.output
 

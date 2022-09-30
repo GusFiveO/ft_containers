@@ -11,7 +11,7 @@ DEPENDS = $(OBJS:.o=.d)
 
 NAME = containers
 
-CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -g#-fsanitize=address
+CPPFLAGS = -Wall -Werror -Wextra -std=c++98 -g -fsanitize=address
 INCPATH = -I$(INC_DIR)
 
 CC = c++
@@ -19,7 +19,7 @@ CC = c++
 all: $(NAME)
 
 real: CPPFLAGS+= -D NAMESPACE=std
-real: all
+real: clean all
 
 $(NAME) : $(OBJ_DIR) $(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)

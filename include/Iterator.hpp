@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 12:29:58 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 18:53:19 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,13 +104,13 @@ class normal_iterator
 		{
 			normal_iterator tmp = *this;
 
-			this->_iter--;
+			--this->_iter;
 			return tmp;
 		}
 
-		normal_iterator operator--()
+		normal_iterator& operator--()
 		{
-			this->_iter--;
+			--this->_iter;
 			return *this;
 		}
 
@@ -321,13 +321,13 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
 		{
 			reverse_iterator tmp = *this;
 
-			this->_iter--;
+			--this->_iter;
 			return tmp;
 		}
 
 		reverse_iterator operator++()
 		{
-			this->_iter--;
+			--this->_iter;
 			return *this;
 		}
 
@@ -335,13 +335,13 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
 		{
 			reverse_iterator tmp = *this;
 
-			this->_iter++;
+			++this->_iter;
 			return tmp;
 		}
 
-		reverse_iterator operator--()
+		reverse_iterator& operator--()
 		{
-			this->_iter++;
+			++this->_iter;
 			return *this;
 		}
 

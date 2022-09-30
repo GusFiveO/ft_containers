@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 13:01:32 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 19:54:21 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,9 @@ class vector
 					 const Allocator& alloc = Allocator())
 			{
 				this->_alloc = alloc;
+				this->_start = this->_alloc.allocate(0);
+				this->_finish = this->_start;
+				this->_endOfStorage = this->_start;
 				_assign_range(first, last, typename ft::iterator_traits<InputIterator>::iterator_category());
 			}
 
@@ -104,20 +107,25 @@ class vector
 			{
 				if (this == &assign)
 					return *this;
+				difference_type size = assign.size();
+				difference_type capacity = assign.size();
 
 				this->clear();
-				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
-				this->_alloc = assign._alloc;
-				difference_type size = assign.size();
-				size_type capacity = assign.capacity();
-				this->_alloc = assign._alloc;
-				pointer tmpStart = this->_alloc.allocate(capacity);
-				pointer tmp = tmpStart;
-				for (iterator it = assign.begin(); it != assign.end(); it++)
+				if (this->capacity() < assign.size())
 				{
-					this->_alloc.construct(tmp++, *it);
+					this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
+					this->_alloc = assign._alloc;
+					this->_alloc = assign._alloc;
+					pointer tmpStart = this->_alloc.allocate(size);
+					this->_start = tmpStart;
 				}
-				this->_start = tmpStart;
+				else
+				{
+					for (pointer tmp = this->_start; tmp != this->_finish; tmp++)
+						this->_alloc.destroy(tmp);
+					capacity = this->capacity();
+				}
+				std::uninitialized_copy(assign.begin(), assign.end(), this->_start);
 				this->_finish = this->_start + size;
 				this->_endOfStorage = this->_start + capacity;
 				return *this;
@@ -377,7 +385,6 @@ class vector
 
 			void clear(void)
 			{
-				std::cout << this->capacity() << std::endl;
 				pointer tmpStart = this->_start;
 				for (;tmpStart != this->_finish; tmpStart++)
 					this->_alloc.destroy(tmpStart);
@@ -422,13 +429,17 @@ class vector
 				size_type prevSize = this->size();
 
 				if (this->capacity() == this->size())
-					this->reserve(this->capacity() * 2);
+				{
+					if (!this->capacity())
+						this->reserve(1);
+					else
+						this->reserve(this->capacity() * 2);
+				}
 
-				for (size_type i = this->size() - 1; i >= idx; i--)
-					this->_alloc.construct(this->_start + i + 1, *(this->_start + i));
+				std::copy_backward(this->_start + idx, this->_finish, this->_finish + 1);
 				this->_alloc.construct(this->_start + idx, value);
 				this->_finish = this->_start + prevSize + 1; 
-				return this->_start[idx]; 
+				return iterator(this->_start + idx); 
 			}
 
 			void insert(iterator pos, size_type n, const value_type& val)
@@ -438,14 +449,13 @@ class vector
 
 				if (this->capacity() < this->size() + n)
 				{
-					if (this->capacity() + (n * 2) > this->size() + n)
-						this->reserve(this->capacity() + n * 2);
-					else
-						this->reserve(this->capacity() + n);
+					//if (this->capacity() + (n * 2) > this->size() + n)
+					//	this->reserve(this->capacity() + n * 2);
+					//else
+						this->reserve(this->size() + n);
 				}
 
-				for (size_type i = this->size() - 1; i >= idx; i--)
-					this->_alloc.construct(this->_start + i + n, *(this->_start + i));
+				std::copy_backward(this->_start + idx, this->_finish, this->_finish + n);
 				std::uninitialized_fill(this->_start + idx, this->_start + idx + n, val);
 				this->_finish = this->_start + prevSize + n; 
 			}
@@ -467,18 +477,16 @@ class vector
 
 				if (this->capacity() < this->size() + rangeLen)
 				{
-					if (this->capacity() * 2  > this->capacity() + rangeLen)
-						this->reserve(this->capacity() * 2);
-					else
-						this->reserve(this->capacity() + rangeLen);
+					//if (this->capacity() * 2  > this->capacity() + rangeLen)
+					//	this->reserve(this->capacity() * 2);
+					//else
+						this->reserve(this->size() + rangeLen);
 				}
 				for (size_type i = this->size() - 1; i >= idx; i--)
 					this->_alloc.construct(this->_start + i + rangeLen, *(this->_start + i));
 				for (size_type i = idx; i < rangeLen; i++)
 					this->_alloc.destroy(this->_start + i);
 				std::uninitialized_copy(first, last, &this->_start[idx]);
-				//for (size_type i = 0; i < rangeLen; i++)
-				//	this->_alloc.construct(this->_start + idx + i, *(first + i));
 				this->_finish = this->_start + prevSize + rangeLen;
 			}
 
@@ -519,7 +527,7 @@ class vector
 						this->_alloc.destroy(tmp.base());
 				}
 				this->_finish = this->_finish - dist;
-				return last + 1;
+				return first;
 			}
 
 			void swap(vector& other)

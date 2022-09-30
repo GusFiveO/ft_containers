@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:49:22 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/30 12:54:50 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 16:03:54 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,18 @@ void vector_assign_test(void)
 
 	printInfo(copy_range);
 	printContent(copy_range);
+
+	NAMESPACE::vector<int> vect_two;
+
+	vect_two.assign(4, 21);
+
+	printInfo(vect_two);
+	printContent(vect_two);
+
+	vect_two.assign(6, 21);
+
+	printInfo(vect_two);
+	printContent(vect_two);
 
 	NAMESPACE::vector<int> tested;
 

@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/28 12:27:06 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 12:53:24 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@
 //	ft::vector<Buffer> vector_buffer;
 //	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
 //	ft::map<int, int> map_int;
-//
+
 //	for (int i = 0; i < COUNT; i++)
 //	{
 //		vector_buffer.push_back(Buffer());
@@ -133,6 +133,30 @@
 #include "is_integral.hpp"
 #include "tests.hpp"
 #include "bench.hpp"
+#include <list>
+
+#define TESTED_TYPE int
+
+//int		main(void)
+//{
+//	std::list<TESTED_TYPE> lst;
+//	std::list<TESTED_TYPE>::iterator lst_it;
+//	for (int i = 1; i < 5; ++i)
+//		lst.push_back(i * 3);
+//
+//	NAMESPACE::vector<TESTED_TYPE> vct(lst.begin(), lst.end());
+//	printInfo(vct);
+//
+//	lst_it = lst.begin();
+//	for (int i = 1; lst_it != lst.end(); ++i)
+//		*lst_it++ = i * 5;
+//	vct.assign(lst.begin(), lst.end());
+//	printInfo(vct);
+//
+//	vct.insert(vct.end(), lst.rbegin(), lst.rend());
+//	printInfo(vct);
+//	return (0);
+//}
 
 int main(void)
 {
@@ -141,6 +165,7 @@ int main(void)
 	vector_assign_operator_test();
 	vector_resize_test();
 	vector_modifiers_test();
+	vector_accesors_test();
 
 	return 0;
 }

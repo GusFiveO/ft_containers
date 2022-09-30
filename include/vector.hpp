@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/29 18:03:34 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 13:01:32 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class vector
 
 			template <class InputIterator>
 			vector (InputIterator first, InputIterator last,
-					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type = 0,
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0,
 					 const Allocator& alloc = Allocator())
 			{
 				this->_alloc = alloc;
@@ -161,16 +161,16 @@ class vector
 			template<typename ForwIt>
 			void _assign_range(ForwIt first, ForwIt last, std::forward_iterator_tag)
 			{
-				size_type dist = last - first;
+				size_type dist = std::distance(first, last);
 				this->clear();
 				if (this->capacity() < this->size() + dist)
 				{
 					this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
-					this->_start = this->_alloc.allocate(last - first); 
-					this->_endOfStorage = this->_start + (last - first);
+					this->_start = this->_alloc.allocate(dist); 
+					this->_endOfStorage = this->_start + (dist);
 				}
 				std::uninitialized_copy(first, last, this->_start);
-				this->_finish = this->_start + (last - first);
+				this->_finish = this->_start + (dist);
 			}
 
 		public:
@@ -207,32 +207,32 @@ class vector
 
 			reverse_iterator rbegin(void)
 			{
-				return reverse_iterator(this->_start);
+				return reverse_iterator(this->end());
 			}
 
 			reverse_iterator rend(void)
 			{
-				return reverse_iterator(this->_finish);
+				return reverse_iterator(this->begin());
 			}
 
 			const_reverse_iterator rbegin(void) const
 			{
-				return const_reverse_iterator(this->_start);
+				return const_reverse_iterator(this->end());
 			}
 
 			const_reverse_iterator rend(void) const
 			{
-				return const_reverse_iterator(this->_finish);
+				return const_reverse_iterator(this->begin());
 			}
 
 			const_reverse_iterator crbegin(void) const
 			{
-				return const_reverse_iterator(this->_start);
+				return const_reverse_iterator(this->end());
 			}
 
 			const_reverse_iterator crend(void) const
 			{
-				return const_reverse_iterator(this->_finish);
+				return const_reverse_iterator(this->_start);
 			}
 
 			size_type size(void) const
@@ -313,7 +313,7 @@ class vector
 		protected:
 
 			inline
-			void _range_check(size_type n)
+			void _range_check(size_type n) const
 			{
 				if (n >= this->size())
 					throw std::out_of_range("vector::_range_check out of range");
@@ -334,13 +334,13 @@ class vector
 			reference at(size_type pos)
 			{
 				_range_check(pos);
-				return (*this)[pos];
+				return this->_start[pos];
 			}
 			
 			const_reference at(size_type pos) const
 			{
 				_range_check(pos);
-				return (*this)[pos];
+				return this->_start[pos];
 			}
 
 			reference front(void)
@@ -348,7 +348,7 @@ class vector
 				return *(this->begin());
 			}
 
-			const reference front(void) const
+			const_reference front(void) const
 			{
 				return *(this->begin());
 			}
@@ -358,7 +358,7 @@ class vector
 				return *(this->end() - 1);
 			}
 
-			const reference back(void) const
+			const_reference back(void) const
 			{
 				return *(this->end() - 1);
 			}
@@ -377,6 +377,7 @@ class vector
 
 			void clear(void)
 			{
+				std::cout << this->capacity() << std::endl;
 				pointer tmpStart = this->_start;
 				for (;tmpStart != this->_finish; tmpStart++)
 					this->_alloc.destroy(tmpStart);
@@ -462,7 +463,7 @@ class vector
 			{
 				size_type idx = pos - this->begin();
 				size_type prevSize = this->size();
-				size_type rangeLen = last - first;
+				size_type rangeLen = std::distance(first, last);
 
 				if (this->capacity() < this->size() + rangeLen)
 				{
@@ -471,11 +472,13 @@ class vector
 					else
 						this->reserve(this->capacity() + rangeLen);
 				}
-
 				for (size_type i = this->size() - 1; i >= idx; i--)
 					this->_alloc.construct(this->_start + i + rangeLen, *(this->_start + i));
-				for (size_type i = 0; i < rangeLen; i++)
-					this->_alloc.construct(this->_start + idx + i, *(first + i));
+				for (size_type i = idx; i < rangeLen; i++)
+					this->_alloc.destroy(this->_start + i);
+				std::uninitialized_copy(first, last, &this->_start[idx]);
+				//for (size_type i = 0; i < rangeLen; i++)
+				//	this->_alloc.construct(this->_start + idx + i, *(first + i));
 				this->_finish = this->_start + prevSize + rangeLen;
 			}
 

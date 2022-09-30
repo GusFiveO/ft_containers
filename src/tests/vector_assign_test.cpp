@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:49:22 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/27 19:04:42 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 12:54:50 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ void vector_assign_test(void)
 
 	for (int i = 0; i < 5; i++)
 		vect.push_back(tab[i]);
+
+	NAMESPACE::vector<int> copy_range(vect.begin(), vect.end());
+
+	printInfo(copy_range);
+	printContent(copy_range);
 
 	NAMESPACE::vector<int> tested;
 

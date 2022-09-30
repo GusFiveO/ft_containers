@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 12:13:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/29 16:06:03 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 12:33:04 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@ void vector_modifiers_test(void)
 	NAMESPACE::vector<int> vect;
 	NAMESPACE::vector<int> tested(6);
 
-	NAMESPACE::vector<int>::const_iterator it;// = tested.begin();
-	(void)it;
-	//std::cout << *it << std::endl;
-
 	int tab[7] = {6, 2, 7, 4, 9, 14, 43};
 
 	for (int i = 0; i < 5; i++)
@@ -36,6 +32,12 @@ void vector_modifiers_test(void)
 	
 	std::cout << "---INSERT (iterators)" << std::endl;
 	tested.insert(NAMESPACE::vector<int>::iterator(&(tested[3])), vect.begin(), vect.end());
+	
+	printContent(tested);
+	printInfo(tested);
+
+	std::cout << "---INSERT (reverse_iterators)" << std::endl;
+	tested.insert(tested.end(), vect.rbegin(), vect.rend());
 	
 	printContent(tested);
 	printInfo(tested);

@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 16:26:49 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/29 17:59:15 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 12:29:58 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,12 +263,14 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
 		typedef typename _traits::reference			reference;
 		typedef typename _traits::iterator_category	iterator_category;
 
-		reverse_iterator(void) : _iter(Iterator()) {}
+		reverse_iterator(void) : _iter() {}
 		
-		explicit reverse_iterator(pointer ptr) : _iter(ptr) {}
+		explicit reverse_iterator(Iterator iter) : _iter(iter) {}
+
+		explicit reverse_iterator(const reverse_iterator& x) : _iter(x.iter) {}
 
 		template <typename T>
-		reverse_iterator(reverse_iterator<T> & iter) : _iter(iter.base()) {}
+		reverse_iterator(const reverse_iterator<T>& iter) : _iter(iter.base()) {}
 
 		reverse_iterator & operator=(const reverse_iterator & rhs)
 		{
@@ -277,31 +279,26 @@ class reverse_iterator : public iterator< typename iterator_traits<Iterator>::it
 		}
 
 		//binary arithmetic operator
-		reverse_iterator & operator+=(const difference_type n)
+		reverse_iterator & operator+=(difference_type n)
 		{
 			this->_iter -= n;
 			return this;
 		}
 
-		reverse_iterator & operator-=(const difference_type n)
+		reverse_iterator & operator-=(difference_type n)
 		{
 			this->_iter += n;
 			return this;
 		}
 
-		reverse_iterator operator+(const difference_type n) const
+		reverse_iterator operator+(difference_type n) const
 		{
 			return reverse_iterator(this->_iter - n);
 		}
 
-		reverse_iterator operator-(const difference_type n) const
+		reverse_iterator operator-(difference_type n) const
 		{
 			return reverse_iterator(this->_iter + n);
-		}
-
-		difference_type operator-(const reverse_iterator& Iter)
-		{
-			return this->_iter + Iter._iter;
 		}
 
 		pointer operator->() const

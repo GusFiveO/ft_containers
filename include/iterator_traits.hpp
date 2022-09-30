@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/14 17:42:48 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/29 17:58:34 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 11:38:26 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,6 @@ struct iterator
 	typedef Category	iterator_category;
 };
 
-template <class Category, class T, class Distance = ptrdiff_t, class Pointer = const T*, class Reference = const T&>
-struct const_iterator
-{
-	typedef T			value_type;
-	typedef Distance	difference_type;
-	typedef Pointer		pointer;
-	typedef Reference	reference;
-	typedef Category	iterator_category;
-};
-
 template<typename Iterator>
 struct iterator_traits
 {
@@ -72,21 +62,21 @@ struct iterator_traits
 template<typename T>
 struct iterator_traits<T*>
 {
-		typedef T 							value_type;
-		typedef ptrdiff_t					difference_type;
+		typedef T								value_type;
+		typedef ptrdiff_t						difference_type;
 		typedef std::random_access_iterator_tag	iterator_category;
-		typedef T*							pointer;
-		typedef T&							reference;
+		typedef T*								pointer;
+		typedef T&								reference;
 };
 
 template<typename T>
 struct iterator_traits<const T*>
 {
-		typedef T 							value_type;
-		typedef ptrdiff_t					difference_type;
+		typedef T 								value_type;
+		typedef ptrdiff_t						difference_type;
 		typedef std::random_access_iterator_tag	iterator_category;
-		typedef const T*							pointer;
-		typedef const T&							reference;
+		typedef const T*						pointer;
+		typedef const T&						reference;
 };
 
 }

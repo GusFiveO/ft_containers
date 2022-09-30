@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:50:17 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/28 18:55:02 by alorain          ###   ########.fr       */
+/*   Updated: 2022/09/30 11:11:04 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@ void vector_assign_operator_test(void);
 void vector_resize_test(void);
 
 void vector_modifiers_test(void);
+
+void vector_accesors_test(void);
 
 #endif

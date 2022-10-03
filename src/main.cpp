@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 20:06:33 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/10/03 16:30:54 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,39 +135,114 @@
 #include "bench.hpp"
 #include <list>
 
+//#define TESTED_TYPE int
+//
+//template <typename Ite_1, typename Ite_2>
+//void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
+//{
+//	std::cout << (first < second) << std::endl;
+//	std::cout << (first <= second) << std::endl;
+//	std::cout << (first > second) << std::endl;
+//	std::cout << (first >= second) << std::endl;
+//	if (redo)
+//		ft_eq_ope(second, first, 0);
+//}
+//
+//int		main(void)
+//{
+//	const int size = 5;
+//	NAMESPACE::vector<TESTED_TYPE> vct(size);
+//	NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_0(vct.rbegin());
+//	NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_1(vct.rend());
+//	NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_mid;
+//
+//	NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_0 = vct.rbegin();
+//	NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_1;
+//	NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_mid;
+//
+//	for (int i = size; it_0 != it_1; --i)
+//		*it_0++ = i;
+//	printInfo(vct);
+//	it_0 = vct.rbegin();
+//	cit_1 = vct.rend();
+//	it_mid = it_0 + 3;
+//	cit_mid = it_0 + 3; cit_mid = cit_0 + 3; cit_mid = it_mid;
+//
+//	std::cout << std::boolalpha;
+//	std::cout << ((it_0 + 3 == cit_0 + 3) && (cit_0 + 3 == it_mid)) << std::endl;
+//
+//	std::cout << "\t\tft_eq_ope:" << std::endl;
+//	// regular it
+//	ft_eq_ope(it_0 + 3, it_mid);
+//	ft_eq_ope(it_0, it_1);
+//	ft_eq_ope(it_1 - 3, it_mid);
+//	// const it
+//	ft_eq_ope(cit_0 + 3, cit_mid);
+//	ft_eq_ope(cit_0, cit_1);
+//	ft_eq_ope(cit_1 - 3, cit_mid);
+//	// both it
+//	ft_eq_ope(it_0 + 3, cit_mid);
+//	ft_eq_ope(it_mid, cit_0 + 3);
+//	ft_eq_ope(it_0, cit_1);
+//	ft_eq_ope(it_1, cit_0);
+//	ft_eq_ope(it_1 - 3, cit_mid);
+//	ft_eq_ope(it_mid, cit_1 - 3);
+//
+//	return (0);
+//}
+
 #define TESTED_TYPE int
+
+void	is_empty(NAMESPACE::vector<TESTED_TYPE> const &vct)
+{
+	std::cout << "is_empty: " << vct.empty() << std::endl;
+}
 
 int		main(void)
 {
-	NAMESPACE::vector<TESTED_TYPE> vct(5);
+	const int start_size = 7;
+	NAMESPACE::vector<TESTED_TYPE> vct(start_size, 20);
 	NAMESPACE::vector<TESTED_TYPE> vct2;
-	const int cut = 3;
+	NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
 
-	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 7;
+	for (int i = 2; i < start_size; ++i)
+		it[i] = (start_size - i) * 3;
 	printInfo(vct);
-	printContent(vct);
 
-	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
-	printInfo(vct2);
-	printContent(vct2);
-	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
-	printInfo(vct2);
-	printContent(vct2);
-	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
-	printInfo(vct2);
-	printContent(vct2);
+	vct.resize(10, 42);
+	printInfo(vct);
 
-	std::cout << "insert return:" << std::endl;
+	vct.resize(13, 43);
+	printInfo(vct);
+	vct.resize(18, 43);
+	printInfo(vct);
+	vct.resize(10);
+	printInfo(vct);
+	vct.resize(23, 44);
+	printInfo(vct);
+	vct.resize(5);
+	printInfo(vct);
+	vct.reserve(5);
+	vct.reserve(3);
+	printInfo(vct);
+	vct.resize(87);
+	vct.resize(5);
+	printInfo(vct);
 
-	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
-	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-
+	is_empty(vct2);
+	vct2 = vct;
+	is_empty(vct2);
+	vct.reserve(vct.capacity() + 1);
+	printInfo(vct);
 	printInfo(vct2);
-	printContent(vct2);
+
+	vct2.resize(0);
+	is_empty(vct2);
+	printInfo(vct2);
 	return (0);
 }
+
+
 //int main(void)
 //{
 //
@@ -176,6 +251,7 @@ int		main(void)
 //	vector_resize_test();
 //	vector_modifiers_test();
 //	vector_accesors_test();
+//	vector_incr_test();
 //
 //	return 0;
 //}

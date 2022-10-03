@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/30 11:09:24 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 11:23:13 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/03 15:27:49 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 
 void vector_accesors_test(void)
 {
+	ft::Bench bench;
+
+	std::cout << "\t\tACCESORS" << std::endl;
+
+	bench.start();
 	NAMESPACE::vector<int> vct(7);
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
@@ -40,5 +45,7 @@ void vector_accesors_test(void)
 		std::cout << "Catch exception: " << e.what() << std::endl;
 	}
 	printInfo(vct_c);
+
+	bench.displayTime();
 	
 }

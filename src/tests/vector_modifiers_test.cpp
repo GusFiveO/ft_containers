@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/28 12:13:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 20:05:30 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/10/03 15:23:30 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ void vector_modifiers_test(void)
 
 	std::cout << "---INSERT (on a empty vector)" << std::endl;
 	vect.insert(vect.begin(), 42);
-
 	printInfo(tested);
+	vect.clear();
+	vect.insert(vect.begin(), tested.begin(), tested.end() - 2);
 
 	int tab[7] = {6, 2, 7, 4, 9, 14, 43};
 

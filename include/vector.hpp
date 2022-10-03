@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/09/30 19:54:21 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/10/03 16:30:08 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,21 +270,27 @@ class vector
 				}
 				else
 				{
-					tmpNewStart	= this->_alloc.allocate(this->capacity() * 2);
-					//this->_endOfStorage = tmpNewStart + (this->capacity() * 2);
-					this->_endOfStorage = tmpNewStart + n;
+					tmpNewStart	= this->_alloc.allocate(std::max(n, this->size() * 2));
+					this->_endOfStorage = tmpNewStart + std::max(n, this->size() * 2);
 				}
-				pointer tmp, tmpStart;
-				size_type i;
-				for (tmp = tmpNewStart, tmpStart = this->_start, i = 0;
-					tmpStart != this->_finish && i < n ; i++, tmp++, tmpStart++)
+				if (n < this->size())
+					std::uninitialized_copy(this->_start, this->_start + n, tmpNewStart);
+				else
 				{
-					this->_alloc.construct(tmp, *tmpStart);
+					std::uninitialized_copy(this->_start, this->_finish, tmpNewStart);
+					std::uninitialized_fill(tmpNewStart + this->size(), tmpNewStart + n, val);
 				}
-				while (i++ < n)
-				{
-					this->_alloc.construct(tmp++, val);
-				}
+				//pointer tmp, tmpStart;
+				//size_type i;
+				//for (tmp = tmpNewStart, tmpStart = this->_start, i = 0;
+				//	tmpStart != this->_finish && i < n ; i++, tmp++, tmpStart++)
+				//{
+				//	this->_alloc.construct(tmp, *tmpStart);
+				//}
+				//while (i++ < n)
+				//{
+				//	this->_alloc.construct(tmp++, val);
+				//}
 				this->clear();
 				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 				this->_start = tmpNewStart;
@@ -293,7 +299,7 @@ class vector
 
 			bool empty(void) const
 			{
-				return (this->_size() == 0);
+				return (this->size() == 0);
 			}
 
 			void reserve(size_type n)
@@ -477,15 +483,18 @@ class vector
 
 				if (this->capacity() < this->size() + rangeLen)
 				{
-					//if (this->capacity() * 2  > this->capacity() + rangeLen)
-					//	this->reserve(this->capacity() * 2);
-					//else
+					if (this->size() * 2  > this->size() + rangeLen)
+						this->reserve(this->size() * 2);
+					else
 						this->reserve(this->size() + rangeLen);
+					//this->reserve(std::max(this->capacity() * 2, this->size() + rangeLen));
 				}
-				for (size_type i = this->size() - 1; i >= idx; i--)
-					this->_alloc.construct(this->_start + i + rangeLen, *(this->_start + i));
-				for (size_type i = idx; i < rangeLen; i++)
-					this->_alloc.destroy(this->_start + i);
+				if (this->size())
+				{
+					std::copy_backward(this->_start + idx, this->_finish, this->_finish + rangeLen);
+					for (size_type i = idx; i < rangeLen; i++)
+						this->_alloc.destroy(this->_start + i);
+				}
 				std::uninitialized_copy(first, last, &this->_start[idx]);
 				this->_finish = this->_start + prevSize + rangeLen;
 			}

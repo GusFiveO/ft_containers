@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 16:30:08 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/03 18:55:27 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,17 +280,6 @@ class vector
 					std::uninitialized_copy(this->_start, this->_finish, tmpNewStart);
 					std::uninitialized_fill(tmpNewStart + this->size(), tmpNewStart + n, val);
 				}
-				//pointer tmp, tmpStart;
-				//size_type i;
-				//for (tmp = tmpNewStart, tmpStart = this->_start, i = 0;
-				//	tmpStart != this->_finish && i < n ; i++, tmp++, tmpStart++)
-				//{
-				//	this->_alloc.construct(tmp, *tmpStart);
-				//}
-				//while (i++ < n)
-				//{
-				//	this->_alloc.construct(tmp++, val);
-				//}
 				this->clear();
 				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
 				this->_start = tmpNewStart;
@@ -399,29 +388,14 @@ class vector
 
 			void push_back(const T& value)
 			{
-				size_type capacity = this->capacity();
-				size_type size = this->size();
-
-				if (size + 1 > capacity)
+				if (this->size() == this->capacity())
 				{
-					if (capacity == 0)
-						capacity = 1;
-					pointer newStart = this->_alloc.allocate(capacity * 2);
-					pointer tmpStart, tmpNewStart;
-					for (tmpStart = this->_start, tmpNewStart = newStart;
-							tmpStart != this->_finish; tmpStart++, tmpNewStart++)
-					{
-						this->_alloc.construct(tmpNewStart, *tmpStart);
-					}
-					this->_alloc.construct(tmpNewStart++, value);
-					this->clear();
-					this->_alloc.deallocate(this->_start, capacity);
-					this->_start = newStart;
-					this->_finish = newStart + size + 1;
-					this->_endOfStorage = newStart + (capacity * 2);
+					if (this->size())
+						this->reserve(this->size() * 2);
+					else
+						this->reserve(1);
 				}
-				else
-					this->_alloc.construct(this->_finish++, value);
+				this->_alloc.construct(this->_finish++, value);
 			}
 
 			void pop_back(void)

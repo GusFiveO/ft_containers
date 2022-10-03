@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 16:30:54 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/03 18:46:27 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,12 +128,14 @@
 //}
 
 #include "vector.hpp"
+#include "stack.hpp"
 #include <vector>
 #include "Iterator.hpp"
 #include "is_integral.hpp"
 #include "tests.hpp"
 #include "bench.hpp"
 #include <list>
+#include <stack>
 
 //#define TESTED_TYPE int
 //
@@ -190,57 +192,123 @@
 //
 //	return (0);
 //}
-
 #define TESTED_TYPE int
+#define t_stack_ NAMESPACE::stack<TESTED_TYPE, ft::vector<TESTED_TYPE> >
+typedef t_stack_::container_type container_type;
 
-void	is_empty(NAMESPACE::vector<TESTED_TYPE> const &vct)
+template <class T_STACK>
+void	cmp(const T_STACK &lhs, const T_STACK &rhs)
 {
-	std::cout << "is_empty: " << vct.empty() << std::endl;
+	static int i = 0;
+
+	std::cout << "############### [" << i++ << "] ###############"  << std::endl;
+	std::cout << "eq: " << (lhs == rhs) << " | ne: " << (lhs != rhs) << std::endl;
+	std::cout << "lt: " << (lhs <  rhs) << " | le: " << (lhs <= rhs) << std::endl;
+	std::cout << "gt: " << (lhs >  rhs) << " | ge: " << (lhs >= rhs) << std::endl;
 }
 
 int		main(void)
 {
-	const int start_size = 7;
-	NAMESPACE::vector<TESTED_TYPE> vct(start_size, 20);
-	NAMESPACE::vector<TESTED_TYPE> vct2;
-	NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
+	container_type vect(6);
 
-	for (int i = 2; i < start_size; ++i)
-		it[i] = (start_size - i) * 3;
-	printInfo(vct);
+	printInfo(vect);
+	vect.push_back(3);
+	printInfo(vect);
 
-	vct.resize(10, 42);
-	printInfo(vct);
 
-	vct.resize(13, 43);
-	printInfo(vct);
-	vct.resize(18, 43);
-	printInfo(vct);
-	vct.resize(10);
-	printInfo(vct);
-	vct.resize(23, 44);
-	printInfo(vct);
-	vct.resize(5);
-	printInfo(vct);
-	vct.reserve(5);
-	vct.reserve(3);
-	printInfo(vct);
-	vct.resize(87);
-	vct.resize(5);
-	printInfo(vct);
 
-	is_empty(vct2);
-	vct2 = vct;
-	is_empty(vct2);
-	vct.reserve(vct.capacity() + 1);
-	printInfo(vct);
-	printInfo(vct2);
 
-	vct2.resize(0);
-	is_empty(vct2);
-	printInfo(vct2);
+	container_type	ctnr;
+
+	ctnr.push_back(21);
+	ctnr.push_back(42);
+	ctnr.push_back(1337);
+	ctnr.push_back(19);
+	ctnr.push_back(0);
+	ctnr.push_back(183792);
+
+	t_stack_	stck(ctnr);
+	t_stack_	stck2(ctnr);
+
+	cmp(stck, stck);  // 0
+	cmp(stck, stck2); // 1
+
+	stck2.push(60);
+	stck2.push(61);
+	stck2.push(62);
+
+	cmp(stck, stck2); // 2
+	cmp(stck2, stck); // 3
+
+	stck.push(42);
+
+	cmp(stck, stck2); // 4
+	cmp(stck2, stck); // 5
+
+	stck.push(100);
+
+	cmp(stck, stck2); // 6
+	cmp(stck2, stck); // 7
 	return (0);
 }
+
+
+//#define TESTED_TYPE int
+//
+//void	is_empty(NAMESPACE::vector<TESTED_TYPE> const &vct)
+//{
+//	std::cout << "is_empty: " << vct.empty() << std::endl;
+//}
+//
+//int		main(void)
+//{
+//
+//	const int start_size = 7;
+//	NAMESPACE::vector<TESTED_TYPE> vct(start_size, 20);
+//	NAMESPACE::vector<TESTED_TYPE> vct2;
+//	NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
+//
+//	ft::stack<int> s(vct);
+//
+//	s.push(12);
+//
+//
+//	for (int i = 2; i < start_size; ++i)
+//		it[i] = (start_size - i) * 3;
+//	printInfo(vct);
+//
+//	vct.resize(10, 42);
+//	printInfo(vct);
+//
+//	vct.resize(13, 43);
+//	printInfo(vct);
+//	vct.resize(18, 43);
+//	printInfo(vct);
+//	vct.resize(10);
+//	printInfo(vct);
+//	vct.resize(23, 44);
+//	printInfo(vct);
+//	vct.resize(5);
+//	printInfo(vct);
+//	vct.reserve(5);
+//	vct.reserve(3);
+//	printInfo(vct);
+//	vct.resize(87);
+//	vct.resize(5);
+//	printInfo(vct);
+//
+//	is_empty(vct2);
+//	vct2 = vct;
+//	is_empty(vct2);
+//	vct.reserve(vct.capacity() + 1);
+//	printInfo(vct);
+//	printInfo(vct2);
+//
+//	vct2.resize(0);
+//	is_empty(vct2);
+//	printInfo(vct2);
+//	return (0);
+//}
 
 
 //int main(void)

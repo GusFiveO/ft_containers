@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 18:46:27 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/03 19:06:05 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,7 @@
 //	return (0);
 //}
 #define TESTED_TYPE int
-#define t_stack_ NAMESPACE::stack<TESTED_TYPE, ft::vector<TESTED_TYPE> >
+#define t_stack_ NAMESPACE::stack<TESTED_TYPE>
 typedef t_stack_::container_type container_type;
 
 template <class T_STACK>

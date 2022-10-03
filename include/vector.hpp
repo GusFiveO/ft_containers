@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 18:55:27 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/03 19:07:25 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ class vector
 				size_type capacity = x.capacity();
 				difference_type size = x.end() - x.begin();
 				this->_alloc = x._alloc;
-				pointer tmpStart = this->_alloc.allocate(size);
+				pointer tmpStart = this->_alloc.allocate(capacity);
 				this->_start = tmpStart;
 				this->_finish = &(*(this->_start + size));
 				this->_endOfStorage = &(*(this->_start + capacity));

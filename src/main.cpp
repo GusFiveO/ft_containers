@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/04 18:39:18 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/05 17:25:06 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,10 +141,10 @@
 
 int main(void)
 {
-	ft::BST<int> bst;
+	ft::Rb_tree<int> bst;
 
-	bst.insert(42);
-	bst.display();
+	bst.insertNode(42);
+	bst.displayRoot();
 	return 0;
 }
 

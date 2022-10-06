@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/05 17:25:06 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 11:40:55 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@
 #include "tests.hpp"
 #include "bench.hpp"
 #include "BST.hpp"
-#include "BNR.hpp"
+#include "Rb_tree.hpp"
 #include <list>
 #include <stack>
 

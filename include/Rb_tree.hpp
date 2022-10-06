@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BNR.hpp                                            :+:      :+:    :+:   */
+/*   Rb_tree.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/05 17:43:25 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 12:22:29 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ template<typename Val, typename Alloc = std::allocator<Val> >
 class Rb_tree
 {
 
-//	protected:
-//		typedef typename Rb_tree_node_base<Val>* 			base_ptr;
-//		typedef typename const Rb_tree_node_base<Val>*		const_base_ptr;
+	protected:
+		typedef Rb_tree_node_base* 			base_ptr;
+		typedef const Rb_tree_node_base*		const_base_ptr;
 
 	public:
 		typedef Val 				value_type;
@@ -89,7 +89,7 @@ class Rb_tree
 			node_ptr tmp = alloc_node();
 			try
 			{
-				get_allocator().construct(&tmp->M_value_field, val);	
+				get_allocator().construct(&tmp->M_value_field, val);
 			}
 			catch(...)
 			{
@@ -102,7 +102,7 @@ class Rb_tree
 		void
 		destroy_node(node_ptr ptr)
 		{
-			get_allocator().destroy(ptr->M_value);
+			get_allocator().destroy(&ptr->M_value_field);
 			dealloc_node(ptr);
 		}
 	
@@ -137,6 +137,18 @@ class Rb_tree
 		{
 			return static_cast<node_ptr>(this->M_impl.M_header.M_parent);
 		}
+
+		static node_ptr
+		S_right(base_ptr x)
+		{
+			return static_cast<node_ptr>(x->M_right);
+		}
+
+		static node_ptr
+		S_left(base_ptr x)
+		{
+			return static_cast<node_ptr>(x->M_left);
+		}
 		
 	public:
 		void
@@ -144,6 +156,10 @@ class Rb_tree
 		{
 			node_ptr tmp = create_node(val);
 			M_impl.M_header.M_parent = tmp;
+			tmp->M_right = NULL;
+			tmp->M_left = NULL;
+			tmp->M_parent = &M_impl.M_header;
+			//ca doit insert en balle par ici
 		}
 
 		void
@@ -152,7 +168,25 @@ class Rb_tree
 			std::cout << M_begin()->M_value_field << std::endl;
 		}
 		
+		Rb_tree()
+		: M_impl() {}
 
+		~Rb_tree()
+		{
+			M_erase(M_begin());
+		}
+
+		void
+		M_erase(node_ptr x)
+		{
+			while (x != NULL)
+			{
+				M_erase(S_right(x));
+				node_ptr y = S_left(x);
+				destroy_node(x);
+				x = y;
+			}
+		}
 		
 	
 

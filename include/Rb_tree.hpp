@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 16:03:22 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 19:41:45 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,30 +199,97 @@ class Rb_tree
 		void
 		insertNode(base_ptr* root, value_type val)
 		{
-			if (*root == NULL)
+			node_ptr tmp = static_cast<node_ptr>(*root);
+			if (!tmp)
 			{
-
-				node_ptr tmp = create_node(val);
-				*root = tmp;
-				tmp->init_node(*root, NULL, NULL);
+				node_ptr New = create_node(val);
+				New->init_node(static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
+				M_impl.M_header.M_parent = New;
 				M_impl.M_node_count++;
 			}
-			else if (val > S_value(*root))
+			while (tmp)
 			{
-				insertNode(&(*root)->M_right, val);
+				if (val > S_value(tmp))
+				{
+					if (S_right(tmp))
+						tmp = S_right(tmp);
+					else
+					{
+						node_ptr New = create_node(val);
+						New->init_node(tmp, NULL, NULL);
+						tmp->M_right = New;
+						M_impl.M_node_count++;
+						return;
+					}
+				}
+				else if (val < S_value(tmp))
+				{
+					if (S_left(tmp))
+						tmp = S_left(tmp);
+					else
+					{
+						node_ptr New = create_node(val);
+						New->init_node(tmp, NULL, NULL);
+						tmp->M_left = New;
+						M_impl.M_node_count++;
+						return;
+					}
+				}
+				else if (val == S_value(tmp))
+					return;
 			}
-			else if (val < S_value(*root))
+		}
+
+		int _level;
+
+	private:
+		void
+		_display(base_ptr root)
+		{
+			for (int i = 0; i < _level * 2; i++)
+				std::cout << " ";
+			if (!_level)
+				std::cout << " ";
+			if (_level)
+				std::cout << "│" <<std::endl;
+			for (int i = 0; i < _level * 2; i++)
+				std::cout << " ";
+			if (_level && root->M_parent->M_left && root != root->M_parent->M_left)
+				std::cout << "├";
+			else if (_level)
+				std::cout << "└";
+			std::cout << S_value(root) << std::endl;
+			++_level;
+			if (S_right(root))
 			{
-				insertNode(&(*root)->M_left, val);
+				_display(S_right(root));
+				--_level;
 			}
+			if (S_left(root))
+			{
+				_display(S_left(root));
+				--_level;
+			}
+
+		}
+	public:
+		void
+		displayTree()
+		{
+			_level = 0;
+			_display(M_root());
+			_level = 0;
 		}
 
 		void
 		displayRoot()
 		{
-			std::cout << M_begin()->M_value_field << std::endl;
-			std::cout << S_value(M_begin()->M_left) << std::endl;
-			std::cout << S_value(M_begin()->M_right) << std::endl;
+			std::cout << M_begin()->M_value_field << " parent: ";
+			std::cout << S_value(M_begin()->M_parent) << std::endl;
+			std::cout << S_value(M_begin()->M_left) << " parent: ";
+			std::cout << S_value(M_begin()->M_left->M_parent) << std::endl;
+			std::cout << S_value(M_begin()->M_right) << " parent: ";
+			std::cout << S_value(M_begin()->M_right->M_parent) << std::endl;
 		}
 		
 		Rb_tree()

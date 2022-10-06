@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 16:03:40 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 19:45:38 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,8 +146,19 @@ int main(void)
 	bst.insertBalanced(42);
 	bst.insertBalanced(23);
 	bst.insertBalanced(43);
-	bst.insertBalanced(42);
+	bst.insertBalanced(1);
+	bst.insertBalanced(27);
+	bst.insertBalanced(28);
+	bst.insertBalanced(29);
+	bst.insertBalanced(30);
+	bst.insertBalanced(31);
+	bst.insertBalanced(32);
+	bst.insertBalanced(33);
+	bst.insertBalanced(34);
+	bst.insertBalanced(35);
+	bst.insertBalanced(100);
 	bst.displayRoot();
+	bst.displayTree();
 	return 0;
 }
 

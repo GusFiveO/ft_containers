@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 11:40:55 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 16:03:40 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,10 @@ int main(void)
 {
 	ft::Rb_tree<int> bst;
 
-	bst.insertNode(42);
+	bst.insertBalanced(42);
+	bst.insertBalanced(23);
+	bst.insertBalanced(43);
+	bst.insertBalanced(42);
 	bst.displayRoot();
 	return 0;
 }

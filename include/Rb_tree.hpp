@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 12:22:29 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/06 16:03:22 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,16 @@ struct Rb_tree_node_base
 template<typename Val>
 struct Rb_tree_node : public Rb_tree_node_base 
 {
-	typedef Rb_tree_node<Val>*	link_type;
+	typedef Rb_tree_node<Val>*	node_ptr;
 	Val 						M_value_field;
+
+	void
+	init_node(base_pointer parent, base_pointer right, base_pointer left)
+	{
+		M_parent = parent;
+		M_right = right;
+		M_left = left;
+	}
 };
 
 
@@ -45,7 +53,7 @@ class Rb_tree
 
 	protected:
 		typedef Rb_tree_node_base* 			base_ptr;
-		typedef const Rb_tree_node_base*		const_base_ptr;
+		typedef const Rb_tree_node_base*	const_base_ptr;
 
 	public:
 		typedef Val 				value_type;
@@ -132,6 +140,12 @@ class Rb_tree
 	
 	protected:
 
+		base_ptr&
+		M_root()
+		{
+			return M_impl.M_header.M_parent;
+		}
+
 		node_ptr
 		M_begin()
 		{
@@ -144,28 +158,71 @@ class Rb_tree
 			return static_cast<node_ptr>(x->M_right);
 		}
 
+		static const_node_ptr
+		S_right(const_base_ptr x)
+		{
+			return static_cast<const_node_ptr>(x->M_right);
+		}
+
 		static node_ptr
 		S_left(base_ptr x)
 		{
 			return static_cast<node_ptr>(x->M_left);
 		}
+
+		static const_node_ptr
+		S_left(const_base_ptr x)
+		{
+			return static_cast<const_node_ptr>(x->M_left);
+		}
+
+		static const_reference
+		S_value(const_node_ptr x)
+		{
+			return x->M_value_field;
+		}
+
+		static const_reference
+		S_value(const_base_ptr x)
+		{
+			return static_cast<const_node_ptr>(x)->M_value_field;
+		}
 		
 	public:
+
 		void
-		insertNode(value_type val)
+		insertBalanced(value_type val)
 		{
-			node_ptr tmp = create_node(val);
-			M_impl.M_header.M_parent = tmp;
-			tmp->M_right = NULL;
-			tmp->M_left = NULL;
-			tmp->M_parent = &M_impl.M_header;
-			//ca doit insert en balle par ici
+			insertNode(&M_root(), val);
+		}
+
+		void
+		insertNode(base_ptr* root, value_type val)
+		{
+			if (*root == NULL)
+			{
+
+				node_ptr tmp = create_node(val);
+				*root = tmp;
+				tmp->init_node(*root, NULL, NULL);
+				M_impl.M_node_count++;
+			}
+			else if (val > S_value(*root))
+			{
+				insertNode(&(*root)->M_right, val);
+			}
+			else if (val < S_value(*root))
+			{
+				insertNode(&(*root)->M_left, val);
+			}
 		}
 
 		void
 		displayRoot()
 		{
 			std::cout << M_begin()->M_value_field << std::endl;
+			std::cout << S_value(M_begin()->M_left) << std::endl;
+			std::cout << S_value(M_begin()->M_right) << std::endl;
 		}
 		
 		Rb_tree()
@@ -192,6 +249,10 @@ class Rb_tree
 
 };
 
+//TODO insert node comme dans un bst classique
+//TODO spot les erreures de rb_tree
+//TODO balance le tree (rotation tout ca tout ca)
+//TODO utiliser tout ca pour faire un balanceInsert
 
 }
 

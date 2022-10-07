@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 19:41:45 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/07 19:20:54 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,20 @@
 namespace ft
 {
 
+	enum Rb_tree_color {red = false, black = true};
+
 struct Rb_tree_node_base
 {
 	typedef Rb_tree_node_base* 			base_pointer;
 	typedef const Rb_tree_node_base*	const_base_pointer;
 	
-	base_pointer M_parent;
-	base_pointer M_right;
-	base_pointer M_left;
+	Rb_tree_color	M_color;
+	base_pointer 	M_parent;
+	base_pointer	M_right;
+	base_pointer	M_left;
 
-	Rb_tree_node_base(base_pointer parent = NULL, base_pointer right = NULL, base_pointer left = NULL)
-	: M_parent(parent), M_right(right), M_left(left) {}
+	Rb_tree_node_base(Rb_tree_color color = red, base_pointer parent = NULL, base_pointer right = NULL, base_pointer left = NULL)
+	: M_color(color), M_parent(parent), M_right(right), M_left(left) {}
 };
 
 template<typename Val>
@@ -38,8 +41,9 @@ struct Rb_tree_node : public Rb_tree_node_base
 	Val 						M_value_field;
 
 	void
-	init_node(base_pointer parent, base_pointer right, base_pointer left)
+	init_node(Rb_tree_color color, base_pointer parent, base_pointer right, base_pointer left)
 	{
+		M_color = color;
 		M_parent = parent;
 		M_right = right;
 		M_left = left;
@@ -130,7 +134,6 @@ class Rb_tree
 				void
 				M_initialize()
 				{
-					this->M_header.M_parent = NULL;
 					this->M_header.M_right = &this->M_header;
 					this->M_header.M_left = &this->M_header;
 				}
@@ -193,19 +196,47 @@ class Rb_tree
 		void
 		insertBalanced(value_type val)
 		{
-			insertNode(&M_root(), val);
+			node_ptr newNode;
+			newNode = insertNode(val);
+			fixTree(newNode);
 		}
 
 		void
-		insertNode(base_ptr* root, value_type val)
+		fixTree(node_ptr newNode)
 		{
-			node_ptr tmp = static_cast<node_ptr>(*root);
+			while (newNode->M_parent->M_color == red)
+			{
+				if (newNode == newNode->M_parent->M_left)
+				{
+					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_right);
+					if (uncle->M_color == red)
+					{
+						newNode->M_parent->M_color = red;
+						newNode->M_parent->M_parent->M_color = red;
+						uncle->M_color = black;
+						newNode = static_cast<node_ptr>(newNode->M_parent->M_parent);
+					}
+					else if (newNode == newNode->M_parent->M_right)
+					{
+
+					}
+				}
+			}
+
+		}
+
+
+		node_ptr
+		insertNode(value_type val)
+		{
+			node_ptr tmp = static_cast<node_ptr>(M_root());
 			if (!tmp)
 			{
 				node_ptr New = create_node(val);
-				New->init_node(static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
+				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
 				M_impl.M_header.M_parent = New;
 				M_impl.M_node_count++;
+				return New;
 			}
 			while (tmp)
 			{
@@ -216,10 +247,10 @@ class Rb_tree
 					else
 					{
 						node_ptr New = create_node(val);
-						New->init_node(tmp, NULL, NULL);
+						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_right = New;
 						M_impl.M_node_count++;
-						return;
+						return New;
 					}
 				}
 				else if (val < S_value(tmp))
@@ -229,20 +260,58 @@ class Rb_tree
 					else
 					{
 						node_ptr New = create_node(val);
-						New->init_node(tmp, NULL, NULL);
+						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_left = New;
 						M_impl.M_node_count++;
-						return;
+						return New;
 					}
 				}
 				else if (val == S_value(tmp))
-					return;
+					return tmp;
 			}
+			return NULL;
 		}
 
-		int _level;
+		node_ptr
+		M_searchNode(value_type val)
+		{
+			node_ptr tmp = static_cast<node_ptr>(M_root());
+			if (tmp == NULL)
+				return NULL;
+			while (S_value(tmp) != val)
+			{
+				if (val > S_value(tmp))
+					tmp = S_right(tmp);
+				if (val < S_value(tmp))
+					tmp = S_left(tmp);
+			}
+			return tmp;
+		}
+
+	//	node_ptr
+	//	removeNode(value_type val)
+	//	{
+	//		node_ptr tmp = static_cast<node_ptr>(M_root());
+	//		node_ptr ret =  NULL;
+	//		if (!tmp)
+	//			return ret;
+	//		while (S_value(tmp) != val)
+	//		{
+	//			if (val > S_value(tmp))
+	//				tmp == S_right(tmp);
+	//			if (val < S_value(tmp))
+	//				tmp == S_left(tmp);
+	//		}
+	//		ret = tmp->M_parent;
+	//		destroyNode
+	//		return 
+	//	}
+
+
 
 	private:
+		int _level;
+
 		void
 		_display(base_ptr root)
 		{
@@ -270,8 +339,8 @@ class Rb_tree
 				_display(S_left(root));
 				--_level;
 			}
-
 		}
+
 	public:
 		void
 		displayTree()
@@ -281,16 +350,6 @@ class Rb_tree
 			_level = 0;
 		}
 
-		void
-		displayRoot()
-		{
-			std::cout << M_begin()->M_value_field << " parent: ";
-			std::cout << S_value(M_begin()->M_parent) << std::endl;
-			std::cout << S_value(M_begin()->M_left) << " parent: ";
-			std::cout << S_value(M_begin()->M_left->M_parent) << std::endl;
-			std::cout << S_value(M_begin()->M_right) << " parent: ";
-			std::cout << S_value(M_begin()->M_right->M_parent) << std::endl;
-		}
 		
 		Rb_tree()
 		: M_impl() {}

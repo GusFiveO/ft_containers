@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/06 19:45:38 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/07 15:07:39 by augustinlorai    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,21 +143,18 @@ int main(void)
 {
 	ft::Rb_tree<int> bst;
 
-	bst.insertBalanced(42);
+	ft::Rb_tree<int>::node_ptr lol = bst.M_searchNode(41);
+	bst.insertBalanced(41);
 	bst.insertBalanced(23);
 	bst.insertBalanced(43);
 	bst.insertBalanced(1);
-	bst.insertBalanced(27);
-	bst.insertBalanced(28);
-	bst.insertBalanced(29);
-	bst.insertBalanced(30);
-	bst.insertBalanced(31);
-	bst.insertBalanced(32);
-	bst.insertBalanced(33);
-	bst.insertBalanced(34);
 	bst.insertBalanced(35);
+	bst.insertBalanced(42);
 	bst.insertBalanced(100);
-	bst.displayRoot();
+	if (lol)
+		std::cout << lol->M_value_field << std::endl;
+	else
+		std::cout << "NULL" << std::endl;
 	bst.displayTree();
 	return 0;
 }

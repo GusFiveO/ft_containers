@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/07 15:07:39 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/10/10 20:37:43 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ int main(void)
 	bst.insertBalanced(23);
 	bst.insertBalanced(43);
 	bst.insertBalanced(1);
+	bst.insertBalanced(-1);
 	bst.insertBalanced(35);
 	bst.insertBalanced(42);
 	bst.insertBalanced(100);
@@ -155,6 +156,22 @@ int main(void)
 		std::cout << lol->M_value_field << std::endl;
 	else
 		std::cout << "NULL" << std::endl;
+	bst.displayTree();
+	bst.deleteNode(1);
+	bst.displayTree();
+	bst.deleteNode(23);
+	bst.displayTree();
+	bst.deleteNode(100);
+	bst.displayTree();
+	bst.deleteNode(42);
+	bst.displayTree();
+	bst.deleteNode(43);
+	bst.displayTree();
+	bst.deleteNode(35);
+	bst.displayTree();
+	bst.deleteNode(-1);
+	bst.displayTree();
+	bst.deleteNode(41);
 	bst.displayTree();
 	return 0;
 }

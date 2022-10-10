@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/07 19:20:54 by augustinlorai    ###   ########.fr       */
+/*   Updated: 2022/10/10 20:35:03 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,38 @@ struct Rb_tree_node_base
 
 	Rb_tree_node_base(Rb_tree_color color = red, base_pointer parent = NULL, base_pointer right = NULL, base_pointer left = NULL)
 	: M_color(color), M_parent(parent), M_right(right), M_left(left) {}
+
+	static base_pointer
+	S_minimum(base_pointer root)
+	{
+		while (root->M_left != 0)
+			root = root->M_left;
+		return root;
+	}
+
+	static const_base_pointer
+	S_minimum(const_base_pointer root)
+	{
+		while (root->M_left != 0)
+			root = root->M_left;
+		return root;
+	}
+
+	static base_pointer
+	S_maximum(base_pointer root)
+	{
+		while (root->M_right != 0)
+			root = root->M_right;
+		return root;
+	}
+
+	static const_base_pointer
+	S_maximum(const_base_pointer root)
+	{
+		while (root->M_right != 0)
+			root = root->M_right;
+		return root;
+	}
 };
 
 template<typename Val>
@@ -95,7 +127,7 @@ class Rb_tree
 			return (M_impl.node_allocator::deallocate(ptr, 1));
 		}
 
-		node_ptr
+		base_ptr
 		create_node(const value_type& val)
 		{
 			node_ptr tmp = alloc_node();
@@ -112,10 +144,10 @@ class Rb_tree
 		}
 
 		void
-		destroy_node(node_ptr ptr)
+		destroy_node(base_ptr ptr)
 		{
-			get_allocator().destroy(&ptr->M_value_field);
-			dealloc_node(ptr);
+			get_allocator().destroy(&static_cast<node_ptr>(ptr)->M_value_field);
+			dealloc_node(static_cast<node_ptr>(ptr));
 		}
 	
 	private:
@@ -134,6 +166,7 @@ class Rb_tree
 				void
 				M_initialize()
 				{
+					this->M_header.M_color = red;
 					this->M_header.M_right = &this->M_header;
 					this->M_header.M_left = &this->M_header;
 				}
@@ -153,6 +186,30 @@ class Rb_tree
 		M_begin()
 		{
 			return static_cast<node_ptr>(this->M_impl.M_header.M_parent);
+		}
+
+		static base_ptr
+		S_minimum(base_ptr root)
+		{
+			return Rb_tree_node_base::S_minimum(root);
+		}
+
+		static const_base_ptr
+		S_minimum(const_base_ptr root)
+		{
+			return Rb_tree_node_base::S_minimum(root);
+		}
+
+		static base_ptr
+		S_maximum(base_ptr root)
+		{
+			return Rb_tree_node_base::S_maximum(root);
+		}
+
+		static const_base_ptr
+		S_maximum(const_base_ptr root)
+		{
+			return Rb_tree_node_base::S_maximum(root);
 		}
 
 		static node_ptr
@@ -202,26 +259,93 @@ class Rb_tree
 		}
 
 		void
+		leftRotate(node_ptr newNode)
+		{
+			node_ptr y = static_cast<node_ptr>(newNode->M_right);
+			newNode->M_right = y->M_left;
+			if (y->M_left != NULL)
+				y->M_left->M_parent = newNode;
+			y->M_parent = newNode->M_parent;
+			if (newNode == M_root())
+				M_root() = y;
+			else if (newNode == newNode->M_parent->M_left)
+				newNode->M_parent->M_left = y;
+			else if (newNode == newNode->M_parent->M_right)
+				newNode->M_parent->M_right = y;
+			y->M_left = newNode;
+			newNode->M_parent = y;
+		}
+
+		void
+		rightRotate(node_ptr newNode)
+		{
+			node_ptr y = static_cast<node_ptr>(newNode->M_left);
+
+			newNode->M_left = y->M_right;
+			if (y->M_right != NULL)
+				y->M_right->M_parent = newNode;
+			y->M_parent = newNode->M_parent;
+			if (newNode == M_root())
+				M_root() = y;
+			else if (newNode == newNode->M_parent->M_right)
+				newNode->M_parent->M_right = y;
+			else if (newNode == newNode->M_parent->M_left)
+				newNode->M_parent->M_left = y;
+			y->M_right = newNode;
+			newNode->M_parent = y;
+		}
+
+		void
 		fixTree(node_ptr newNode)
 		{
-			while (newNode->M_parent->M_color == red)
+			while (newNode != M_root() && newNode->M_parent->M_color == red)
 			{
-				if (newNode == newNode->M_parent->M_left)
+				if (newNode->M_parent == newNode->M_parent->M_parent->M_left)
 				{
-					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_right);
-					if (uncle->M_color == red)
+					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_parent->M_right);
+					if (uncle && uncle->M_color == red)
 					{
-						newNode->M_parent->M_color = red;
+						newNode->M_parent->M_color = black;
 						newNode->M_parent->M_parent->M_color = red;
 						uncle->M_color = black;
 						newNode = static_cast<node_ptr>(newNode->M_parent->M_parent);
 					}
-					else if (newNode == newNode->M_parent->M_right)
+					else 
 					{
-
+						if (newNode == newNode->M_parent->M_right)
+						{
+							newNode = static_cast<node_ptr>(newNode->M_parent);
+							leftRotate(newNode);
+						}
+						newNode->M_parent->M_color = black;
+						newNode->M_parent->M_parent->M_color = red;
+						rightRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
+					}
+				}
+				else
+				{
+					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_parent->M_left);
+					if (uncle && uncle->M_color == red)
+					{
+						newNode->M_parent->M_color = black;
+						newNode->M_parent->M_parent->M_color = red;
+						uncle->M_color = black;
+						newNode = static_cast<node_ptr>(newNode->M_parent->M_parent);
+					}
+					else
+					{
+						if (newNode == newNode->M_parent->M_left)
+						{
+							newNode = static_cast<node_ptr>(newNode->M_parent);
+							rightRotate(newNode);
+						}
+						newNode->M_parent->M_color = black;
+						newNode->M_parent->M_parent->M_color = red;
+						leftRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
 					}
 				}
 			}
+			static_cast<node_ptr>(M_root())->M_color = black;
 
 		}
 
@@ -232,7 +356,7 @@ class Rb_tree
 			node_ptr tmp = static_cast<node_ptr>(M_root());
 			if (!tmp)
 			{
-				node_ptr New = create_node(val);
+				node_ptr New = static_cast<node_ptr>(create_node(val));
 				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
 				M_impl.M_header.M_parent = New;
 				M_impl.M_node_count++;
@@ -246,7 +370,7 @@ class Rb_tree
 						tmp = S_right(tmp);
 					else
 					{
-						node_ptr New = create_node(val);
+						node_ptr New = static_cast<node_ptr>(create_node(val));
 						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_right = New;
 						M_impl.M_node_count++;
@@ -259,7 +383,7 @@ class Rb_tree
 						tmp = S_left(tmp);
 					else
 					{
-						node_ptr New = create_node(val);
+						node_ptr New = static_cast<node_ptr>(create_node(val));
 						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_left = New;
 						M_impl.M_node_count++;
@@ -270,6 +394,71 @@ class Rb_tree
 					return tmp;
 			}
 			return NULL;
+		}
+
+		void
+		transplant(base_ptr u, base_ptr v)
+		{
+			if (u == M_root())
+				M_root() = v;
+			else if (u == u->M_parent->M_right)
+				u->M_parent->M_right = v;
+			else
+				u->M_parent->M_left = v;
+			if (v)
+				v->M_parent = u->M_parent;
+		}
+
+
+		// 3 case :
+		// 1) the right is NULL so i can transplant to the left
+		// 2) the left is NULL so i can transplant to the right
+		// 3) both aren't NULL so i have to take the smallest element of the right subtree
+		// 		then this element need to take the place of my new element
+		base_ptr
+		removeNode(base_ptr z)
+		{
+			base_ptr ret = NULL;
+			base_ptr tmp = NULL;
+			Rb_tree_color tmp_color;
+			if (z->M_right == NULL)
+			{
+				ret = z->M_left;
+				transplant(z, z->M_left);
+			}
+			else if (z->M_left == NULL)
+			{
+				ret = z->M_right;
+				transplant(z, z->M_right);
+			}
+			else
+			{
+				tmp = S_minimum(z->M_right);
+				tmp_color = tmp->M_color;
+				ret = z->M_right;
+				if (tmp->M_parent == z)
+					ret->M_parent = tmp;
+				else
+				{
+					transplant(tmp, tmp->M_right);
+					tmp->M_right = z->M_right;
+					tmp->M_right->M_parent = tmp;
+				}
+				transplant(z, tmp);
+				tmp->M_left = z->M_left;
+				tmp->M_left->M_parent = tmp;
+				tmp->M_color = z->M_color;
+			}
+			destroy_node(z);
+			return ret;	
+		}
+		
+		void
+		deleteNode(value_type val)
+		{
+			base_ptr x = M_searchNode(val);
+			base_ptr y = removeNode(x);
+			(void)y;
 		}
 
 		node_ptr
@@ -315,6 +504,8 @@ class Rb_tree
 		void
 		_display(base_ptr root)
 		{
+			if (!root)
+				return;
 			for (int i = 0; i < _level * 2; i++)
 				std::cout << " ";
 			if (!_level)
@@ -327,7 +518,11 @@ class Rb_tree
 				std::cout << "├";
 			else if (_level)
 				std::cout << "└";
+			if (root->M_color == red)
+				std::cout << "\033[31m";
 			std::cout << S_value(root) << std::endl;
+			if (root->M_color == red)
+				std::cout << "\033[0m";
 			++_level;
 			if (S_right(root))
 			{

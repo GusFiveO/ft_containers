@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/10 20:35:03 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 11:52:02 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ class Rb_tree
 		{
 			node_ptr newNode;
 			newNode = insertNode(val);
-			fixTree(newNode);
+			insertFixTree(newNode);
 		}
 
 		void
@@ -296,7 +296,7 @@ class Rb_tree
 		}
 
 		void
-		fixTree(node_ptr newNode)
+		insertFixTree(node_ptr newNode)
 		{
 			while (newNode != M_root() && newNode->M_parent->M_color == red)
 			{
@@ -450,7 +450,42 @@ class Rb_tree
 				tmp->M_color = z->M_color;
 			}
 			destroy_node(z);
+			if (tmp_color == black)
+				removeFixTree(ret);
 			return ret;	
+		}
+
+
+		// 4 case 
+		// 1) the sibling is red
+		// 2) the sibling is black and both of his child are black
+		// 3) the sibling is black and his left child is red and the other black
+		// 4) the sibling is black and his right child is black
+		// all of these rules are not exclusive
+		void
+		removeFixTree(base_ptr x)
+		{
+			base_ptr sibling = NULL;
+			while (x != M_root() && x->M_color == black)
+			{
+				if (x = x->M_parent->M_left)
+					sibling = x->M_parent->M_right;
+				if (sibling->M_color == red)
+				{
+				}
+				if (sibling->M_left->M_colr == black
+						&& sibling->M_right->M_color == black)
+				{
+
+				}
+				else
+				{
+					if (sibling->M_right->M_color == black)
+					{
+
+					}
+				}
+			}
 		}
 		
 		void
@@ -458,7 +493,6 @@ class Rb_tree
 		{
 			base_ptr x = M_searchNode(val);
 			base_ptr y = removeNode(x);
-			(void)y;
 		}
 
 		node_ptr

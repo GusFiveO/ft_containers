@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 18:23:21 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 19:02:21 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,7 +218,7 @@ struct Rb_tree_iterator
 			return &(static_cast<node_ptr>(M_node)->M_value_field);
 		}
 
-		self
+		self&
 		operator++()
 		{
 			M_node = Rb_increment(M_node);
@@ -233,7 +233,97 @@ struct Rb_tree_iterator
 			return tmp;
 		}
 
+		self&
+		operator--()
+		{
+			M_node = Rb_decrement(M_node);
+			return *this;
+		}
+
 		self
+		operator--(int)
+		{
+			self tmp = *this;
+			M_node = Rb_decrement(M_node);
+			return tmp;
+		}
+
+		bool
+		operator==(const self& rhs) const
+		{
+			return M_node == rhs.M_node;
+		}
+
+		bool
+		operator!=(const self& rhs) const
+		{
+			return M_node != rhs.M_node;
+		}
+};
+
+template<typename T>
+struct Rb_tree_const_iterator
+{
+	typedef T 	value_type;
+	typedef T*	pointer;
+	typedef T&	reference;
+
+	typedef Rb_tree_iterator<T>	iterator;
+
+	typedef std::bidirectional_iterator_tag	iterator_category;
+	typedef ptrdiff_t						difference_type;
+
+	typedef Rb_tree_node_base::const_base_pointer	base_ptr;
+	typedef Rb_tree_const_iterator<T>				self;
+	typedef Rb_tree_node<T>*						node_ptr;
+
+		base_ptr	M_node;
+
+		Rb_tree_const_iterator()
+		: M_node() {}
+
+		explicit
+		Rb_tree_const_iterator(base_ptr ptr)
+		: M_node(ptr) {}
+
+		Rb_tree_const_iterator(const iterator& x)
+		: M_node(x.M_node) {}
+
+		iterator
+		M_const_cast() const
+		{
+			return iterator(static_cast<typename iterator::node_ptr>
+			(const_cast<typename iterator::base_ptr>(M_node)));
+		}
+
+		reference
+		operator*() const
+		{
+			return static_cast<node_ptr>(M_node)->M_value_field;
+		}
+
+		pointer
+		operator->() const
+		{
+			return &(static_cast<node_ptr>(M_node)->M_value_field);
+		}
+
+		self&
+		operator++()
+		{
+			M_node = Rb_increment(M_node);
+			return *this;
+		}
+
+		self
+		operator++(int)
+		{
+			self tmp = *this;
+			M_node = Rb_increment(M_node);
+			return tmp;
+		}
+
+		self&
 		operator--()
 		{
 			M_node = Rb_decrement(M_node);
@@ -465,6 +555,8 @@ class Rb_tree
 		M_removeBalanced(value_type val)
 		{
 			base_ptr x = M_searchNode(val);
+			if (!x)
+				return;
 			if (val == S_value(S_maximum(M_root())))
 				M_impl.M_header.M_right = x->M_parent;
 			if (val == S_value(S_minimum(M_root())))
@@ -479,6 +571,7 @@ class Rb_tree
 				else
 					M_impl.M_header.M_left = x->M_parent;
 			}
+			M_impl.M_node_count--;
 			M_removeNode(x);
 		}
 
@@ -844,7 +937,7 @@ class Rb_tree
 	public:
 
 		typedef ft::Rb_tree_iterator<Val> 				iterator;
-		typedef const ft::Rb_tree_iterator<Val>			const_iterator;
+		typedef ft::Rb_tree_const_iterator<Val>			const_iterator;
 
 		typedef ft::reverse_iterator<iterator>			reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
@@ -913,6 +1006,49 @@ class Rb_tree
 		{
 			return const_reverse_iterator(begin());
 		}
+
+		void
+		erase(iterator pos)
+		{
+			removeBalanced(*pos);
+		}
+
+		void
+		erase(const_iterator pos)
+		{
+			removeBalanced(*pos);
+		}
+
+		size_type
+		erase(const value_type& k)
+		{
+			removeBalanced(searchNode(k));
+		}
+
+	private:
+		void
+		M_erase_sev(const_iterator first, const_iterator last)
+		{
+			const_iterator tmp = first;
+			while (first != last)
+			{
+				first++;
+				M_removeBalanced(*(tmp.M_const_cast()));
+				tmp = first;
+			}
+
+		}
+	public:
+		iterator
+		erase(const_iterator first, const_iterator last)
+		{
+			M_erase_sev(first, last);
+			return last.M_const_cast();
+		}
+
+		
+
+		
 
 };
 

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 15:35:32 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 18:23:21 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,16 +83,105 @@ struct Rb_tree_node : public Rb_tree_node_base
 };
 
 Rb_tree_node_base*
-Rb_increment(Rb_tree_node_base* x) throw();
+Rb_increment(Rb_tree_node_base* x) throw()
+{
+	if (x->M_right)
+	{
+		x = x->M_right;
+		while (x->M_left)
+			x = x->M_left;
+	}
+	else
+	{
+		Rb_tree_node_base* y = x->M_parent;
+		while (x == y->M_right)
+		{
+			x = y;
+			y = y->M_parent;
+		}
+		if (y->M_parent == x)
+			x = y->M_left;
+		else if (x->M_right != y)
+			x = y;
+	}
+	return x;
+}
+
 
 const Rb_tree_node_base*
-Rb_increment(const Rb_tree_node_base* x) throw();
+Rb_increment(const Rb_tree_node_base* x) throw()
+{
+	if (x->M_right)
+	{
+		x = x->M_right;
+		while (x->M_left)
+			x = x->M_left;
+	}
+	else
+	{
+		Rb_tree_node_base* y = x->M_parent;
+		while (x == y->M_right)
+		{
+			x = y;
+			y = y->M_parent;
+		}
+		if (y->M_parent == x)
+			x = y->M_left;
+		else if (x->M_right != y)
+			x = y;
+	}
+	return x;
+}
 
 Rb_tree_node_base*
-Rb_decrement(Rb_tree_node_base* x) throw();
+Rb_decrement(Rb_tree_node_base* x) throw()
+{
+	if (x->M_left)
+	{
+		x = x->M_left;
+		while (x->M_right)
+			x = x->M_right;
+	}
+	else
+	{
+		Rb_tree_node_base* y = x->M_parent;
+		while (x == y->M_left)
+		{
+			x = y;
+			y = y->M_parent;
+		}
+		if (y->M_parent == x)
+			x = y->M_right;
+		else if (x->M_left != y)
+			x = y;
+	}
+	return x;
+}
 
 const Rb_tree_node_base*
-Rb_decrement(const Rb_tree_node_base* x) throw();
+Rb_decrement(const Rb_tree_node_base* x) throw()
+{
+	if (x->M_left)
+	{
+		x = x->M_left;
+		while (x->M_right)
+			x = x->M_right;
+	}
+	else
+	{
+		Rb_tree_node_base* y = x->M_parent;
+		while (x == y->M_left)
+		{
+			x = y;
+			y = y->M_parent;
+		}
+		if (y->M_parent == x)
+			x = y->M_right;
+		else if (x->M_left != y)
+			x = y;
+	}
+	return x;
+}
 
 template<typename T>
 struct Rb_tree_iterator
@@ -101,7 +190,7 @@ struct Rb_tree_iterator
 	typedef T*	pointer;
 	typedef T&	reference;
 
-	typedef std::bidirectional_iterator_tag	iterator_tag;
+	typedef std::bidirectional_iterator_tag	iterator_category;
 	typedef ptrdiff_t						difference_type;
 
 	typedef Rb_tree_node_base::base_pointer	base_ptr;
@@ -114,7 +203,7 @@ struct Rb_tree_iterator
 		: M_node() {}
 
 		explicit
-		Rb_tree_iterator(node_ptr ptr)
+		Rb_tree_iterator(base_ptr ptr)
 		: M_node(ptr) {}
 
 		reference
@@ -361,18 +450,47 @@ class Rb_tree
 	protected:
 
 		void
+		M_erase(node_ptr x)
+		{
+			while (x != NULL)
+			{
+				M_erase(S_right(x));
+				node_ptr y = S_left(x);
+				destroy_node(x);
+				x = y;
+			}
+		}
+		
+		void
 		M_removeBalanced(value_type val)
 		{
 			base_ptr x = M_searchNode(val);
+			if (val == S_value(S_maximum(M_root())))
+				M_impl.M_header.M_right = x->M_parent;
+			if (val == S_value(S_minimum(M_root())))
+			{
+				if (x->M_right)
+				{
+					base_ptr tmp = x->M_right;
+					while (tmp->M_left)
+						tmp = tmp->M_left;
+					M_impl.M_header.M_left = tmp;
+				}
+				else
+					M_impl.M_header.M_left = x->M_parent;
+			}
 			M_removeNode(x);
 		}
-
 
 		void
 		M_insertBalanced(value_type val)
 		{
 			node_ptr newNode;
 			newNode = M_insertNode(val);
+			if (val > S_value(M_impl.M_header.M_right))
+				M_impl.M_header.M_right = newNode;
+			if (val < S_value(M_impl.M_header.M_left))
+				M_impl.M_header.M_left = newNode;
 			M_insertFixTree(newNode);
 		}
 		
@@ -593,8 +711,6 @@ class Rb_tree
 			destroy_node(z);
 			if (tmp_color == black)
 			{
-				std::cout << "before" << std::endl;
-				displayTree();
 				M_removeFixTree(ret);
 			}
 			return ret;	
@@ -726,6 +842,14 @@ class Rb_tree
 		}
 
 	public:
+
+		typedef ft::Rb_tree_iterator<Val> 				iterator;
+		typedef const ft::Rb_tree_iterator<Val>			const_iterator;
+
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+
 		void
 		displayTree()
 		{
@@ -742,19 +866,53 @@ class Rb_tree
 			M_erase(M_begin());
 		}
 
-		void
-		M_erase(node_ptr x)
+		iterator
+		begin()
 		{
-			while (x != NULL)
-			{
-				M_erase(S_right(x));
-				node_ptr y = S_left(x);
-				destroy_node(x);
-				x = y;
-			}
+			return iterator(M_impl.M_header.M_left);
 		}
-		
-	
+
+		iterator
+		end()
+		{
+			return iterator(&M_impl.M_header);
+		}
+
+		const_iterator
+		begin() const
+		{
+			return const_iterator(M_impl.M_header.M_left);
+		}
+
+		const_iterator
+		end() const
+		{
+			return const_iterator(&M_impl.M_header);
+		}
+
+		reverse_iterator
+		rbegin()
+		{
+			return reverse_iterator(end());
+		}
+
+		reverse_iterator
+		rend()
+		{
+			return reverse_iterator(begin());
+		}
+
+		const_reverse_iterator
+		rbegin() const
+		{
+			return const_reverse_iterator(end());
+		}
+
+		const_reverse_iterator
+		rend() const
+		{
+			return const_reverse_iterator(begin());
+		}
 
 };
 

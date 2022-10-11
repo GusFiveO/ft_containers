@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 15:05:04 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 18:21:46 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,28 +151,21 @@ int main(void)
 	bst.insertBalanced(35);
 	bst.insertBalanced(42);
 	bst.insertBalanced(100);
-	ft::Rb_tree<int>::node_ptr lol = bst.searchNode(41);
-	if (lol)
-		std::cout << lol->M_value_field << std::endl;
-	else
-		std::cout << "NULL" << std::endl;
+	//ft::Rb_tree<int>::node_ptr lol = bst.searchNode(42);
+	//if (lol)
+	//	std::cout << lol->M_value_field << std::endl;
+	//else
+	//	std::cout << "NULL" << std::endl;
+	//std::cout << static_cast<ft::Rb_tree_node<int>*>(Rb_decrement(lol))->M_value_field << std::endl;
 	bst.displayTree();
-	bst.removeBalanced(2);
-	bst.displayTree();
-	bst.removeBalanced(23);
-	bst.displayTree();
-	bst.removeBalanced(100);
-	bst.displayTree();
-	bst.removeBalanced(42);
-	bst.displayTree();
-	bst.removeBalanced(43);
-	bst.displayTree();
-	bst.removeBalanced(35);
-	bst.displayTree();
-	bst.removeBalanced(1);
-	bst.displayTree();
-	bst.removeBalanced(41);
-	bst.displayTree();
+	ft::Rb_tree<int>::reverse_iterator it = bst.rend();
+	int i = 0;
+	while (i != 20)
+	{
+		std::cout << (*it++) << " ";
+		i++;
+	}
+	std::cout << std::endl;
 	return 0;
 }
 

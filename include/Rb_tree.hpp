@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 11:52:02 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 12:48:36 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,9 +259,9 @@ class Rb_tree
 		}
 
 		void
-		leftRotate(node_ptr newNode)
+		leftRotate(base_ptr newNode)
 		{
-			node_ptr y = static_cast<node_ptr>(newNode->M_right);
+			base_ptr y = newNode->M_right;
 			newNode->M_right = y->M_left;
 			if (y->M_left != NULL)
 				y->M_left->M_parent = newNode;
@@ -277,9 +277,9 @@ class Rb_tree
 		}
 
 		void
-		rightRotate(node_ptr newNode)
+		rightRotate(base_ptr newNode)
 		{
-			node_ptr y = static_cast<node_ptr>(newNode->M_left);
+			base_ptr y = newNode->M_left;
 
 			newNode->M_left = y->M_right;
 			if (y->M_right != NULL)
@@ -420,29 +420,30 @@ class Rb_tree
 		{
 			base_ptr ret = NULL;
 			base_ptr tmp = NULL;
-			Rb_tree_color tmp_color;
-			if (z->M_right == NULL)
-			{
-				ret = z->M_left;
-				transplant(z, z->M_left);
-			}
-			else if (z->M_left == NULL)
+			Rb_tree_color tmp_color = red;
+			if (z->M_left == NULL)
 			{
 				ret = z->M_right;
 				transplant(z, z->M_right);
+			}
+			else if (z->M_right == NULL)
+			{
+				ret = z->M_left;
+				transplant(z, z->M_left);
 			}
 			else
 			{
 				tmp = S_minimum(z->M_right);
 				tmp_color = tmp->M_color;
-				ret = z->M_right;
-				if (tmp->M_parent == z)
+				ret = tmp->M_right;
+				if (tmp->M_parent == z && ret)
 					ret->M_parent = tmp;
 				else
 				{
 					transplant(tmp, tmp->M_right);
 					tmp->M_right = z->M_right;
-					tmp->M_right->M_parent = tmp;
+					if (tmp->M_right)
+						tmp->M_right->M_parent = tmp;
 				}
 				transplant(z, tmp);
 				tmp->M_left = z->M_left;
@@ -466,33 +467,82 @@ class Rb_tree
 		removeFixTree(base_ptr x)
 		{
 			base_ptr sibling = NULL;
-			while (x != M_root() && x->M_color == black)
+			while (x && x != M_root() && x->M_color == black)
 			{
-				if (x = x->M_parent->M_left)
+				if (x == x->M_parent->M_left)
+				{
 					sibling = x->M_parent->M_right;
-				if (sibling->M_color == red)
-				{
-				}
-				if (sibling->M_left->M_colr == black
-						&& sibling->M_right->M_color == black)
-				{
-
+					if (sibling->M_color == red)
+					{
+						sibling->M_color = black;
+						x->M_parent->M_color = red;
+						leftRotate(x->M_parent);
+						sibling = x->M_parent->M_right;
+					}
+					if (sibling->M_left->M_color == black
+							&& sibling->M_right->M_color == black)
+					{
+						sibling->M_color = red;
+						x = x->M_parent;
+					}
+					else
+					{
+						if (sibling->M_right->M_color == black)
+						{
+							sibling->M_left->M_color = black;
+							sibling->M_color = red;
+							rightRotate(sibling);
+							sibling = x->M_parent->M_right;
+						}
+						sibling->M_color = x->M_parent->M_color;
+						x->M_parent->M_color = black;
+						sibling->M_right->M_color = black;
+						leftRotate(x->M_parent);
+						x = M_root();
+					}
 				}
 				else
 				{
-					if (sibling->M_right->M_color == black)
+					sibling = x->M_parent->M_right;
+					if (sibling->M_color == red)
 					{
-
+						sibling->M_color = black;
+						x->M_parent->M_color = red;
+						rightRotate(x->M_parent);
+						sibling = x->M_parent->M_left;
+					}
+					if (sibling->M_right->M_color == black
+							&& sibling->M_left->M_color == black)
+					{
+						sibling->M_color = red;
+						x = x->M_parent;
+					}
+					else
+					{
+						if (sibling->M_left->M_color == black)
+						{
+							sibling->M_right->M_color = black;
+							sibling->M_color = red;
+							leftRotate(sibling);
+							sibling = x->M_parent->M_left;
+						}
+						sibling->M_color = x->M_parent->M_color;
+						x->M_parent->M_color = black;
+						sibling->M_left->M_color = black;
+						rightRotate(x->M_parent);
+						x = M_root();
 					}
 				}
 			}
+			if (x)
+				x->M_color = black;
 		}
 		
 		void
 		deleteNode(value_type val)
 		{
 			base_ptr x = M_searchNode(val);
-			base_ptr y = removeNode(x);
+			removeNode(x);
 		}
 
 		node_ptr

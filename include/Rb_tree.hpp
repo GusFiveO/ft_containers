@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 12:48:36 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/11 15:35:32 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,96 @@ struct Rb_tree_node : public Rb_tree_node_base
 		M_right = right;
 		M_left = left;
 	}
+};
+
+Rb_tree_node_base*
+Rb_increment(Rb_tree_node_base* x) throw();
+
+const Rb_tree_node_base*
+Rb_increment(const Rb_tree_node_base* x) throw();
+
+Rb_tree_node_base*
+Rb_decrement(Rb_tree_node_base* x) throw();
+
+const Rb_tree_node_base*
+Rb_decrement(const Rb_tree_node_base* x) throw();
+
+template<typename T>
+struct Rb_tree_iterator
+{
+	typedef T 	value_type;
+	typedef T*	pointer;
+	typedef T&	reference;
+
+	typedef std::bidirectional_iterator_tag	iterator_tag;
+	typedef ptrdiff_t						difference_type;
+
+	typedef Rb_tree_node_base::base_pointer	base_ptr;
+	typedef Rb_tree_iterator<T>				self;
+	typedef Rb_tree_node<T>*				node_ptr;
+
+		base_ptr	M_node;
+
+		Rb_tree_iterator()
+		: M_node() {}
+
+		explicit
+		Rb_tree_iterator(node_ptr ptr)
+		: M_node(ptr) {}
+
+		reference
+		operator*() const
+		{
+			return static_cast<node_ptr>(M_node)->M_value_field;
+		}
+
+		pointer
+		operator->() const
+		{
+			return &(static_cast<node_ptr>(M_node)->M_value_field);
+		}
+
+		self
+		operator++()
+		{
+			M_node = Rb_increment(M_node);
+			return *this;
+		}
+
+		self
+		operator++(int)
+		{
+			self tmp = *this;
+			M_node = Rb_increment(M_node);
+			return tmp;
+		}
+
+		self
+		operator--()
+		{
+			M_node = Rb_decrement(M_node);
+			return *this;
+		}
+
+		self
+		operator--(int)
+		{
+			self tmp = *this;
+			M_node = Rb_decrement(M_node);
+			return tmp;
+		}
+
+		bool
+		operator==(const self& rhs) const
+		{
+			return M_node == rhs.M_node;
+		}
+
+		bool
+		operator!=(const self& rhs) const
+		{
+			return M_node != rhs.M_node;
+		}
 };
 
 
@@ -251,17 +341,62 @@ class Rb_tree
 	public:
 
 		void
-		insertBalanced(value_type val)
+		removeBalanced(value_type val)
 		{
-			node_ptr newNode;
-			newNode = insertNode(val);
-			insertFixTree(newNode);
+			M_removeBalanced(val);
 		}
 
 		void
-		leftRotate(base_ptr newNode)
+		insertBalanced(value_type val)
+		{
+			M_insertBalanced(val);
+		}
+
+		node_ptr
+		searchNode(value_type val)
+		{
+			return M_searchNode(val);
+		}
+
+	protected:
+
+		void
+		M_removeBalanced(value_type val)
+		{
+			base_ptr x = M_searchNode(val);
+			M_removeNode(x);
+		}
+
+
+		void
+		M_insertBalanced(value_type val)
+		{
+			node_ptr newNode;
+			newNode = M_insertNode(val);
+			M_insertFixTree(newNode);
+		}
+		
+		node_ptr
+		M_searchNode(value_type val)
+		{
+			node_ptr tmp = static_cast<node_ptr>(M_root());
+			if (tmp == NULL)
+				return NULL;
+			while (S_value(tmp) != val)
+			{
+				if (val > S_value(tmp))
+					tmp = S_right(tmp);
+				if (val < S_value(tmp))
+					tmp = S_left(tmp);
+			}
+			return tmp;
+		}
+
+		void
+		M_leftRotate(base_ptr newNode)
 		{
 			base_ptr y = newNode->M_right;
+
 			newNode->M_right = y->M_left;
 			if (y->M_left != NULL)
 				y->M_left->M_parent = newNode;
@@ -277,7 +412,7 @@ class Rb_tree
 		}
 
 		void
-		rightRotate(base_ptr newNode)
+		M_rightRotate(base_ptr newNode)
 		{
 			base_ptr y = newNode->M_left;
 
@@ -296,13 +431,14 @@ class Rb_tree
 		}
 
 		void
-		insertFixTree(node_ptr newNode)
+		M_insertFixTree(node_ptr newNode)
 		{
 			while (newNode != M_root() && newNode->M_parent->M_color == red)
 			{
 				if (newNode->M_parent == newNode->M_parent->M_parent->M_left)
 				{
 					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_parent->M_right);
+
 					if (uncle && uncle->M_color == red)
 					{
 						newNode->M_parent->M_color = black;
@@ -315,16 +451,17 @@ class Rb_tree
 						if (newNode == newNode->M_parent->M_right)
 						{
 							newNode = static_cast<node_ptr>(newNode->M_parent);
-							leftRotate(newNode);
+							M_leftRotate(newNode);
 						}
 						newNode->M_parent->M_color = black;
 						newNode->M_parent->M_parent->M_color = red;
-						rightRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
+						M_rightRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
 					}
 				}
 				else
 				{
 					node_ptr uncle = static_cast<node_ptr>(newNode->M_parent->M_parent->M_left);
+
 					if (uncle && uncle->M_color == red)
 					{
 						newNode->M_parent->M_color = black;
@@ -337,26 +474,26 @@ class Rb_tree
 						if (newNode == newNode->M_parent->M_left)
 						{
 							newNode = static_cast<node_ptr>(newNode->M_parent);
-							rightRotate(newNode);
+							M_rightRotate(newNode);
 						}
 						newNode->M_parent->M_color = black;
 						newNode->M_parent->M_parent->M_color = red;
-						leftRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
+						M_leftRotate(static_cast<node_ptr>(newNode->M_parent->M_parent));
 					}
 				}
 			}
 			static_cast<node_ptr>(M_root())->M_color = black;
-
 		}
 
 
 		node_ptr
-		insertNode(value_type val)
+		M_insertNode(value_type val)
 		{
 			node_ptr tmp = static_cast<node_ptr>(M_root());
 			if (!tmp)
 			{
 				node_ptr New = static_cast<node_ptr>(create_node(val));
+
 				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
 				M_impl.M_header.M_parent = New;
 				M_impl.M_node_count++;
@@ -371,6 +508,7 @@ class Rb_tree
 					else
 					{
 						node_ptr New = static_cast<node_ptr>(create_node(val));
+
 						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_right = New;
 						M_impl.M_node_count++;
@@ -384,6 +522,7 @@ class Rb_tree
 					else
 					{
 						node_ptr New = static_cast<node_ptr>(create_node(val));
+
 						New->init_node(red, tmp, NULL, NULL);
 						tmp->M_left = New;
 						M_impl.M_node_count++;
@@ -397,7 +536,7 @@ class Rb_tree
 		}
 
 		void
-		transplant(base_ptr u, base_ptr v)
+		M_transplant(base_ptr u, base_ptr v)
 		{
 			if (u == M_root())
 				M_root() = v;
@@ -416,7 +555,7 @@ class Rb_tree
 		// 3) both aren't NULL so i have to take the smallest element of the right subtree
 		// 		then this element need to take the place of my new element
 		base_ptr
-		removeNode(base_ptr z)
+		M_removeNode(base_ptr z)
 		{
 			base_ptr ret = NULL;
 			base_ptr tmp = NULL;
@@ -424,35 +563,40 @@ class Rb_tree
 			if (z->M_left == NULL)
 			{
 				ret = z->M_right;
-				transplant(z, z->M_right);
+				M_transplant(z, z->M_right);
 			}
 			else if (z->M_right == NULL)
 			{
 				ret = z->M_left;
-				transplant(z, z->M_left);
+				M_transplant(z, z->M_left);
 			}
 			else
 			{
 				tmp = S_minimum(z->M_right);
+
 				tmp_color = tmp->M_color;
 				ret = tmp->M_right;
 				if (tmp->M_parent == z && ret)
 					ret->M_parent = tmp;
 				else
 				{
-					transplant(tmp, tmp->M_right);
+					M_transplant(tmp, tmp->M_right);
 					tmp->M_right = z->M_right;
 					if (tmp->M_right)
 						tmp->M_right->M_parent = tmp;
 				}
-				transplant(z, tmp);
+				M_transplant(z, tmp);
 				tmp->M_left = z->M_left;
 				tmp->M_left->M_parent = tmp;
 				tmp->M_color = z->M_color;
 			}
 			destroy_node(z);
 			if (tmp_color == black)
-				removeFixTree(ret);
+			{
+				std::cout << "before" << std::endl;
+				displayTree();
+				M_removeFixTree(ret);
+			}
 			return ret;	
 		}
 
@@ -464,7 +608,7 @@ class Rb_tree
 		// 4) the sibling is black and his right child is black
 		// all of these rules are not exclusive
 		void
-		removeFixTree(base_ptr x)
+		M_removeFixTree(base_ptr x)
 		{
 			base_ptr sibling = NULL;
 			while (x && x != M_root() && x->M_color == black)
@@ -472,64 +616,69 @@ class Rb_tree
 				if (x == x->M_parent->M_left)
 				{
 					sibling = x->M_parent->M_right;
+
 					if (sibling->M_color == red)
 					{
 						sibling->M_color = black;
 						x->M_parent->M_color = red;
-						leftRotate(x->M_parent);
+						M_leftRotate(x->M_parent);
 						sibling = x->M_parent->M_right;
 					}
-					if (sibling->M_left->M_color == black
-							&& sibling->M_right->M_color == black)
+					if ((sibling->M_left == NULL || sibling->M_left->M_color == black)
+							&& (sibling->M_right == NULL || sibling->M_right->M_color == black))
 					{
 						sibling->M_color = red;
 						x = x->M_parent;
+						x->M_parent = x->M_parent->M_parent;
 					}
 					else
 					{
-						if (sibling->M_right->M_color == black)
+						if (sibling->M_right == NULL || sibling->M_right->M_color == black)
 						{
 							sibling->M_left->M_color = black;
 							sibling->M_color = red;
-							rightRotate(sibling);
+							M_rightRotate(sibling);
 							sibling = x->M_parent->M_right;
 						}
 						sibling->M_color = x->M_parent->M_color;
 						x->M_parent->M_color = black;
-						sibling->M_right->M_color = black;
-						leftRotate(x->M_parent);
+						if (sibling->M_right)
+							sibling->M_right->M_color = black;
+						M_leftRotate(x->M_parent);
 						x = M_root();
 					}
 				}
 				else
 				{
-					sibling = x->M_parent->M_right;
+					sibling = x->M_parent->M_left;
+
 					if (sibling->M_color == red)
 					{
 						sibling->M_color = black;
 						x->M_parent->M_color = red;
-						rightRotate(x->M_parent);
+						M_rightRotate(x->M_parent);
 						sibling = x->M_parent->M_left;
 					}
-					if (sibling->M_right->M_color == black
-							&& sibling->M_left->M_color == black)
+					if ((sibling->M_right == NULL || sibling->M_right->M_color == black)
+							&& (sibling->M_left == NULL || sibling->M_left->M_color == black))
 					{
 						sibling->M_color = red;
 						x = x->M_parent;
 					}
 					else
 					{
-						if (sibling->M_left->M_color == black)
+						if (sibling->M_left == NULL || sibling->M_left->M_color == black)
 						{
 							sibling->M_right->M_color = black;
 							sibling->M_color = red;
-							leftRotate(sibling);
+							M_leftRotate(sibling);
 							sibling = x->M_parent->M_left;
 						}
 						sibling->M_color = x->M_parent->M_color;
 						x->M_parent->M_color = black;
-						sibling->M_left->M_color = black;
-						rightRotate(x->M_parent);
+						if (sibling->M_left)
+							sibling->M_left->M_color = black;
+						M_rightRotate(x->M_parent);
 						x = M_root();
 					}
 				}
@@ -537,50 +686,6 @@ class Rb_tree
 			if (x)
 				x->M_color = black;
 		}
-		
-		void
-		deleteNode(value_type val)
-		{
-			base_ptr x = M_searchNode(val);
-			removeNode(x);
-		}
-
-		node_ptr
-		M_searchNode(value_type val)
-		{
-			node_ptr tmp = static_cast<node_ptr>(M_root());
-			if (tmp == NULL)
-				return NULL;
-			while (S_value(tmp) != val)
-			{
-				if (val > S_value(tmp))
-					tmp = S_right(tmp);
-				if (val < S_value(tmp))
-					tmp = S_left(tmp);
-			}
-			return tmp;
-		}
-
-	//	node_ptr
-	//	removeNode(value_type val)
-	//	{
-	//		node_ptr tmp = static_cast<node_ptr>(M_root());
-	//		node_ptr ret =  NULL;
-	//		if (!tmp)
-	//			return ret;
-	//		while (S_value(tmp) != val)
-	//		{
-	//			if (val > S_value(tmp))
-	//				tmp == S_right(tmp);
-	//			if (val < S_value(tmp))
-	//				tmp == S_left(tmp);
-	//		}
-	//		ret = tmp->M_parent;
-	//		destroyNode
-	//		return 
-	//	}
-
-
 
 	private:
 		int _level;
@@ -628,7 +733,6 @@ class Rb_tree
 			_display(M_root());
 			_level = 0;
 		}
-
 		
 		Rb_tree()
 		: M_impl() {}
@@ -654,10 +758,6 @@ class Rb_tree
 
 };
 
-//TODO insert node comme dans un bst classique
-//TODO spot les erreures de rb_tree
-//TODO balance le tree (rotation tout ca tout ca)
-//TODO utiliser tout ca pour faire un balanceInsert
 
 }
 

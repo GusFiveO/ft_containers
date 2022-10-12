@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/12 11:49:11 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/12 17:36:00 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,17 @@
 
 int main(void)
 {
-	ft::Rb_tree<int> bst;
+	ft::Rb_tree<int, int, std::_Identity<int>, std::greater<int> > bst;
+	//ft::Rb_tree<int, ft::pair<int, int>, std::_Select1st<ft::pair<int, int> >, std::less<int> > bst;
+
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
+	bst.insertBalanced(1);
 
 	bst.insertBalanced(41);
 	bst.insertBalanced(23);
@@ -152,16 +162,27 @@ int main(void)
 	bst.insertBalanced(42);
 	bst.insertBalanced(100);
 
-	std::cout << bst.size() << std::endl;
+	//bst.insertBalanced(ft::make_pair<int, int>(41, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(23, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(43, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(2, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(1, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(35, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(42, 1));
+	//bst.insertBalanced(ft::make_pair<int, int>(100, 1));
+
+	std::cout << "size " << bst.size() << std::endl;
 	bst.displayTree();
 	bst.erase(++bst.begin(), --(--(--bst.end())));
-	ft::Rb_tree<int>::reverse_iterator it = bst.rend();
+	//ft::Rb_tree<int, int, std::_Identity<int>, std::less<int> >::iterator it = bst.find(1);
+	std::cout << "size " << bst.size() << std::endl;
+	//std::cout << *(++it) << std::endl; 
 	bst.displayTree();
 	std::cout << bst.size() << std::endl;
 	bst.clear();
 	bst.displayTree();
-	std::cout << bst.max_size() << std::endl;
-	std::cout << bst.size() << std::endl;
+	std::cout << "max_size " << bst.max_size() << std::endl;
+	std::cout << "size " << bst.size() << std::endl;
 	return 0;
 }
 

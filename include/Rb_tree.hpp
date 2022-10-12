@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/12 12:32:27 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/12 17:35:54 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,11 @@ Rb_increment(Rb_tree_node_base* x) throw()
 			y = y->M_parent;
 		}
 		if (y->M_parent == x)
-			x = y->M_left;
+			x = y->M_parent->M_left;
 		else if (x->M_right != y)
 			x = y;
+	//	if (x->M_right != y)
+	//		x = y;
 	}
 	return x;
 }
@@ -136,6 +138,7 @@ Rb_increment(const Rb_tree_node_base* x) throw()
 Rb_tree_node_base*
 Rb_decrement(Rb_tree_node_base* x) throw()
 {
+	//std::cout << "parent left value " << static_cast<Rb_tree_node<int>*>(y->M_left)->M_value_field;
 	if (x->M_left)
 	{
 		x = x->M_left;
@@ -151,9 +154,13 @@ Rb_decrement(Rb_tree_node_base* x) throw()
 			y = y->M_parent;
 		}
 		if (y->M_parent == x)
-			x = y->M_right;
+		{
+			x = y->M_parent->M_right;
+		}
 		else if (x->M_left != y)
 			x = y;
+		//if (x->M_left != y)
+		//	x = y;
 	}
 	return x;
 }
@@ -270,9 +277,9 @@ struct Rb_tree_iterator
 template<typename T>
 struct Rb_tree_const_iterator
 {
-	typedef T 	value_type;
-	typedef T*	pointer;
-	typedef T&	reference;
+	typedef T 			value_type;
+	typedef const T*	pointer;
+	typedef const T&	reference;
 
 	typedef Rb_tree_iterator<T>	iterator;
 
@@ -281,7 +288,7 @@ struct Rb_tree_const_iterator
 
 	typedef Rb_tree_node_base::const_base_pointer	base_ptr;
 	typedef Rb_tree_const_iterator<T>				self;
-	typedef Rb_tree_node<T>*						node_ptr;
+	typedef const Rb_tree_node<T>*					node_ptr;
 
 		base_ptr	M_node;
 
@@ -364,7 +371,10 @@ struct Rb_tree_const_iterator
 };
 
 
-template<typename Val, typename Alloc = std::allocator<Val> >
+//KeyOfValue define wich part of the pair is the key and if is not a pair define that the key is the value we are using
+//Compare is the function we use to define the order in the tree
+template<typename Key, typename Val, typename KeyOfValue,
+			typename Compare, typename Alloc = std::allocator<Val> >
 class Rb_tree
 {
 
@@ -374,7 +384,7 @@ class Rb_tree
 
 	public:
 		typedef Val 				value_type;
-
+		typedef Key					key_type;
 		typedef value_type* 		pointer;
 		typedef const value_type* 	const_pointer;
 		typedef value_type& 		reference;
@@ -461,7 +471,7 @@ class Rb_tree
 				}
 		};
 		
-		Rb_tree_impl M_impl;
+		Rb_tree_impl<Compare> M_impl;
 	
 	protected:
 
@@ -554,6 +564,12 @@ class Rb_tree
 		{
 			return static_cast<const_node_ptr>(x)->M_value_field;
 		}
+
+		static const key_type&
+		S_key(const_base_ptr node)
+		{
+			return KeyOfValue()(S_value(node));
+		}
 		
 	public:
 
@@ -595,9 +611,11 @@ class Rb_tree
 			base_ptr x = M_searchNode(val);
 			if (!x)
 				return;
-			if (val == S_value(S_maximum(M_root())))
+			//if (val == S_value(S_maximum(M_root())))
+			if (val == S_value(M_rightmost()))
 				M_impl.M_header.M_right = x->M_parent;
-			if (val == S_value(S_minimum(M_root())))
+			//if (val == S_value(S_minimum(M_root())))
+			if (val == S_value(M_rightmost()))
 			{
 				if (x->M_right)
 				{
@@ -618,9 +636,11 @@ class Rb_tree
 		{
 			node_ptr newNode;
 			newNode = M_insertNode(val);
-			if (val > S_value(M_impl.M_header.M_right))
+			//if (val > S_value(M_impl.M_header.M_right))
+			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
 				M_impl.M_header.M_right = newNode;
-			if (val < S_value(M_impl.M_header.M_left))
+			//if (val < S_value(M_impl.M_header.M_left))
+			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
 				M_impl.M_header.M_left = newNode;
 			M_insertFixTree(newNode);
 		}
@@ -633,9 +653,11 @@ class Rb_tree
 				return NULL;
 			while (S_value(tmp) != val)
 			{
-				if (val > S_value(tmp))
+				//if (val > S_value(tmp))
+				if (M_impl.M_key_compare(S_key(tmp), KeyOfValue()(val)))
 					tmp = S_right(tmp);
-				if (val < S_value(tmp))
+				//if (val < S_value(tmp))
+				if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
 					tmp = S_left(tmp);
 			}
 			return tmp;
@@ -746,11 +768,13 @@ class Rb_tree
 				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
 				M_impl.M_header.M_parent = New;
 				M_impl.M_node_count++;
+				M_impl.M_header.M_right = New;
+				M_impl.M_header.M_left = New;
 				return New;
 			}
 			while (tmp)
 			{
-				if (val > S_value(tmp))
+				if (M_impl.M_key_compare(S_key(tmp), KeyOfValue()(val)))
 				{
 					if (S_right(tmp))
 						tmp = S_right(tmp);
@@ -764,7 +788,7 @@ class Rb_tree
 						return New;
 					}
 				}
-				else if (val < S_value(tmp))
+				if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
 				{
 					if (S_left(tmp))
 						tmp = S_left(tmp);
@@ -956,7 +980,7 @@ class Rb_tree
 				std::cout << "└";
 			if (root->M_color == red)
 				std::cout << "\033[31m";
-			std::cout << S_value(root) << std::endl;
+			std::cout << S_key(root) << std::endl;
 			if (root->M_color == red)
 				std::cout << "\033[0m";
 			++_level;
@@ -1079,6 +1103,12 @@ class Rb_tree
 		erase(const value_type& k)
 		{
 			removeBalanced(searchNode(k));
+		}
+
+		iterator
+		find(value_type val)
+		{
+			return iterator(M_searchNode(val));
 		}
 
 	private:

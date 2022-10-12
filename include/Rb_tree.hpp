@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 19:02:21 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/12 12:32:27 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,6 +259,12 @@ struct Rb_tree_iterator
 		{
 			return M_node != rhs.M_node;
 		}
+
+		base_ptr
+		base()
+		{
+			return M_node;
+		}
 };
 
 template<typename T>
@@ -349,6 +355,12 @@ struct Rb_tree_const_iterator
 		{
 			return M_node != rhs.M_node;
 		}
+
+		base_ptr
+		base()
+		{
+			return M_node;
+		}
 };
 
 
@@ -380,6 +392,12 @@ class Rb_tree
 		get_allocator()
 		{
 			return allocator_type();
+		}
+
+		node_allocator
+		M_get_node_allocator()
+		{
+			return static_cast<node_allocator>(M_impl);
 		}
 
 	protected:
@@ -420,13 +438,15 @@ class Rb_tree
 		}
 	
 	private:
+		template<typename Key_compare>
 		struct Rb_tree_impl : public node_allocator
 		{
+			Key_compare			M_key_compare;
 			Rb_tree_node_base	M_header;
 			size_type			M_node_count;
 
 			Rb_tree_impl()
-			: node_allocator(), M_header(), M_node_count(0)
+			: node_allocator(), M_key_compare() ,M_header(), M_node_count(0)
 			{
 				M_initialize();
 			}
@@ -451,10 +471,28 @@ class Rb_tree
 			return M_impl.M_header.M_parent;
 		}
 
+		base_ptr&
+		M_leftmost()
+		{
+			return M_impl.M_header.M_left;
+		}
+
+		base_ptr&
+		M_rightmost()
+		{
+			return M_impl.M_header.M_right;
+		}
+
 		node_ptr
 		M_begin()
 		{
 			return static_cast<node_ptr>(this->M_impl.M_header.M_parent);
+		}
+
+		node_ptr
+		M_end()
+		{
+			return static_cast<node_ptr>(&this->M_impl.M_header);
 		}
 
 		static base_ptr
@@ -1007,6 +1045,24 @@ class Rb_tree
 			return const_reverse_iterator(begin());
 		}
 
+		bool
+		empty()
+		{
+			return M_impl.M_node_count == 0;
+		}
+
+		size_type
+		size()
+		{
+			return M_impl.M_node_count;
+		}
+
+		size_type
+		max_size()
+		{
+			return M_get_node_allocator().max_size();
+		}
+
 		void
 		erase(iterator pos)
 		{
@@ -1036,8 +1092,8 @@ class Rb_tree
 				M_removeBalanced(*(tmp.M_const_cast()));
 				tmp = first;
 			}
-
 		}
+
 	public:
 		iterator
 		erase(const_iterator first, const_iterator last)
@@ -1045,7 +1101,16 @@ class Rb_tree
 			M_erase_sev(first, last);
 			return last.M_const_cast();
 		}
-
+		
+		void
+		clear()
+		{
+			M_erase(M_begin());
+			M_leftmost() = M_end();
+			M_root() = NULL;
+			M_rightmost() = M_end();
+			M_impl.M_node_count = 0;
+		}
 		
 
 		

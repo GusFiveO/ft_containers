@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/11 19:08:04 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/12 11:49:11 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,10 +152,16 @@ int main(void)
 	bst.insertBalanced(42);
 	bst.insertBalanced(100);
 
+	std::cout << bst.size() << std::endl;
 	bst.displayTree();
-	bst.erase(bst.begin(), --(--(--bst.end())));
+	bst.erase(++bst.begin(), --(--(--bst.end())));
 	ft::Rb_tree<int>::reverse_iterator it = bst.rend();
 	bst.displayTree();
+	std::cout << bst.size() << std::endl;
+	bst.clear();
+	bst.displayTree();
+	std::cout << bst.max_size() << std::endl;
+	std::cout << bst.size() << std::endl;
 	return 0;
 }
 

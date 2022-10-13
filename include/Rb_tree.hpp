@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/12 17:35:54 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/13 17:15:07 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,7 +405,7 @@ class Rb_tree
 		}
 
 		node_allocator
-		M_get_node_allocator()
+		M_get_node_allocator() const
 		{
 			return static_cast<node_allocator>(M_impl);
 		}
@@ -424,7 +424,7 @@ class Rb_tree
 			return (M_impl.node_allocator::deallocate(ptr, 1));
 		}
 
-		base_ptr
+		node_ptr
 		create_node(const value_type& val)
 		{
 			node_ptr tmp = alloc_node();
@@ -461,6 +461,12 @@ class Rb_tree
 				M_initialize();
 			}
 
+			Rb_tree_impl(const Key_compare& comp, const node_allocator& alloc)
+			: node_allocator(alloc), Key_compare(comp), M_header(), M_node_count(0)
+			{
+				M_initialize();
+			}
+
 			private:
 				void
 				M_initialize()
@@ -481,8 +487,20 @@ class Rb_tree
 			return M_impl.M_header.M_parent;
 		}
 
+		const_base_ptr
+		M_root() const
+		{
+			return M_impl.M_header.M_parent;
+		}
+
 		base_ptr&
 		M_leftmost()
+		{
+			return M_impl.M_header.M_left;
+		}
+
+		const_base_ptr
+		M_leftmost() const
 		{
 			return M_impl.M_header.M_left;
 		}
@@ -493,16 +511,34 @@ class Rb_tree
 			return M_impl.M_header.M_right;
 		}
 
+		const_base_ptr
+		M_rightmost() const
+		{
+			return M_impl.M_header.M_right;
+		}
+
 		node_ptr
 		M_begin()
 		{
 			return static_cast<node_ptr>(this->M_impl.M_header.M_parent);
 		}
 
+		const_node_ptr
+		M_begin() const
+		{
+			return static_cast<const_node_ptr>(this->M_impl.M_header.M_parent);
+		}
+
 		node_ptr
 		M_end()
 		{
 			return static_cast<node_ptr>(&this->M_impl.M_header);
+		}
+
+		const_node_ptr
+		M_end() const
+		{
+			return static_cast<const_node_ptr>(&this->M_impl.M_header);
 		}
 
 		static base_ptr
@@ -958,6 +994,16 @@ class Rb_tree
 				x->M_color = black;
 		}
 
+		node_ptr
+		M_clone_node(const_node_ptr node)
+		{
+			node_ptr ret = create_node(node->M_value_field);
+			ret->M_color = node->M_color;
+			ret->M_right = NULL;
+			ret->M_left = NULL;
+			return ret;
+		}
+
 	private:
 		int _level;
 
@@ -1016,9 +1062,39 @@ class Rb_tree
 		Rb_tree()
 		: M_impl() {}
 
+		Rb_tree(const Rb_tree& copy)
+		: M_impl(copy.M_impl.M_key_compare, copy.M_get_node_allocator)
+		{
+			if (copy.M_root())
+			{
+				M_root() = M_copy(copy.M_begin(), M_end());
+				M_rightmost() = S_maximum(M_root());
+				M_leftmost() = S_minimum(M_root());
+				M_impl.M_node_count = copy.size();
+			}
+		}
+
 		~Rb_tree()
 		{
 			M_erase(M_begin());
+		}
+
+		Rb_tree&
+		operator=(const Rb_tree& assign)
+		{
+			if (this != &assign)
+			{
+				clear();
+				M_impl.M_key_compare = assign.M_impl.M_key_compare;
+				if (assign.M_root() != NULL)
+				{
+					M_root() = M_copy(assign.M_begin(), M_end());
+					M_leftmost() = S_minimum(M_root());
+					M_rightmost() = S_maximum(M_root());
+					M_impl.M_node_count = assign.size();
+				}
+			}
+			return *this;
 		}
 
 		iterator
@@ -1076,13 +1152,13 @@ class Rb_tree
 		}
 
 		size_type
-		size()
+		size() const
 		{
 			return M_impl.M_node_count;
 		}
 
 		size_type
-		max_size()
+		max_size() const
 		{
 			return M_get_node_allocator().max_size();
 		}
@@ -1112,6 +1188,36 @@ class Rb_tree
 		}
 
 	private:
+
+		//the first and last elem to the function
+		//it will copy starting with the right subtree
+		//than it gonna loop throught the left one 
+		//if a node get a right subtree he recursively copy it
+		//then he gonna copy deeper on the left
+		node_ptr
+		M_copy(const_node_ptr first, node_ptr parent)
+		{
+			node_ptr top = M_clone_node(first);
+			top->M_parent = parent;
+
+			if (first->M_right)
+				top->M_right = M_copy(S_right(first), top);
+
+			first = S_left(first);
+			parent = top;
+			while (first != NULL)
+			{
+				node_ptr y = M_clone_node(first);
+				parent->M_left = y;
+				y->M_parent = parent;
+				if (first->M_right)
+					y->M_right = M_copy(S_right(first), y);
+				parent = y;
+				first = S_left(first);
+			}
+			return top;
+		}
+		
 		void
 		M_erase_sev(const_iterator first, const_iterator last)
 		{
@@ -1143,9 +1249,8 @@ class Rb_tree
 		}
 		
 
-		
-
 };
+
 
 
 }

@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/12 17:36:00 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/13 16:08:20 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@
 int main(void)
 {
 	ft::Rb_tree<int, int, std::_Identity<int>, std::greater<int> > bst;
+	ft::Rb_tree<int, int, std::_Identity<int>, std::greater<int> > bst2;
 	//ft::Rb_tree<int, ft::pair<int, int>, std::_Select1st<ft::pair<int, int> >, std::less<int> > bst;
 
 	bst.insertBalanced(1);
@@ -171,6 +172,8 @@ int main(void)
 	//bst.insertBalanced(ft::make_pair<int, int>(42, 1));
 	//bst.insertBalanced(ft::make_pair<int, int>(100, 1));
 
+	bst2 = bst;
+
 	std::cout << "size " << bst.size() << std::endl;
 	bst.displayTree();
 	bst.erase(++bst.begin(), --(--(--bst.end())));
@@ -183,6 +186,19 @@ int main(void)
 	bst.displayTree();
 	std::cout << "max_size " << bst.max_size() << std::endl;
 	std::cout << "size " << bst.size() << std::endl;
+
+	std::cout << "size " << bst2.size() << std::endl;
+	bst2.displayTree();
+	bst2.erase(++bst2.begin(), --(--(--bst2.end())));
+	//ft::Rb_tree<int, int, std::_Identity<int>, std::less<int> >::iterator it = bst2.find(1);
+	std::cout << "size " << bst2.size() << std::endl;
+	//std::cout << *(++it) << std::endl; 
+	bst2.displayTree();
+	std::cout << bst2.size() << std::endl;
+	bst2.clear();
+	bst2.displayTree();
+	std::cout << "max_size " << bst2.max_size() << std::endl;
+	std::cout << "size " << bst2.size() << std::endl;
 	return 0;
 }
 

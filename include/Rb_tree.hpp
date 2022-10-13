@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/13 17:15:07 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/13 20:06:38 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,12 +99,8 @@ Rb_increment(Rb_tree_node_base* x) throw()
 			x = y;
 			y = y->M_parent;
 		}
-		if (y->M_parent == x)
-			x = y->M_parent->M_left;
-		else if (x->M_right != y)
+		if (x->M_right != y)
 			x = y;
-	//	if (x->M_right != y)
-	//		x = y;
 	}
 	return x;
 }
@@ -127,9 +123,7 @@ Rb_increment(const Rb_tree_node_base* x) throw()
 			x = y;
 			y = y->M_parent;
 		}
-		if (y->M_parent == x)
-			x = y->M_left;
-		else if (x->M_right != y)
+		if (x->M_right != y)
 			x = y;
 	}
 	return x;
@@ -153,14 +147,8 @@ Rb_decrement(Rb_tree_node_base* x) throw()
 			x = y;
 			y = y->M_parent;
 		}
-		if (y->M_parent == x)
-		{
-			x = y->M_parent->M_right;
-		}
-		else if (x->M_left != y)
+		if (x->M_left != y)
 			x = y;
-		//if (x->M_left != y)
-		//	x = y;
 	}
 	return x;
 }
@@ -182,9 +170,7 @@ Rb_decrement(const Rb_tree_node_base* x) throw()
 			x = y;
 			y = y->M_parent;
 		}
-		if (y->M_parent == x)
-			x = y->M_right;
-		else if (x->M_left != y)
+		if (x->M_left != y)
 			x = y;
 	}
 	return x;
@@ -462,7 +448,7 @@ class Rb_tree
 			}
 
 			Rb_tree_impl(const Key_compare& comp, const node_allocator& alloc)
-			: node_allocator(alloc), Key_compare(comp), M_header(), M_node_count(0)
+			: node_allocator(alloc), M_key_compare(comp), M_header(), M_node_count(0)
 			{
 				M_initialize();
 			}
@@ -615,16 +601,30 @@ class Rb_tree
 			M_removeBalanced(val);
 		}
 
+		template<typename InputIt>
+		void
+		insertBalanced(InputIt first, InputIt last)
+		{
+			while (first != last)
+				insertBalanced(*first++);
+		}
+
 		void
 		insertBalanced(value_type val)
 		{
 			M_insertBalanced(val);
 		}
 
+		//node_ptr
+		//searchNode(value_type val)
+		//{
+		//	return M_searchNode(KeyOfValue()(val));
+		//}
+
 		node_ptr
-		searchNode(value_type val)
+		searchNode(key_type key)
 		{
-			return M_searchNode(val);
+			return M_searchNode(key);
 		}
 
 	protected:
@@ -682,18 +682,16 @@ class Rb_tree
 		}
 		
 		node_ptr
-		M_searchNode(value_type val)
+		M_searchNode(key_type key)
 		{
 			node_ptr tmp = static_cast<node_ptr>(M_root());
-			if (tmp == NULL)
-				return NULL;
-			while (S_value(tmp) != val)
+			while (tmp && S_key(tmp) != key)
 			{
-				//if (val > S_value(tmp))
-				if (M_impl.M_key_compare(S_key(tmp), KeyOfValue()(val)))
+				if (tmp == NULL)
+					return NULL;
+				else if (M_impl.M_key_compare(S_key(tmp), key))
 					tmp = S_right(tmp);
-				//if (val < S_value(tmp))
-				if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
+				else if (M_impl.M_key_compare(key, S_key(tmp)))
 					tmp = S_left(tmp);
 			}
 			return tmp;
@@ -1062,8 +1060,11 @@ class Rb_tree
 		Rb_tree()
 		: M_impl() {}
 
+		Rb_tree(const Compare& comp)
+		: M_impl(comp, Alloc()) {}
+
 		Rb_tree(const Rb_tree& copy)
-		: M_impl(copy.M_impl.M_key_compare, copy.M_get_node_allocator)
+		: M_impl(copy.M_impl.M_key_compare, copy.M_get_node_allocator())
 		{
 			if (copy.M_root())
 			{
@@ -1182,9 +1183,14 @@ class Rb_tree
 		}
 
 		iterator
-		find(value_type val)
+		find(const key_type key)
 		{
-			return iterator(M_searchNode(val));
+			node_ptr tmp = M_searchNode(key);
+
+			if (!tmp)
+				throw std::out_of_range("out of range");
+
+			return iterator(tmp);
 		}
 
 	private:

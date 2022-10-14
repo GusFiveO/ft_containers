@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/13 20:10:47 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/14 15:21:32 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Rb_tree.hpp"
 # include "pair.hpp"
+# include "Iterator.hpp"
 
 namespace ft
 {
@@ -146,19 +147,19 @@ namespace ft
 		}
 
 		bool
-		empty()
+		empty() const
 		{
 			return M_tree.empty();
 		}
 
 		size_type
-		size()
+		size() const
 		{
 			return M_tree.size();
 		}
 
 		size_type
-		max_size()
+		max_size() const
 		{
 			return M_tree.max_size();
 		}
@@ -167,6 +168,18 @@ namespace ft
 		M_display()
 		{
 			M_tree.displayTree();
+		}
+
+		ft::pair<iterator, bool>
+		insert(const value_type& val)
+		{
+			return M_tree.insertBalanced(val);
+		}
+
+		iterator
+		insert(iterator pos, const value_type& val)
+		{
+			return M_tree.insertBalanced(pos, val);
 		}
 
 		void

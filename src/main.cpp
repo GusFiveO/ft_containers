@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/13 20:03:25 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/14 15:24:24 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,10 @@ int main(void)
 		std::cout << std::_Select1st<ft::pair<int, int> >()(*it) << std::endl;
 	}
 	map1.M_display();
+	//ft::pair<ft::map<int, int>::iterator, bool> p = map2.insert(ft::make_pair<int, int>(6, 7));
+	//std::cout << "iterator content " << p.first->first << std::boolalpha << "inserted : " << p.second << std::endl;
+	ft::map<int, int>::iterator iti = map2.insert(map2.begin(), ft::make_pair<int, int>(6, 7));
+	std::cout << "iterator content " << iti->first <<  std::endl;
 	map2.M_display();
 	map2[5];
 	try

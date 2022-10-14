@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/13 20:06:38 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/14 15:22:53 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define BNR_HPP
 
 # include "pair.hpp"
+# include "Iterator.hpp"
 
 namespace ft
 {
@@ -184,7 +185,7 @@ struct Rb_tree_iterator
 	typedef T&	reference;
 
 	typedef std::bidirectional_iterator_tag	iterator_category;
-	typedef ptrdiff_t						difference_type;
+	typedef std::ptrdiff_t					difference_type;
 
 	typedef Rb_tree_node_base::base_pointer	base_ptr;
 	typedef Rb_tree_iterator<T>				self;
@@ -270,7 +271,7 @@ struct Rb_tree_const_iterator
 	typedef Rb_tree_iterator<T>	iterator;
 
 	typedef std::bidirectional_iterator_tag	iterator_category;
-	typedef ptrdiff_t						difference_type;
+	typedef std::ptrdiff_t					difference_type;
 
 	typedef Rb_tree_node_base::const_base_pointer	base_ptr;
 	typedef Rb_tree_const_iterator<T>				self;
@@ -376,7 +377,7 @@ class Rb_tree
 		typedef value_type& 		reference;
 		typedef const value_type& 	const_reference;
 		typedef size_t				size_type;
-		typedef ptrdiff_t			difference_type;
+		typedef std::ptrdiff_t		difference_type;
 
 		typedef Alloc				allocator_type;
 		typedef typename Alloc::template rebind<Rb_tree_node<Val> >::other node_allocator;
@@ -384,6 +385,13 @@ class Rb_tree
 		typedef Rb_tree_node<Val>* 			node_ptr;
 		typedef const Rb_tree_node<Val>*	const_node_ptr;
 	
+		typedef ft::Rb_tree_iterator<Val> 				iterator;
+		typedef ft::Rb_tree_const_iterator<Val>			const_iterator;
+
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+
+
 		allocator_type
 		get_allocator()
 		{
@@ -592,40 +600,6 @@ class Rb_tree
 		{
 			return KeyOfValue()(S_value(node));
 		}
-		
-	public:
-
-		void
-		removeBalanced(value_type val)
-		{
-			M_removeBalanced(val);
-		}
-
-		template<typename InputIt>
-		void
-		insertBalanced(InputIt first, InputIt last)
-		{
-			while (first != last)
-				insertBalanced(*first++);
-		}
-
-		void
-		insertBalanced(value_type val)
-		{
-			M_insertBalanced(val);
-		}
-
-		//node_ptr
-		//searchNode(value_type val)
-		//{
-		//	return M_searchNode(KeyOfValue()(val));
-		//}
-
-		node_ptr
-		searchNode(key_type key)
-		{
-			return M_searchNode(key);
-		}
 
 	protected:
 
@@ -667,18 +641,38 @@ class Rb_tree
 			M_removeNode(x);
 		}
 
-		void
+		ft::pair<iterator, bool>
 		M_insertBalanced(value_type val)
 		{
 			node_ptr newNode;
 			newNode = M_insertNode(val);
-			//if (val > S_value(M_impl.M_header.M_right))
+
+			if (!newNode)
+				return ft::make_pair<iterator, bool>(iterator(create_node(val)), false);
 			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
 				M_impl.M_header.M_right = newNode;
-			//if (val < S_value(M_impl.M_header.M_left))
 			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
 				M_impl.M_header.M_left = newNode;
-			M_insertFixTree(newNode);
+
+			newNode = M_insertFixTree(newNode);
+			return ft::make_pair<iterator, bool>(iterator(newNode), true);
+		}
+
+		ft::pair<iterator, bool>
+		M_insertBalanced(iterator pos, value_type val)
+		{
+			node_ptr newNode;
+			newNode = M_insertNode(pos, val);
+
+			if (!newNode)
+				return ft::make_pair<iterator, bool>(iterator(create_node(val)), false);
+			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
+				M_impl.M_header.M_right = newNode;
+			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
+				M_impl.M_header.M_left = newNode;
+
+			newNode = M_insertFixTree(newNode);
+			return ft::make_pair<iterator, bool>(iterator(newNode), true);
 		}
 		
 		node_ptr
@@ -735,7 +729,7 @@ class Rb_tree
 			newNode->M_parent = y;
 		}
 
-		void
+		node_ptr
 		M_insertFixTree(node_ptr newNode)
 		{
 			while (newNode != M_root() && newNode->M_parent->M_color == red)
@@ -788,6 +782,7 @@ class Rb_tree
 				}
 			}
 			static_cast<node_ptr>(M_root())->M_color = black;
+			return newNode;
 		}
 
 
@@ -822,7 +817,7 @@ class Rb_tree
 						return New;
 					}
 				}
-				if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
+				else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
 				{
 					if (S_left(tmp))
 						tmp = S_left(tmp);
@@ -836,8 +831,59 @@ class Rb_tree
 						return New;
 					}
 				}
-				else if (val == S_value(tmp))
-					return tmp;
+				else if (KeyOfValue()(val) == S_key(tmp))
+					break;
+			}
+			return NULL;
+		}
+
+		node_ptr
+		M_insertNode(iterator pos, value_type val)
+		{
+			node_ptr tmp = M_searchNode(pos->first);
+			if (!tmp)
+			{
+				node_ptr New = static_cast<node_ptr>(create_node(val));
+
+				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
+				M_impl.M_header.M_parent = New;
+				M_impl.M_node_count++;
+				M_impl.M_header.M_right = New;
+				M_impl.M_header.M_left = New;
+				return New;
+			}
+			while (tmp)
+			{
+				if (M_impl.M_key_compare(S_key(tmp), KeyOfValue()(val)))
+				{
+					if (S_right(tmp))
+						tmp = S_right(tmp);
+					else
+					{
+						node_ptr New = static_cast<node_ptr>(create_node(val));
+
+						New->init_node(red, tmp, NULL, NULL);
+						tmp->M_right = New;
+						M_impl.M_node_count++;
+						return New;
+					}
+				}
+				else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
+				{
+					if (S_left(tmp))
+						tmp = S_left(tmp);
+					else
+					{
+						node_ptr New = static_cast<node_ptr>(create_node(val));
+
+						New->init_node(red, tmp, NULL, NULL);
+						tmp->M_left = New;
+						M_impl.M_node_count++;
+						return New;
+					}
+				}
+				else if (KeyOfValue()(val) == S_key(tmp))
+					break;
 			}
 			return NULL;
 		}
@@ -1042,13 +1088,6 @@ class Rb_tree
 
 	public:
 
-		typedef ft::Rb_tree_iterator<Val> 				iterator;
-		typedef ft::Rb_tree_const_iterator<Val>			const_iterator;
-
-		typedef ft::reverse_iterator<iterator>			reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-
-
 		void
 		displayTree()
 		{
@@ -1096,6 +1135,44 @@ class Rb_tree
 				}
 			}
 			return *this;
+		}
+
+		void
+		removeBalanced(value_type val)
+		{
+			M_removeBalanced(val);
+		}
+
+		template<typename InputIt>
+		void
+		insertBalanced(InputIt first, InputIt last)
+		{
+			while (first != last)
+				insertBalanced(*first++);
+		}
+
+		ft::pair<iterator, bool>
+		insertBalanced(value_type val)
+		{
+			return M_insertBalanced(val);
+		}
+
+		iterator
+		insertBalanced(iterator pos, value_type val)
+		{
+			return M_insertBalanced(pos, val).first;
+		}
+
+		//node_ptr
+		//searchNode(value_type val)
+		//{
+		//	return M_searchNode(KeyOfValue()(val));
+		//}
+
+		node_ptr
+		searchNode(key_type key)
+		{
+			return M_searchNode(key);
 		}
 
 		iterator

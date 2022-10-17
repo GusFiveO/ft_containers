@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/14 15:21:32 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/17 20:13:21 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,95 @@ namespace ft
 		insert(iterator pos, const value_type& val)
 		{
 			return M_tree.insertBalanced(pos, val);
+		}
+
+		template<typename InputIt>
+		void
+		insert(InputIt first, InputIt last)
+		{
+			while (first != last)
+				M_tree.insertBalanced(*(first++));
+		}
+
+		void
+		erase(iterator pos)
+		{
+			M_tree.erase(pos);
+		}
+
+		void
+		erase(iterator first, iterator last)
+		{
+			while (first != last)
+				M_tree.erase(first++);
+		}
+
+		size_type
+		erase(const key_type& key)
+		{
+			return M_tree.erase(key);
+		}
+
+		void
+		swap(map& other)
+		{
+			M_tree.swap(other.M_tree);
+		}
+
+		size_type
+		count(const key_type& key)
+		{
+			if (!M_tree.searchNode(key))
+				return 0;
+			return 1;
+		}
+
+		iterator
+		find(const key_type& key)
+		{
+			return M_tree.find(key);
+		}
+
+		const_iterator
+		find(const key_type& key) const
+		{
+			return M_tree.find(key);
+		}
+
+		iterator
+		lower_bound(const key_type& key)
+		{
+			return M_tree.lower_bound(key);
+		}
+
+		const_iterator
+		lower_bound(const key_type& key) const
+		{
+			return M_tree.lower_bound(key);
+		}
+
+		iterator
+		upper_bound(const key_type& key)
+		{
+			return M_tree.upper_bound(key);
+		}
+
+		const_iterator
+		upper_bound(const key_type& key) const
+		{
+			return M_tree.upper_bound(key);
+		}
+
+		ft::pair<iterator, iterator>
+		equal_range(const key_type& key)
+		{
+			return M_tree.equal_range(key);
+		}
+
+		ft::pair<const_iterator, const_iterator>
+		equal_range(const key_type& key) const
+		{
+			return M_tree.equal_range(key);
 		}
 
 		void

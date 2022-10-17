@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/14 15:24:24 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/17 20:51:22 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,27 +139,86 @@
 #include <list>
 #include <stack>
 #include "map.hpp"
+//int main(void)
+//{
+//	ft::Rb_tree<int, int, std::_Identity<int>, std::greater<int> > bst;
+//	//ft::Rb_tree<int, ft::pair<int, int>, std::_Select1st<ft::pair<int, int> >, std::less<int> > bst;
+//
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(1);
+//
+//	bst.insertBalanced(41);
+//	bst.insertBalanced(23);
+//	bst.insertBalanced(43);
+//	bst.insertBalanced(2);
+//	bst.insertBalanced(1);
+//	bst.insertBalanced(35);
+//	bst.insertBalanced(42);
+//	bst.insertBalanced(100);
+//
+//	//bst.insertBalanced(ft::make_pair<int, int>(41, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(23, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(43, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(2, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(1, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(35, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(42, 1));
+//	//bst.insertBalanced(ft::make_pair<int, int>(100, 1));
+//
+//
+//	std::cout << "size " << bst.size() << std::endl;
+//	bst.displayTree();
+//	bst.erase(++bst.begin(), --(--(--bst.end())));
+//	//ft::Rb_tree<int, int, std::_Identity<int>, std::less<int> >::iterator it = bst.find(1);
+//	std::cout << "size " << bst.size() << std::endl;
+//	//std::cout << *(++it) << std::endl; 
+//	bst.displayTree();
+//	std::cout << bst.size() << std::endl;
+//	bst.clear();
+//	bst.displayTree();
+//	std::cout << "max_size " << bst.max_size() << std::endl;
+//	std::cout << "size " << bst.size() << std::endl;
+//	return 0;
+//
+//}
+
+#include <map>
 
 int main(void)
 {
-	ft::vector<ft::pair<int, int> > vect;
-	vect.push_back(ft::make_pair<int, int >(1, 2));
-	vect.push_back(ft::make_pair<int, int >(2, 3));
-	vect.push_back(ft::make_pair<int, int >(3, 4));
-	vect.push_back(ft::make_pair<int, int >(4, 5));
+	std::vector<ft::pair<int, int> > vect;
+	vect.push_back(ft::make_pair<int, int>(1, 4)); 
+    vect.push_back(ft::make_pair<int, int>(16, 5));
+	vect.push_back(ft::make_pair<int, int>(4, 5)); 
+	vect.push_back(ft::make_pair<int, int>(2, 4)); 
+	vect.push_back(ft::make_pair<int, int>(3, 4)); 
+    vect.push_back(ft::make_pair<int, int>(64, 5));
+    vect.push_back(ft::make_pair<int, int>(23, 5));
+
 	ft::map<int, int> map1(vect.begin(), vect.end());
-	ft::map<int, int> map2 = map1;
-	for (ft::vector<ft::pair<int, int> >::iterator it = vect.begin(); it != vect.end(); it++)
+	ft::map<int, int> map2 /*= map1*/;
+	for (std::vector<ft::pair<int, int> >::iterator it = vect.begin(); it != vect.end(); it++)
 	{
 		std::cout << std::_Select1st<ft::pair<int, int> >()(*it) << std::endl;
 	}
 	map1.M_display();
-	//ft::pair<ft::map<int, int>::iterator, bool> p = map2.insert(ft::make_pair<int, int>(6, 7));
-	//std::cout << "iterator content " << p.first->first << std::boolalpha << "inserted : " << p.second << std::endl;
-	ft::map<int, int>::iterator iti = map2.insert(map2.begin(), ft::make_pair<int, int>(6, 7));
-	std::cout << "iterator content " << iti->first <<  std::endl;
 	map2.M_display();
-	map2[5];
+	//map2.swap(map1);
+	map2.M_display();
+	map1.M_display();
+	std::cout << "equal_rang"<< std::endl; 
+	std::cout << map1.equal_range(12).first->first << std::endl;
+	for (ft::map<int, int>::iterator itit = map1.equal_range(12).first; itit != map1.equal_range(12).second; itit++)
+		std::cout << itit->first << ", ";
+	std::cout << std::endl;
+
+	map2.M_display();
 	try
 	{
 	std::cout << map2.at(4) << std::endl;

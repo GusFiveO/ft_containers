@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/14 15:22:53 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/17 20:09:49 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,10 @@ Rb_tree_node_base*
 Rb_decrement(Rb_tree_node_base* x) throw()
 {
 	//std::cout << "parent left value " << static_cast<Rb_tree_node<int>*>(y->M_left)->M_value_field;
-	if (x->M_left)
+	if (x->M_color == red
+       && x->M_parent->M_parent == x)
+     x = x->M_right;
+	else if (x->M_left)
 	{
 		x = x->M_left;
 		while (x->M_right)
@@ -157,7 +160,10 @@ Rb_decrement(Rb_tree_node_base* x) throw()
 const Rb_tree_node_base*
 Rb_decrement(const Rb_tree_node_base* x) throw()
 {
-	if (x->M_left)
+	if (x->M_color == red
+       && x->M_parent->M_parent == x)
+     x = x->M_right;
+	else if (x->M_left)
 	{
 		x = x->M_left;
 		while (x->M_right)
@@ -472,6 +478,116 @@ class Rb_tree
 		};
 		
 		Rb_tree_impl<Compare> M_impl;
+
+	public:
+
+		iterator
+		M_lower_bound(node_ptr first, node_ptr last, const key_type& key)
+		{
+			while (first != NULL)
+			{
+				if (!M_impl.M_key_compare(S_key(first), key))
+				{
+					last = first;
+					first = S_left(first);
+				}
+				else
+				{
+					first = S_right(first);
+				}
+			}
+			return iterator(last);
+		}
+
+		iterator
+		lower_bound(const key_type& key)
+		{
+			return M_lower_bound(M_begin(), M_end(), key);
+		}
+
+		const_iterator
+		M_lower_bound(const_node_ptr first, const_node_ptr last, const key_type& key) const
+		{
+			while (first != NULL)
+			{
+				if (!M_impl.M_key_compare(S_key(first), key))
+				{
+					last = first;
+					first = S_left(first);
+				}
+				else
+				{
+					first = S_right(first);
+				}
+			}
+			return iterator(last);
+		}
+
+		const_iterator
+		lower_bound(const key_type& key) const
+		{
+			return M_lower_bound(M_begin(), M_end(), key);
+		}
+
+		iterator
+		M_upper_bound(node_ptr first, node_ptr last, const key_type& key)
+		{
+			while (first != NULL)
+			{
+				if (M_impl.M_key_compare(key, S_key(first)))
+				{
+					last = first;
+					first = S_left(first);
+				}
+				else
+				{
+					first = S_right(first);
+				}
+			}
+			return iterator(last);
+		}
+
+		iterator
+		upper_bound(const key_type& key)
+		{
+			return M_upper_bound(M_begin(), M_end(), key);
+		}
+
+		const_iterator
+		M_upper_bound(const_node_ptr first, const_node_ptr last, const key_type& key) const
+		{
+			while (first != NULL)
+			{
+				if (M_impl.M_key_compare(key, S_key(first)))
+				{
+					last = first;
+					first = S_left(first);
+				}
+				else
+				{
+					first = S_right(first);
+				}
+			}
+			return iterator(last);
+		}
+
+		const_iterator
+		upper_bound(const key_type& key) const
+		{
+			return M_upper_bound(M_begin(), M_end(), key);
+		}
+
+		ft::pair<iterator, iterator>
+		equal_range(const key_type& key)
+		{
+			return ft::make_pair<iterator, iterator>(lower_bound(key), upper_bound(key));
+		}
+
+		ft::pair<const_iterator, const_iterator>
+		equal_range(const key_type& key) const
+		{
+			return ft::make_pair<const_iterator, const_iterator>(lower_bound(key), upper_bound(key));
+		}
 	
 	protected:
 
@@ -614,67 +730,7 @@ class Rb_tree
 				x = y;
 			}
 		}
-		
-		void
-		M_removeBalanced(value_type val)
-		{
-			base_ptr x = M_searchNode(val);
-			if (!x)
-				return;
-			//if (val == S_value(S_maximum(M_root())))
-			if (val == S_value(M_rightmost()))
-				M_impl.M_header.M_right = x->M_parent;
-			//if (val == S_value(S_minimum(M_root())))
-			if (val == S_value(M_rightmost()))
-			{
-				if (x->M_right)
-				{
-					base_ptr tmp = x->M_right;
-					while (tmp->M_left)
-						tmp = tmp->M_left;
-					M_impl.M_header.M_left = tmp;
-				}
-				else
-					M_impl.M_header.M_left = x->M_parent;
-			}
-			M_impl.M_node_count--;
-			M_removeNode(x);
-		}
 
-		ft::pair<iterator, bool>
-		M_insertBalanced(value_type val)
-		{
-			node_ptr newNode;
-			newNode = M_insertNode(val);
-
-			if (!newNode)
-				return ft::make_pair<iterator, bool>(iterator(create_node(val)), false);
-			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
-				M_impl.M_header.M_right = newNode;
-			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
-				M_impl.M_header.M_left = newNode;
-
-			newNode = M_insertFixTree(newNode);
-			return ft::make_pair<iterator, bool>(iterator(newNode), true);
-		}
-
-		ft::pair<iterator, bool>
-		M_insertBalanced(iterator pos, value_type val)
-		{
-			node_ptr newNode;
-			newNode = M_insertNode(pos, val);
-
-			if (!newNode)
-				return ft::make_pair<iterator, bool>(iterator(create_node(val)), false);
-			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
-				M_impl.M_header.M_right = newNode;
-			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
-				M_impl.M_header.M_left = newNode;
-
-			newNode = M_insertFixTree(newNode);
-			return ft::make_pair<iterator, bool>(iterator(newNode), true);
-		}
-		
 		node_ptr
 		M_searchNode(key_type key)
 		{
@@ -691,6 +747,56 @@ class Rb_tree
 			return tmp;
 		}
 
+		ft::pair<iterator, bool>
+		M_insertBalanced(base_ptr root, value_type val)
+		{
+			node_ptr newNode;
+			newNode = M_insertNode(root, val);
+
+			if (!newNode)
+				return ft::make_pair<iterator, bool>(find(KeyOfValue()(val)), false);
+			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
+				M_impl.M_header.M_right = newNode;
+			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
+				M_impl.M_header.M_left = newNode;
+
+			newNode = M_insertFixTree(newNode);
+			return ft::make_pair<iterator, bool>(iterator(newNode), true);
+		}
+
+
+		//insert a newNode the closest to the iterator's one passed in parameter
+		// 1st case the iterator is the end one so we need to know if he is greater of the rightmost or not
+		//	-if its greater we need to insert balanced with rightmost as root
+		//	-else insert balanced with M_root() as root
+		// 2nd case 
+		iterator
+		M_insertBalanced(iterator pos, value_type val)
+		{
+
+			node_ptr newNode;
+			if (M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
+				&& M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(val)))
+			{
+				while (M_impl.M_key_compare(KeyOfValue()(val), KeyOfValue()(*pos)))
+					++pos;
+				node_ptr close = M_searchNode(KeyOfValue()(*pos));
+				newNode = M_insertNode(close, val);
+			}
+			else
+				newNode = M_insertNode(M_root(), val);
+
+			if (!newNode)
+				return iterator(find(KeyOfValue()(val)));
+			if (M_impl.M_key_compare(S_key(M_impl.M_header.M_right), KeyOfValue()(val)))
+				M_impl.M_header.M_right = newNode;
+			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
+				M_impl.M_header.M_left = newNode;
+
+			newNode = M_insertFixTree(newNode);
+			return iterator(newNode);
+		}
+		
 		void
 		M_leftRotate(base_ptr newNode)
 		{
@@ -787,9 +893,9 @@ class Rb_tree
 
 
 		node_ptr
-		M_insertNode(value_type val)
+		M_insertNode(base_ptr root, value_type val)
 		{
-			node_ptr tmp = static_cast<node_ptr>(M_root());
+			node_ptr tmp = static_cast<node_ptr>(root);
 			if (!tmp)
 			{
 				node_ptr New = static_cast<node_ptr>(create_node(val));
@@ -817,7 +923,7 @@ class Rb_tree
 						return New;
 					}
 				}
-				else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
+				if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
 				{
 					if (S_left(tmp))
 						tmp = S_left(tmp);
@@ -831,61 +937,34 @@ class Rb_tree
 						return New;
 					}
 				}
-				else if (KeyOfValue()(val) == S_key(tmp))
+				if (KeyOfValue()(val) == S_key(tmp))
 					break;
 			}
 			return NULL;
 		}
-
-		node_ptr
-		M_insertNode(iterator pos, value_type val)
+		
+		void
+		M_removeBalanced(value_type val)
 		{
-			node_ptr tmp = M_searchNode(pos->first);
-			if (!tmp)
+			base_ptr x = M_searchNode(KeyOfValue()(val));
+			if (!x)
+				return;
+			if (val == S_value(M_rightmost()))
+				M_impl.M_header.M_right = x->M_parent;
+			if (val == S_value(M_leftmost()))
 			{
-				node_ptr New = static_cast<node_ptr>(create_node(val));
-
-				New->init_node(black, static_cast<node_ptr>(&M_impl.M_header), NULL, NULL);
-				M_impl.M_header.M_parent = New;
-				M_impl.M_node_count++;
-				M_impl.M_header.M_right = New;
-				M_impl.M_header.M_left = New;
-				return New;
-			}
-			while (tmp)
-			{
-				if (M_impl.M_key_compare(S_key(tmp), KeyOfValue()(val)))
+				if (x->M_right)
 				{
-					if (S_right(tmp))
-						tmp = S_right(tmp);
-					else
-					{
-						node_ptr New = static_cast<node_ptr>(create_node(val));
-
-						New->init_node(red, tmp, NULL, NULL);
-						tmp->M_right = New;
-						M_impl.M_node_count++;
-						return New;
-					}
+					base_ptr tmp = x->M_right;
+					while (tmp->M_left)
+						tmp = tmp->M_left;
+					M_impl.M_header.M_left = tmp;
 				}
-				else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(tmp)))
-				{
-					if (S_left(tmp))
-						tmp = S_left(tmp);
-					else
-					{
-						node_ptr New = static_cast<node_ptr>(create_node(val));
-
-						New->init_node(red, tmp, NULL, NULL);
-						tmp->M_left = New;
-						M_impl.M_node_count++;
-						return New;
-					}
-				}
-				else if (KeyOfValue()(val) == S_key(tmp))
-					break;
+				else
+					M_impl.M_header.M_left = x->M_parent;
 			}
-			return NULL;
+			M_impl.M_node_count--;
+			M_removeNode(x);
 		}
 
 		void
@@ -1048,6 +1127,7 @@ class Rb_tree
 			return ret;
 		}
 
+
 	private:
 		int _level;
 
@@ -1137,6 +1217,16 @@ class Rb_tree
 			return *this;
 		}
 
+		size_type
+		removeBalanced(const key_type& key)
+		{
+			node_ptr search = searchNode(key);
+			if (!search)
+				return 0;
+			M_removeBalanced(search->M_value_field);
+			return 1;
+		}
+
 		void
 		removeBalanced(value_type val)
 		{
@@ -1154,13 +1244,13 @@ class Rb_tree
 		ft::pair<iterator, bool>
 		insertBalanced(value_type val)
 		{
-			return M_insertBalanced(val);
+			return M_insertBalanced(M_root(), val);
 		}
 
 		iterator
 		insertBalanced(iterator pos, value_type val)
 		{
-			return M_insertBalanced(pos, val).first;
+			return M_insertBalanced(pos, val);
 		}
 
 		//node_ptr
@@ -1241,33 +1331,70 @@ class Rb_tree
 			return M_get_node_allocator().max_size();
 		}
 
-		void
-		erase(iterator pos)
-		{
-			removeBalanced(*pos);
-		}
 
 		void
-		erase(const_iterator pos)
+		swap(Rb_tree& other)
 		{
-			removeBalanced(*pos);
-		}
+			if (M_root() == NULL)
+			{
+				if (other.M_root() != NULL)
+				{
+					M_root() = other.M_root();
+					M_leftmost() = other.M_leftmost();
+					M_rightmost() = other.M_rightmost();
+					M_root()->M_parent = M_end();
 
-		size_type
-		erase(const value_type& k)
-		{
-			removeBalanced(searchNode(k));
+					other.M_root() = NULL;
+					other.M_leftmost() = other.M_end();
+					other.M_rightmost() = other.M_end();
+				}
+			}
+			else if (other.M_root() == NULL)
+			{
+				other.M_root() = M_root();
+				other.M_leftmost() = M_leftmost();
+				other.M_rightmost() = M_rightmost();
+				other.M_root()->M_parent = other.M_end();
+
+				M_root() = NULL;
+				M_leftmost() = M_end();
+				M_rightmost() = M_end();
+
+			}
+			else
+			{
+				std::swap(M_root(), other.M_root());
+				std::swap(M_leftmost(), other.M_leftmost());
+				std::swap(M_rightmost(), other.M_rightmost());
+
+				M_root()->M_parent = M_end();
+				other.M_root()->M_parent = other.M_end();
+			}
+
+			std::swap(M_impl.M_node_count, other.M_impl.M_node_count);
+			std::swap(M_impl.M_key_compare, other.M_impl.M_key_compare);
+
 		}
 
 		iterator
-		find(const key_type key)
+		find(const key_type& key)
 		{
 			node_ptr tmp = M_searchNode(key);
 
 			if (!tmp)
-				throw std::out_of_range("out of range");
-
+				return end();
 			return iterator(tmp);
+		}
+
+		const_iterator
+		find(const key_type& key) const
+		{
+			node_ptr tmp = M_searchNode(key);
+
+			if (!tmp)
+				return end();
+
+			return const_iterator(tmp);
 		}
 
 	private:
@@ -1314,6 +1441,24 @@ class Rb_tree
 		}
 
 	public:
+
+		void
+		erase(iterator pos)
+		{
+			removeBalanced(KeyOfValue()(*pos));
+		}
+
+		void
+		erase(const_iterator pos)
+		{
+			removeBalanced(KeyOfValue()(*pos));
+		}
+
+		size_type
+		erase(const key_type& k)
+		{
+			return removeBalanced(k);
+		}
 		iterator
 		erase(const_iterator first, const_iterator last)
 		{

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/05 12:33:53 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/05 17:26:16 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/17 20:38:52 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,17 @@ namespace ft
 		template<typename U1, typename U2>
 		pair(const pair<U1, U2>& p)
 		: first(p.first), second(p.second) {}
+
+		pair&
+		operator=(pair assign)
+		{
+			if (&assign != this)
+			{
+				first = assign.first;
+				second = assign.second;
+			}
+			return *this;
+		}
 	};
 
 	template<class T1, class T2> 

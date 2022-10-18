@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/18 17:24:59 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 19:12:58 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,6 @@ namespace ft
 			return M_tree.end();
 		}
 
-
 		reverse_iterator
 		rbegin()
 		{
@@ -207,7 +206,6 @@ namespace ft
 		{
 			return M_tree.rend();
 		}
-
 
 		bool
 		empty() const
@@ -410,6 +408,13 @@ operator<=(const map<Key, T, Compare, Alloc>& x,
 	return !(y < x);
 }
 
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline void
+swap(map<Key, T, Compare, Alloc>& x,
+			map<Key, T, Compare, Alloc>& y)
+{
+	x.swap(y);
+}
 
 
 }

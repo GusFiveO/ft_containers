@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/18 17:25:15 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 19:31:57 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,65 +235,444 @@
 //	printSize(mp2);
 //	return (0);
 //}
-#include <list>
+//using namespace NAMESPACE;
+#include <map>
+#include <cstdio>
+#include <iomanip>
 
-#define T1 float
-#define T2 int
-typedef ft::pair<const T1, T2> T3;
+/*
+** This is a minimal set of ANSI/VT100 color codes
+*/
+# define _END			"\x1b[0m"
+# define _BOLD			"\x1b[1m"
+# define _UNDER			"\x1b[4m"
+# define _REV			"\x1b[7m"
 
-std::string
-printPair(NAMESPACE::map<T1, T2>::const_reverse_iterator it)
+/*
+** Colors
+*/
+# define _GREY			"\x1b[30m"
+# define _RED			"\x1b[31m"
+# define _GREEN			"\x1b[32m"
+# define _YELLOW		"\x1b[33m"
+# define _BLUE			"\x1b[34m"
+# define _PURPLE		"\x1b[35m"
+# define _CYAN			"\x1b[36m"
+# define _WHITE			"\x1b[37m"
+
+/*
+** Inverted, i.e. colored backgrounds
+*/
+# define _IGREY			"\x1b[40m"
+# define _IRED			"\x1b[41m"
+# define _IGREEN		"\x1b[42m"
+# define _IYELLOW		"\x1b[43m"
+# define _IBLUE			"\x1b[44m"
+# define _IPURPLE		"\x1b[45m"
+# define _ICYAN			"\x1b[46m"
+# define _IWHITE		"\x1b[47m"
+
+
+#ifndef STD
+# define NAMESPACE ft
+#else
+# define NAMESPACE std
+#endif
+
+
+template <class Key, class T>
+void	print(NAMESPACE::map<Key, T>& lst)
 {
-	std::cout << "first " << it->first << ", second " << it->second << std::endl;
-	return "false";
+	std::cout << "printing a map : \n";
+	for (typename NAMESPACE::map<Key, T>::iterator it = lst.begin(); it != lst.end(); it++)
+		std::cout << it->first << " => " << it->second << '\n';
 }
 
-void
-printSize(NAMESPACE::map<T1, T2>& Map)
+int main()
 {
-	std::cout << "size: " << Map.size() << std::endl;
+	std::cout << _WHITE << "# test_map" << _END << std::endl;
+	std::cout << _YELLOW <<  "/* ********************************************************************** */" << std::endl;
+	std::cout << "/*                          "<< _WHITE << "BASIC TESTS" << _YELLOW << "                                   */" << std::endl;
+	std::cout << "/* ********************************************************************** */" << _END << std::endl;
+	std::cout << std::endl;
+
+
+	NAMESPACE::map<std::string, int> mymap;
+	print(mymap);
+
+
+	std::cout << "mymap<" << _PURPLE << "std::string" << _END << ", " << _PURPLE << "int" << _END <<"> mymap;" << std::endl;
+
+	std::cout << std::endl;
+	std::cout << "mymap.max_size(): " << (mymap.max_size() > 10000) << std::endl;
+	print(mymap);
+	std::cout << std::endl;
+
+
+	print(mymap);
+	mymap.insert(ft::pair<std::string, int>("ft", 42));
+
+	print(mymap);
+	mymap.insert(ft::pair<std::string, int>("one", 1));
+
+
+	std::cout << _WHITE << "# testing upper/lower_bound" << _END << std::endl;
+	NAMESPACE::map<std::string, int>::iterator mit;
+	NAMESPACE::map<std::string, int>::iterator it;
+	print(mymap);
+	it = mymap.lower_bound("aaa");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.lower_bound(\"aaa\"): " << it->first << ":" << it->second << std::endl;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.lower_bound("one");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.lower_bound(\"one\"): " << it->first << ":" << it->second << std::endl;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.lower_bound("oae");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.lower_bound(\"oae\"): " << it->first << ":" << it->second << std::endl;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.lower_bound("ft");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.lower_bound(\"ft\"): " << it->first << ":" << it->second << std::endl;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.lower_bound("zzz");
+	print(mymap);
+	
+	if (it == mymap.end())
+		std::cout << std::setw(40) << "mymap.lower_bound(\"zzz\"): mymap.end()" << std::endl;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.upper_bound("aaa");
+	
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.upper_bound(\"aaa\"): " << it->first << ":" << it->second << std::endl;;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.upper_bound("oae");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.upper_bound(\"oae\"): " << it->first << ":" << it->second << std::endl;;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.upper_bound("one");
+	
+	if (it == mymap.end())
+		std::cout << std::setw(40) << "mymap.upper_bound(\"one\"): mymap.end()" << std::endl;
+	print(mymap);
+	std::cout << std::endl;
+	it = mymap.upper_bound("ft");
+	print(mymap);
+	std::cout << std::setw(40) << "mymap.upper_bound(\"ft\"): " << it->first << ":" << it->second << std::endl;;
+	std::cout << std::endl;
+	print(mymap);
+	it = mymap.upper_bound("zzz");
+	
+	if (it == mymap.end())
+		std::cout << std::setw(40) << "mymap.upper_bound(\"zzz\"): mymap.end()" << std::endl;
+	print(mymap);
+	std::cout << std::endl;
+
+	print(mymap);
+	mymap.erase("undefined");
+	print(mymap);
+	mymap.erase("ft");
+	print(mymap);
+	std::cout << _WHITE << "# double clear" << _END << std::endl;
+	mymap.clear();
+	print(mymap);
+	mymap.clear();
+	print(mymap);
+	mymap["lol"];
+	print(mymap);
+	mymap.insert(ft::pair<std::string, int>("xD", 123));
+	print(mymap);
+	mymap.insert(mymap.end(), ft::pair<std::string, int>("uch", 442));
+	print(mymap);
+	mymap.insert(mymap.begin(), ft::pair<std::string, int>("uch", 22));
+	print(mymap);
+	mymap.insert(mymap.end(), ft::pair<std::string, int>("uch", 23));
+	print(mymap);
+	mymap.insert(ft::pair<std::string, int>("uch", 23));
+	print(mymap);
+	mymap["lol"] = 8;
+
+
+	print(mymap);
+	NAMESPACE::map<std::string, int> map2;
+
+	print(mymap);
+	print(map2);
+	std::cout << "mymap<" << _PURPLE << "std::string" << _END << ", " << _PURPLE << "int" << _END <<"> mymap2;" << std::endl;
+	print(mymap);
+	std::cout << "empty line\n";
+	print(map2);
+	std::cout << "empty line2\n";
+
+	swap(mymap, map2);
+	std::cout << "empty line3\n";
+	print(mymap);
+	std::cout << "empty line4\n";
+	print(map2);
+	std::cout << "empty line5\n";
+
+	mymap = map2;
+	print(mymap);
+	print(map2);
+
+	std::cout << std::setw(40) << "map == map2: " << (mymap == map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+
+	mymap.clear();
+	print(mymap);
+	print(map2);
+
+	mymap["satan"] = 666;
+	print(mymap);
+	print(map2);
+	std::cout << std::setw(40) << "mymap == map2: " << (mymap == map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+	std::cout << std::setw(40) << "mymap <= map2: " << (mymap <= map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+	std::cout << std::setw(40) << "mymap >= map2: " << (mymap >= map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+	std::cout << std::setw(40) << "mymap > map2: " << (mymap > map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+	std::cout << std::setw(40) << "mymap < map2: " << (mymap > map2) << std::endl;
+	print(mymap);
+	print(map2);
+	std::cout << std::endl;
+
+	return 0;
 }
 
-int		main(void)
-{
-	std::list<T3> lst;
-	unsigned int lst_size = 5;
-	for (unsigned int i = 0; i < lst_size; ++i)
-		lst.push_back(T3(2.5 - i, (i + 1) * 7));
+//#include <map>
+//
+//#ifndef STD
+//# define NAMESPACE ft
+//#else
+//# define NAMESPACE std
+//#endif
+//
+//
+//template <class Key, class T>
+//void	print(NAMESPACE::map<Key, T>& lst)
+//{
+//	for (typename NAMESPACE::map<Key, T>::iterator it = lst.begin(); it != lst.end(); it++)
+//		std::cout << it->first << " => " << it->second << '\n';
+//}
+//
+//int main ()
+//{
+//  NAMESPACE::map<char,int> mymap;
+//  char c;
+//
+//  mymap ['a']=101;
+//  std::cout << "assigned 'a'\n";
+//  mymap ['c']=202;
+//  std::cout << "assiged 'c'\n";
+//  mymap ['f']=303;
+//  std::cout << "assigned 'f'\n";
+//
+//	std::cout << "end of assignations\n";
+//  for (c='a'; c<'h'; c++)
+//  {
+//    std::cout << c;
+//    if (mymap.count(c)>0)
+//      std::cout << " is an element of mymap.\n";
+//    else 
+//      std::cout << " is not an element of mymap.\n";
+//  }
+//
+//  return 0;
+//}
 
-	NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
-	NAMESPACE::map<T1, T2>::reverse_iterator it(mp.rbegin());
-	NAMESPACE::map<T1, T2>::const_reverse_iterator ite(mp.rbegin());
-	printSize(mp);
+//template <class Key, class T>
+//void	print(NAMESPACE::map<Key, T>& lst)
+//{
+//	for (typename NAMESPACE::map<Key, T>::iterator it = lst.begin(); it != lst.end(); it++)
+//		std::cout << it->first << " => " << it->second << '\n';
+//}
+//
+//int main ()
+//{
+//  NAMESPACE::map<char,int> foo,bar;
+//
+//  foo['x']=100;
+//  foo['y']=200;
+//
+//  bar['a']=11;
+//  bar['b']=22;
+//  bar['c']=33;
+//
+//
+//  NAMESPACE::map<char, int>::const_iterator tmp = foo.begin(); //tmp iterates through foo
+//  NAMESPACE::map<char, int>::const_iterator tmp2 = bar.begin(); //tmp2 iterates through bar
+//
+//
+//  NAMESPACE::swap(bar, foo); //tmp iterates through bar
+//				//tmp2 iterates through foo
+//
+//  NAMESPACE::map<char, int>	other;
+//
+//  other['1'] = 73;
+//  other['2'] = 173;
+//  other['3'] = 763;
+//  other['4'] = 73854;
+//  other['5'] = 74683;
+//  other['6'] = 753;
+//
+//  NAMESPACE::map<char, int>::const_iterator tmp3 = other.begin(); // tmp3 iterates through other
+//
+//  std::cout << "foo contains:\n";
+//  for (NAMESPACE::map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+//   std:: cout << it->first << " => " << it->second << '\n';
+//
+//  std::cout << "bar contains:\n";
+//  for (NAMESPACE::map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+//    std::cout << it->first << " => " << it->second << '\n';
+//
+//	while(tmp != bar.end())
+//	{
+//		std::cout << tmp->first << " => " << tmp->second << '\n';
+//		tmp++;
+//	}
+//	tmp--;
+//
+//	while(tmp2 != foo.end())
+//	{
+//		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+//		tmp2++;
+//	}
+//	tmp2--;
+//
+//	swap(other, foo); //tmp2 iterates through other
+//					//tmp3 iterates throught foo
+//	print(other);
+//	print(foo);
+//	print(bar);
+//	while(tmp != bar.begin())
+//	{
+//		std::cout << tmp->first << " => " << tmp->second << '\n';
+//		tmp--;
+//	}
+//	std::cout << tmp->first << " => " << tmp->second << '\n';
+//
+//	while(tmp2 != other.begin())
+//	{
+//		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+//		tmp2--;
+//	}
+//	std::cout << tmp2->first << " => " << tmp2->second << '\n';
+//
+//	while(tmp3 != foo.end())
+//	{
+//		std::cout << tmp3->first << " => " << tmp3->second << '\n';
+//		tmp3++;
+//	}
+//	tmp3--;
+//
+//	swap(bar, foo);
+//	swap(foo, bar);
+//	swap(bar, foo); //tmp3 iterates through bar
+//				//tmp iterates through foo
+//
+//	print(other);
+//	print(foo);
+//	print(bar);
+//
+//	while(tmp != foo.end())
+//	{
+//		std::cout << tmp->first << " => " << tmp->second << '\n';
+//		tmp++;
+//	}
+//
+//	while(tmp2 != other.end())
+//	{
+//		std::cout << tmp2->first << " => " << tmp2->second << '\n';
+//		tmp2++;
+//	}
+//
+//	while(tmp3 != bar.begin())
+//	{
+//		std::cout << tmp3->first << " => " << tmp3->second << '\n';
+//		tmp3--;
+//	}
+//	std::cout << tmp3->first << " => " << tmp3->second << '\n';
+//}
 
-	printPair(++ite);
-	printPair(ite++);
-	printPair(ite++);
-	printPair(++ite);
-
-	it->second.m();
-	ite->second.m();
-
-	printPair(++it);
-	printPair(it++);
-	printPair(it++);
-	printPair(++it);
-
-	printPair(--ite);
-	printPair(ite--);
-	printPair(--ite);
-	printPair(ite--);
-
-	(*it).second.m();
-	(*ite).second.m();
-
-	printPair(--it);
-	printPair(it--);
-	printPair(it--);
-	printPair(--it);
-
-	return (0);
-}
+//#include <list>
+//
+//#define T1 float
+//#define T2 int
+//typedef ft::pair<const T1, T2> T3;
+//
+//std::string
+//printPair(NAMESPACE::map<T1, T2>::const_reverse_iterator it)
+//{
+//	std::cout << "first " << it->first << ", second " << it->second << std::endl;
+//	return "false";
+//}
+//
+//void
+//printSize(NAMESPACE::map<T1, T2>& Map)
+//{
+//	std::cout << "size: " << Map.size() << std::endl;
+//}
+//
+//int		main(void)
+//{
+//	std::list<T3> lst;
+//	unsigned int lst_size = 5;
+//	for (unsigned int i = 0; i < lst_size; ++i)
+//		lst.push_back(T3(2.5 - i, (i + 1) * 7));
+//
+//	NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end());
+//	NAMESPACE::map<T1, T2>::reverse_iterator it(mp.rbegin());
+//	NAMESPACE::map<T1, T2>::const_reverse_iterator ite(mp.rbegin());
+//	printSize(mp);
+//
+//	printPair(++ite);
+//	printPair(ite++);
+//	printPair(ite++);
+//	printPair(++ite);
+//
+//	it->second.m();
+//	ite->second.m();
+//
+//	printPair(++it);
+//	printPair(it++);
+//	printPair(it++);
+//	printPair(++it);
+//
+//	printPair(--ite);
+//	printPair(ite--);
+//	printPair(--ite);
+//	printPair(ite--);
+//
+//	(*it).second.m();
+//	(*ite).second.m();
+//
+//	printPair(--it);
+//	printPair(it--);
+//	printPair(it--);
+//	printPair(--it);
+//
+//	return (0);
+//}
 
 //#define T1 int
 //#define T2 int

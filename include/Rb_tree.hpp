@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/18 17:17:13 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 19:40:41 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -782,7 +782,7 @@ class Rb_tree
 		M_insertBalanced(iterator pos, const value_type& val)
 		{
 			node_ptr newNode;
-			if (begin() != end() && M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
+			if (pos != end() && begin() != end() && M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
 				&& M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(val)))
 			{
 				while (M_impl.M_key_compare(KeyOfValue()(val), KeyOfValue()(*pos)))
@@ -1278,25 +1278,25 @@ class Rb_tree
 		iterator
 		begin()
 		{
-			return iterator(M_impl.M_header.M_left);
+			return iterator(static_cast<node_ptr>(M_impl.M_header.M_left));
 		}
 
 		iterator
 		end()
 		{
-			return iterator(&M_impl.M_header);
+			return iterator(static_cast<node_ptr>(&M_impl.M_header));
 		}
 
 		const_iterator
 		begin() const
 		{
-			return const_iterator(M_impl.M_header.M_left);
+			return const_iterator(static_cast<const_node_ptr>(M_impl.M_header.M_left));
 		}
 
 		const_iterator
 		end() const
 		{
-			return const_iterator(&M_impl.M_header);
+			return const_iterator(static_cast<const_node_ptr>(&M_impl.M_header));
 		}
 
 		reverse_iterator
@@ -1536,6 +1536,15 @@ operator>=(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
 			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
 {
 	return !(x < y);
+}
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline void
+swap(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	x.swap(y);
 }
 
 }

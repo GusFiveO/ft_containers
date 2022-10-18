@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/17 20:56:43 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 17:24:59 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "Rb_tree.hpp"
 # include "pair.hpp"
 # include "Iterator.hpp"
+# include "iterator_traits.hpp"
 
 namespace ft
 {
@@ -23,6 +24,7 @@ namespace ft
 		typename Compare = std::less<Key>, typename Alloc = std::allocator<ft::pair<const Key, Val> > >
 	class map 
 	{
+		public:
 			typedef Key 						key_type;
 			typedef Val							mapped_type;
 			typedef ft::pair<const Key, Val>	value_type;
@@ -37,6 +39,26 @@ namespace ft
 			tree_type	M_tree;
 
 		public:
+			
+			class value_compare : public std::binary_function<value_type, value_type, bool>
+			{
+				friend class map<Key, Val, Compare, Alloc>;
+				protected:
+				Compare comp;
+
+				value_compare(Compare c)
+				: comp(c) {}
+
+				public:
+
+				bool
+				operator()(const value_type& x, const value_type& y) const
+				{
+					return comp(x.first, y.first);
+				}
+
+			};
+
 			typedef typename pair_alloc_type::reference			reference;
 			typedef typename pair_alloc_type::const_reference	const_reference;
 			typedef typename pair_alloc_type::pointer			pointer;
@@ -45,6 +67,8 @@ namespace ft
 			typedef typename tree_type::difference_type			difference_type;
 			typedef typename tree_type::iterator				iterator;
 			typedef typename tree_type::const_iterator			const_iterator;
+			typedef typename tree_type::reverse_iterator		reverse_iterator;
+			typedef typename tree_type::const_reverse_iterator	const_reverse_iterator;
 
 		map()
 		: M_tree() {}
@@ -73,6 +97,7 @@ namespace ft
 		operator=(const map& other)
 		{
 			M_tree = other.M_tree;
+			return *this;
 		}
 
 		allocator_type
@@ -99,8 +124,8 @@ namespace ft
 		operator[](const key_type& key)
 		{
 			typename tree_type::node_ptr tmp = M_tree.searchNode(key);
-			if (!tmp)
-				M_tree.insertBalanced(ft::make_pair<const key_type, mapped_type>(key, mapped_type()));
+			if (tmp == NULL)
+				return insert(ft::make_pair<const key_type, mapped_type>(key, mapped_type())).first->second;
 			return tmp->M_value_field.second;
 		}
 
@@ -145,6 +170,44 @@ namespace ft
 		{
 			return M_tree.end();
 		}
+
+
+		reverse_iterator
+		rbegin()
+		{
+			return M_tree.rbegin();
+		}
+
+		const_reverse_iterator
+		rbegin() const
+		{
+			return M_tree.rbegin();
+		}
+
+		reverse_iterator
+		rend()
+		{
+			return M_tree.rend();
+		}
+
+		const_reverse_iterator
+		rend() const
+		{
+			return M_tree.rend();
+		}
+
+		const_reverse_iterator
+		crbegin() const
+		{
+			return M_tree.rbegin();
+		}
+
+		const_reverse_iterator
+		crend() const
+		{
+			return M_tree.rend();
+		}
+
 
 		bool
 		empty() const
@@ -216,11 +279,9 @@ namespace ft
 		}
 
 		size_type
-		count(const key_type& key)
+		count(const key_type& key) const
 		{
-			if (!M_tree.searchNode(key))
-				return 0;
-			return 1;
+			return M_tree.find(key) == M_tree.end() ? 0 : 1;
 		}
 
 		iterator
@@ -271,13 +332,86 @@ namespace ft
 			return M_tree.equal_range(key);
 		}
 
+		key_compare
+		key_comp() const
+		{
+			return M_tree.key_comp();
+		}
+
+		value_compare
+		value_comp() const
+		{
+			return value_compare(M_tree.key_comp());
+		}
+
 		void
 		clear()
 		{
 			M_tree.clear();
 		}
 
+	template<typename K1, typename T1, typename C1, typename A1>
+	friend bool
+	operator==(const map<K1, T1, C1, A1>& x,
+				const map<K1, T1, C1, A1>& y);
+
+	template<typename K1, typename T1, typename C1, typename A1>
+	friend bool
+	operator>(const map<K1, T1, C1, A1>& x,
+				const map<K1, T1, C1, A1>& y);
+
 	};
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator==(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return x.M_tree == y.M_tree;
+}
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator>(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return x.M_tree > y.M_tree;
+}
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator!=(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return !(x == y);
+}
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator<(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return y > x;
+}
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator>=(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return !(x < y);
+}
+
+template<typename Key, typename T, typename Compare, typename Alloc>
+inline bool
+operator<=(const map<Key, T, Compare, Alloc>& x,
+			const map<Key, T, Compare, Alloc>& y)
+{
+	return !(y < x);
+}
+
+
+
 }
 
 

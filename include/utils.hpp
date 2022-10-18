@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/15 18:05:41 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/14 12:24:33 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 12:15:02 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define UTILS_HPP
 
 # include "Iterator.hpp"
+# include "iterator_traits.hpp"
 
 namespace ft
 {

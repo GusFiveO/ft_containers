@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 19:07:25 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 12:16:30 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <memory>
 
 # include "Iterator.hpp"
+# include "iterator_traits.hpp"
 # include "utils.hpp"
 # include "enable_if.hpp"
 # include "is_integral.hpp"

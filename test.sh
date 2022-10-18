@@ -14,15 +14,17 @@ echo "done, launching containers..."
 
 echo "Compiling..."
 make real >/dev/null 2>realVector.error
-echo "done, launching containers..."
-./containers > realVector.output
 
 if [[ $? -ne 0 ]]
 then
 	echo "real vector compilation failed check realVector.error"
-	make fclean
+	make clean
 	exit 1
 fi
+
+echo "done, launching containers..."
+./containers > realVector.output
+
 
 echo -e "\n\t\tMY VECTOR\t\t\t\t\t\t\tREAL VECTOR\n"
 diff -y -s myVector.output realVector.output

@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/17 20:56:00 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/18 17:17:13 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "pair.hpp"
 # include "Iterator.hpp"
+# include "iterator_traits.hpp"
+# include "algorithm.hpp"
 
 namespace ft
 {
@@ -410,6 +412,12 @@ class Rb_tree
 			return static_cast<node_allocator>(M_impl);
 		}
 
+		Compare
+		key_comp() const
+		{
+			return M_impl.M_key_compare;
+		}
+
 	protected:
 		
 		node_ptr
@@ -482,7 +490,7 @@ class Rb_tree
 	public:
 
 		iterator
-		M_lower_bound(node_ptr first, node_ptr last, const key_type& key)
+		M_lower_bound(base_ptr first, base_ptr last, const key_type& key)
 		{
 			while (first != NULL)
 			{
@@ -506,7 +514,7 @@ class Rb_tree
 		}
 
 		const_iterator
-		M_lower_bound(const_node_ptr first, const_node_ptr last, const key_type& key) const
+		M_lower_bound(const_base_ptr first, const_base_ptr last, const key_type& key) const
 		{
 			while (first != NULL)
 			{
@@ -520,7 +528,7 @@ class Rb_tree
 					first = S_right(first);
 				}
 			}
-			return iterator(last);
+			return const_iterator(last);
 		}
 
 		const_iterator
@@ -530,7 +538,7 @@ class Rb_tree
 		}
 
 		iterator
-		M_upper_bound(node_ptr first, node_ptr last, const key_type& key)
+		M_upper_bound(base_ptr first, base_ptr last, const key_type& key)
 		{
 			while (first != NULL)
 			{
@@ -554,7 +562,7 @@ class Rb_tree
 		}
 
 		const_iterator
-		M_upper_bound(const_node_ptr first, const_node_ptr last, const key_type& key) const
+		M_upper_bound(const_base_ptr first, const_base_ptr last, const key_type& key) const
 		{
 			while (first != NULL)
 			{
@@ -568,7 +576,7 @@ class Rb_tree
 					first = S_right(first);
 				}
 			}
-			return iterator(last);
+			return const_iterator(last);
 		}
 
 		const_iterator
@@ -748,7 +756,7 @@ class Rb_tree
 		}
 
 		ft::pair<iterator, bool>
-		M_insertBalanced(base_ptr root, value_type val)
+		M_insertBalanced(base_ptr root, const value_type& val)
 		{
 			node_ptr newNode;
 			newNode = M_insertNode(root, val);
@@ -771,11 +779,10 @@ class Rb_tree
 		//	-else insert balanced with M_root() as root
 		// 2nd case 
 		iterator
-		M_insertBalanced(iterator pos, value_type val)
+		M_insertBalanced(iterator pos, const value_type& val)
 		{
-
 			node_ptr newNode;
-			if (M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
+			if (begin() != end() && M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
 				&& M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(val)))
 			{
 				while (M_impl.M_key_compare(KeyOfValue()(val), KeyOfValue()(*pos)))
@@ -793,7 +800,7 @@ class Rb_tree
 			else if (M_impl.M_key_compare(KeyOfValue()(val), S_key(M_impl.M_header.M_left)))
 				M_impl.M_header.M_left = newNode;
 
-			newNode = M_insertFixTree(newNode);
+			M_insertFixTree(newNode);
 			return iterator(newNode);
 		}
 		
@@ -838,6 +845,7 @@ class Rb_tree
 		node_ptr
 		M_insertFixTree(node_ptr newNode)
 		{
+			node_ptr ret = newNode;
 			while (newNode != M_root() && newNode->M_parent->M_color == red)
 			{
 				if (newNode->M_parent == newNode->M_parent->M_parent->M_left)
@@ -888,12 +896,12 @@ class Rb_tree
 				}
 			}
 			static_cast<node_ptr>(M_root())->M_color = black;
-			return newNode;
+			return ret;
 		}
 
 
 		node_ptr
-		M_insertNode(base_ptr root, value_type val)
+		M_insertNode(base_ptr root, const value_type &val)
 		{
 			node_ptr tmp = static_cast<node_ptr>(root);
 			if (!tmp)
@@ -1150,7 +1158,8 @@ class Rb_tree
 				std::cout << "└";
 			if (root->M_color == red)
 				std::cout << "\033[31m";
-			std::cout << S_key(root) << std::endl;
+			std::cout << S_key(root) << ", ";
+			std::cout << S_value(root).second << std::endl;
 			if (root->M_color == red)
 				std::cout << "\033[0m";
 			++_level;
@@ -1164,6 +1173,7 @@ class Rb_tree
 				_display(S_left(root));
 				--_level;
 			}
+			std::cout << std::endl;
 		}
 
 	public:
@@ -1242,13 +1252,13 @@ class Rb_tree
 		}
 
 		ft::pair<iterator, bool>
-		insertBalanced(value_type val)
+		insertBalanced(const value_type &val)
 		{
 			return M_insertBalanced(M_root(), val);
 		}
 
 		iterator
-		insertBalanced(iterator pos, value_type val)
+		insertBalanced(iterator pos, const value_type& val)
 		{
 			return M_insertBalanced(pos, val);
 		}
@@ -1314,7 +1324,7 @@ class Rb_tree
 		}
 
 		bool
-		empty()
+		empty() const 
 		{
 			return M_impl.M_node_count == 0;
 		}
@@ -1379,22 +1389,17 @@ class Rb_tree
 		iterator
 		find(const key_type& key)
 		{
-			node_ptr tmp = M_searchNode(key);
+			iterator j = M_lower_bound(M_begin(), M_end(), key);
 
-			if (!tmp)
-				return end();
-			return iterator(tmp);
+			return (j == end() || M_impl.M_key_compare(key, S_key(j.M_node))) ? end() : j;
 		}
 
 		const_iterator
 		find(const key_type& key) const
 		{
-			node_ptr tmp = M_searchNode(key);
+			const_iterator j = M_lower_bound(M_begin(), M_end(), key);
 
-			if (!tmp)
-				return end();
-
-			return const_iterator(tmp);
+			return (j == end() || M_impl.M_key_compare(key, S_key(j.M_node))) ? end() : j;
 		}
 
 	private:
@@ -1475,11 +1480,63 @@ class Rb_tree
 			M_rightmost() = M_end();
 			M_impl.M_node_count = 0;
 		}
-		
-
 };
 
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator==(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return x.size() == y.size()
+			&& std::equal(x.begin(), x.end(), y.begin());
+}
 
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator<(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+}
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator!=(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return !(x == y);
+}
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator>(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return y < x;
+}
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator<=(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return !(x > y);
+}
+
+template<typename Key, typename Val, typename KeyOfValue,
+					typename Compare, typename Alloc>
+inline bool
+operator>=(const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& x,
+			const Rb_tree<Key, Val, KeyOfValue, Compare, Alloc>& y)
+{
+	return !(x < y);
+}
 
 }
 

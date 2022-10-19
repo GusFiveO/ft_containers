@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/18 12:16:30 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 15:56:04 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include "enable_if.hpp"
 # include "is_integral.hpp"
 # include "algorithm.hpp"
+# include <stdexcept>
 
 namespace ft
 {
@@ -249,7 +250,7 @@ class vector
 				return this->_finish - this->_start;
 			}
 
-			difference_type max_size(void) const
+			size_type max_size(void) const
 			{
 				return this->_alloc.max_size();
 			}
@@ -261,29 +262,16 @@ class vector
 
 			void resize(size_type n, value_type val = value_type())
 			{
-				if (n == 0)
-					return this->clear();
-				pointer tmpNewStart;
-				if (n < this->capacity())
+				if (size() > n)
 				{
-					tmpNewStart	= this->_alloc.allocate(this->capacity());
-					this->_endOfStorage = tmpNewStart + this->capacity();
+					for (pointer ptr = this->_start + n; ptr != this->_finish; ptr++)
+						this->_alloc.destroy(ptr);
 				}
 				else
 				{
-					tmpNewStart	= this->_alloc.allocate(std::max(n, this->size() * 2));
-					this->_endOfStorage = tmpNewStart + std::max(n, this->size() * 2);
+					reserve(n);
+					std::uninitialized_fill(this->_finish, this->_start + n, val);
 				}
-				if (n < this->size())
-					std::uninitialized_copy(this->_start, this->_start + n, tmpNewStart);
-				else
-				{
-					std::uninitialized_copy(this->_start, this->_finish, tmpNewStart);
-					std::uninitialized_fill(tmpNewStart + this->size(), tmpNewStart + n, val);
-				}
-				this->clear();
-				this->_alloc.deallocate(this->_start, this->_endOfStorage - this->_start);
-				this->_start = tmpNewStart;
 				this->_finish = this->_start + n;
 			}
 
@@ -294,6 +282,8 @@ class vector
 
 			void reserve(size_type n)
 			{
+				if (n > max_size())
+					throw (std::length_error("vector::reserve"));
 				if (n > this->capacity())
 				{
 					difference_type size = this->size();
@@ -396,12 +386,14 @@ class vector
 					else
 						this->reserve(1);
 				}
-				this->_alloc.construct(this->_finish++, value);
+				this->_alloc.construct(this->_finish, value);
+				_finish++;
 			}
 
 			void pop_back(void)
 			{
-				this->_alloc.destroy(this->_finish--);
+				--this->_finish;
+				this->_alloc.destroy(this->_finish);
 			}
 
 			iterator insert(iterator pos, const value_type& value)
@@ -425,20 +417,35 @@ class vector
 
 			void insert(iterator pos, size_type n, const value_type& val)
 			{
-				size_type idx = pos - this->begin();
-				size_type prevSize = this->size();
+					size_type	idx;
+					size_type	prevSize = size();
 
-				if (this->capacity() < this->size() + n)
-				{
-					//if (this->capacity() + (n * 2) > this->size() + n)
-					//	this->reserve(this->capacity() + n * 2);
-					//else
-						this->reserve(this->size() + n);
-				}
+					idx = std::distance(this->_start, pos.base());
+					if (size() + n > capacity())
+					{
+						vector	tmp;
 
-				std::copy_backward(this->_start + idx, this->_finish, this->_finish + n);
-				std::uninitialized_fill(this->_start + idx, this->_start + idx + n, val);
-				this->_finish = this->_start + prevSize + n; 
+						//std::cout << "size: " << size() << std::endl;
+						if (n < size())
+							tmp.reserve(size() * 2);
+						else
+							tmp.reserve(size() + n);
+						tmp._finish = std::uninitialized_copy(this->_start, pos.base(), tmp._start);
+						tmp._finish = std::uninitialized_fill_n(tmp._finish, n, val);
+						tmp._finish = std::uninitialized_copy(pos.base(), this->_finish, tmp._finish);
+						swap(tmp);
+					}
+					else
+					{
+						pointer p = this->_finish;
+
+						resize(size() + n);
+						std::copy_backward(pos.base(), p, this->_finish);
+						std::fill_n(pos.base(), n, val);
+						(void)prevSize;
+						//this->_finish = this->_start + prevSize + n; 
+
+					}
 			}
 
 			template <typename InputIt>
@@ -452,26 +459,33 @@ class vector
 			template<typename ForwardIt>
 			void _insert_range(iterator pos, ForwardIt first, ForwardIt last, std::forward_iterator_tag)
 			{
-				size_type idx = pos - this->begin();
-				size_type prevSize = this->size();
-				size_type rangeLen = std::distance(first, last);
+					size_type	idx;
+					size_type	n = std::distance(first, last);
+					size_type	prevSize = size();
 
-				if (this->capacity() < this->size() + rangeLen)
-				{
-					if (this->size() * 2  > this->size() + rangeLen)
-						this->reserve(this->size() * 2);
+					idx = std::distance(this->_start, pos.base());
+					if (size() + n > capacity())
+					{
+						vector	tmp;
+
+						tmp.reserve(size() + n);
+						tmp._finish = std::uninitialized_copy(this->_start, pos.base(), tmp._start);
+						tmp._finish = std::uninitialized_copy(first, last, tmp._finish);
+						tmp._finish = std::uninitialized_copy(pos.base(), this->_finish, tmp._finish);
+						swap(tmp);
+					}
 					else
-						this->reserve(this->size() + rangeLen);
-					//this->reserve(std::max(this->capacity() * 2, this->size() + rangeLen));
-				}
-				if (this->size())
-				{
-					std::copy_backward(this->_start + idx, this->_finish, this->_finish + rangeLen);
-					for (size_type i = idx; i < rangeLen; i++)
-						this->_alloc.destroy(this->_start + i);
-				}
-				std::uninitialized_copy(first, last, &this->_start[idx]);
-				this->_finish = this->_start + prevSize + rangeLen;
+					{
+						pointer p = this->_finish;
+
+						resize(size() + n);
+						std::copy_backward(pos.base(), p, this->_finish);
+						//std::uninitialized_fill(pos.base(), this->_start + idx + n, val);
+						std::copy(first, last, pos.base());
+						(void)prevSize;
+					//	this->_finish = this->_start + prevSize + n; 
+
+					}
 			}
 
 			template<typename InputIt>
@@ -495,10 +509,7 @@ class vector
 
 			iterator erase(iterator pos)
 			{
-				if (pos + 1 != this->end())
-					std::copy(pos + 1, this->end(), pos);
-				this->_finish--;
-				return pos;
+				return erase(pos, pos + 1);
 			}
 
 			iterator erase(iterator first, iterator last)
@@ -539,7 +550,7 @@ template<typename T, typename Allocator>
 inline bool
 operator==(const vector<T, Allocator>& lhs, const vector<T, Allocator>& rhs)
 {
-	return (lhs.size() == rhs.size() && equal(lhs.begin(), lhs.end(), rhs.begin()));
+	return (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 }
 
 template<typename T, typename Allocator>

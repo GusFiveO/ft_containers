@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/03 17:17:36 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/03 18:49:11 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 15:51:48 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ class stack
 		explicit stack(const Container& c = Container())
 		: _c(c) {};
 
-		//stack(const stack& other)
-		//: _c(other._c) {}
+		stack(const stack& other)
+		: _c(other._c) {}
 
 		~stack(void) {}
 

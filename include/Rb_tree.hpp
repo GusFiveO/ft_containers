@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/18 19:40:41 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 16:18:36 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -1235,12 +1235,6 @@ class Rb_tree
 				return 0;
 			M_removeBalanced(search->M_value_field);
 			return 1;
-		}
-
-		void
-		removeBalanced(value_type val)
-		{
-			M_removeBalanced(val);
 		}
 
 		template<typename InputIt>

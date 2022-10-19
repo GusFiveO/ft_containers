@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 19:02:28 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/30 11:29:34 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 15:43:31 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 #include "tests.hpp"
 
-template<typename T, typename Allocator>
-void printContent(ft::vector<T, Allocator>& vect)
+template<typename T>
+void printContent(ft::vector<T>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
@@ -29,8 +29,8 @@ void printContent(ft::vector<T, Allocator>& vect)
 	std::cout << "}" << std::endl; 
 }
 
-template<typename T, typename Allocator>
-void printContent(const ft::vector<T, Allocator>& vect)
+template<typename T>
+void printContent(const ft::vector<T>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
@@ -43,8 +43,8 @@ void printContent(const ft::vector<T, Allocator>& vect)
 	std::cout << "}" << std::endl; 
 }
 
-template<typename T, typename Allocator>
-void printContent(std::vector<T, Allocator>& vect)
+template<typename T>
+void printContent(std::vector<T>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
@@ -57,8 +57,8 @@ void printContent(std::vector<T, Allocator>& vect)
 	std::cout << "}" << std::endl; 
 }
 
-template<typename T, typename Allocator>
-void printContent(const std::vector<T, Allocator>& vect)
+template<typename T>
+void printContent(const std::vector<T>& vect)
 {
 	std::cout << "CONTENT: ";
 	std::cout << "{";
@@ -71,32 +71,32 @@ void printContent(const std::vector<T, Allocator>& vect)
 	std::cout << "}" << std::endl; 
 }
 
-template<typename T, typename Allocator>
-void printInfo(ft::vector<T, Allocator>& vect)
+template<typename T>
+void printInfo(ft::vector<T>& vect)
 {
 	std::cout << "CAPACITY: " << vect.capacity() << std::endl;
 	std::cout << "SIZE: " << vect.size() << std::endl;
 	std::cout << "MAX_SIZE: " << vect.max_size() << std::endl;
 }
 
-template<typename T, typename Allocator>
-void printInfo(const ft::vector<T, Allocator>& vect)
+template<typename T>
+void printInfo(const ft::vector<T>& vect)
 {
 	std::cout << "CAPACITY: " << vect.capacity() << std::endl;
 	std::cout << "SIZE: " << vect.size() << std::endl;
 	std::cout << "MAX_SIZE: " << vect.max_size() << std::endl;
 }
 
-template<typename T, typename Allocator>
-void printInfo(std::vector<T, Allocator>& vect)
+template<typename T>
+void printInfo(std::vector<T>& vect)
 {
 	std::cout << "CAPACITY: " << vect.capacity() << std::endl;
 	std::cout << "SIZE: " << vect.size() << std::endl;
 	std::cout << "MAX_SIZE: " << vect.max_size() << std::endl;
 }
 
-template<typename T, typename Allocator>
-void printInfo(const std::vector<T, Allocator>& vect)
+template<typename T>
+void printInfo(const std::vector<T>& vect)
 {
 	std::cout << "CAPACITY: " << vect.capacity() << std::endl;
 	std::cout << "SIZE: " << vect.size() << std::endl;

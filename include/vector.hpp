@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 15:56:04 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 19:06:15 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,14 +418,12 @@ class vector
 			void insert(iterator pos, size_type n, const value_type& val)
 			{
 					size_type	idx;
-					size_type	prevSize = size();
 
 					idx = std::distance(this->_start, pos.base());
 					if (size() + n > capacity())
 					{
 						vector	tmp;
 
-						//std::cout << "size: " << size() << std::endl;
 						if (n < size())
 							tmp.reserve(size() * 2);
 						else
@@ -439,11 +437,10 @@ class vector
 					{
 						pointer p = this->_finish;
 
-						resize(size() + n);
+						resize(size() + n, *_start);
+
 						std::copy_backward(pos.base(), p, this->_finish);
 						std::fill_n(pos.base(), n, val);
-						(void)prevSize;
-						//this->_finish = this->_start + prevSize + n; 
 
 					}
 			}
@@ -461,7 +458,6 @@ class vector
 			{
 					size_type	idx;
 					size_type	n = std::distance(first, last);
-					size_type	prevSize = size();
 
 					idx = std::distance(this->_start, pos.base());
 					if (size() + n > capacity())
@@ -478,13 +474,12 @@ class vector
 					{
 						pointer p = this->_finish;
 
-						resize(size() + n);
+						resize(size() + n, *first);
+					//	reserve(size() + n);
+					//	for (pointer ptr = this->_finish + n; ptr != this->_finish; ptr--)
+					//		_alloc.construct(ptr, *this->_start);
 						std::copy_backward(pos.base(), p, this->_finish);
-						//std::uninitialized_fill(pos.base(), this->_start + idx + n, val);
 						std::copy(first, last, pos.base());
-						(void)prevSize;
-					//	this->_finish = this->_start + prevSize + n; 
-
 					}
 			}
 

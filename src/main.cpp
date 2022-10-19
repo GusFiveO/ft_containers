@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 16:21:14 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 19:18:22 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,32 +140,99 @@
 #include "map.hpp"
 #include "set.hpp"
 
-template <class T>
-void	print(NAMESPACE::set<T>& lst)
+//template <class T>
+//void	print(NAMESPACE::set<T>& lst)
+//{
+//	for (typename NAMESPACE::set<T>::iterator it = lst.begin(); it != lst.end(); it++)
+//		std::cout << it->first << " => " << it->second << '\n';
+//}
+//
+//int main ()
+//{
+//  NAMESPACE::set<int> myset;
+//
+//  NAMESPACE::set<int>::value_compare mycomp = myset.value_comp();
+//
+//  for (int i=0; i<=5; i++) myset.insert(i);
+//
+//  std::cout << "myset contains:";
+//
+//  int highest=*myset.rbegin();
+//  NAMESPACE::set<int>::iterator it=myset.begin();
+//  do {
+//    std::cout << ' ' << *it;
+//  } while ( mycomp(*(++it),highest) );
+//
+//  std::cout << '\n';
+//
+//  return 0;
+//}
+
+# include <set>
+
+//std::string
+//printPair(NAMESPACE::set<T1>::const_iterator it)
+//{
+//	std::cout << "first " << *it << std::endl;
+//	return "false";
+//}
+//
+//void
+//printSize(NAMESPACE::set<T1>& S)
+//{
+//	std::cout << "size: " << S.size() << std::endl;
+//}
+//
+//int		main(void)
+//{
+//	std::list<T1> lst;
+//	unsigned int lst_size = 5;
+//	for (unsigned int i = 0; i < lst_size; ++i)
+//		lst.push_back(2.5 + i);
+//
+//	NAMESPACE::set<T1> st(lst.begin(), lst.end());
+//	NAMESPACE::set<T1>::iterator it(st.begin());
+//	NAMESPACE::set<T1>::const_iterator ite(st.begin());
+//	printSize(st);
+//
+//	printPair(++ite);
+//	printPair(ite++);
+//	printPair(ite++);
+//	printPair(++ite);
+//
+//	//it->m();
+//	//ite->m();
+//
+//	printPair(++it);
+//	printPair(it++);
+//	printPair(it++);
+//	printPair(++it);
+//
+//	printPair(--ite);
+//	printPair(ite--);
+//	printPair(--ite);
+//	printPair(ite--);
+//
+//	//(*it).m();
+//	//(*ite).m();
+//
+//	printPair(--it);
+//	printPair(it--);
+//	printPair(it--);
+//	printPair(--it);
+//
+//	return (0);
+//}
+
+#define T1 int
+
+int		main(void)
 {
-	for (typename NAMESPACE::set<T>::iterator it = lst.begin(); it != lst.end(); it++)
-		std::cout << it->first << " => " << it->second << '\n';
-}
+	NAMESPACE::set<T1> st;
 
-int main ()
-{
-  NAMESPACE::set<int> myset;
-
-  NAMESPACE::set<int>::value_compare mycomp = myset.value_comp();
-
-  for (int i=0; i<=5; i++) myset.insert(i);
-
-  std::cout << "myset contains:";
-
-  int highest=*myset.rbegin();
-  NAMESPACE::set<int>::iterator it=myset.begin();
-  do {
-    std::cout << ' ' << *it;
-  } while ( mycomp(*(++it),highest) );
-
-  std::cout << '\n';
-
-  return 0;
+	NAMESPACE::set<T1>::iterator ite = st.begin();
+	*ite = 42; // < -- error as well ; T is always const, even with regular iterator
+	return (0);
 }
 
 //template <class T>

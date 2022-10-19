@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 16:21:38 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 19:29:42 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,15 @@ namespace ft
 
 			};
 
-			typedef typename alloc_type::reference			reference;
-			typedef typename alloc_type::const_reference	const_reference;
-			typedef typename alloc_type::pointer			pointer;
-			typedef typename alloc_type::const_pointer		const_pointer;
+			typedef typename alloc_type::reference				reference;
+			typedef typename alloc_type::const_reference		const_reference;
+			typedef typename alloc_type::pointer				pointer;
+			typedef typename alloc_type::const_pointer			const_pointer;
 			typedef typename tree_type::size_type				size_type;
 			typedef typename tree_type::difference_type			difference_type;
-			typedef typename tree_type::iterator				iterator;
+			typedef typename tree_type::const_iterator			iterator;
 			typedef typename tree_type::const_iterator			const_iterator;
-			typedef typename tree_type::reverse_iterator		reverse_iterator;
+			typedef typename tree_type::const_reverse_iterator	reverse_iterator;
 			typedef typename tree_type::const_reverse_iterator	const_reverse_iterator;
 
 		set()

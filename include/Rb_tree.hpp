@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 16:18:36 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 19:37:25 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -779,7 +779,7 @@ class Rb_tree
 		//	-else insert balanced with M_root() as root
 		// 2nd case 
 		iterator
-		M_insertBalanced(iterator pos, const value_type& val)
+		M_insertBalanced(const_iterator pos, const value_type& val)
 		{
 			node_ptr newNode;
 			if (pos != end() && begin() != end() && M_impl.M_key_compare(S_key(M_root()), KeyOfValue()(*pos))
@@ -1252,7 +1252,7 @@ class Rb_tree
 		}
 
 		iterator
-		insertBalanced(iterator pos, const value_type& val)
+		insertBalanced(const_iterator pos, const value_type& val)
 		{
 			return M_insertBalanced(pos, val);
 		}

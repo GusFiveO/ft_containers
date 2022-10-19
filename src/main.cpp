@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 15:15:13 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 19:18:22 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/19 19:33:38 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,70 @@
 
 # include <set>
 
+#define T1 std::string
+typedef NAMESPACE::set<T1>::iterator iterator;
+
+static int iter = 0;
+
+void
+printSize(NAMESPACE::set<T1>& S)
+{
+	std::cout << "size: " << S.size() << std::endl;
+}
+
+std::string
+printPair(NAMESPACE::set<T1>::const_iterator it)
+{
+	std::cout << "first " << *it << std::endl;
+	return "false";
+}
+
+template <typename SET, typename U>
+void	ft_insert(SET &st, U param)
+{
+	ft::pair<iterator, bool> tmp;
+
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	tmp = st.insert(param);
+	std::cout << "insert return: " << printPair(tmp.first);
+	std::cout << "Created new node: " << tmp.second << std::endl;
+	printSize(st);
+}
+
+template <typename SET, typename U, typename V>
+void	ft_insert(SET &st, U param, V param2)
+{
+	iterator tst;
+
+	std::cout << "\t-- [" << iter++ << "] --" << std::endl;
+	tst = st.insert(param, param2);
+	std::cout << "insert return: " << printPair(tst);
+	printSize(st);
+}
+
+int		main(void)
+{
+	NAMESPACE::set<T1> st, st2;
+
+	ft_insert(st, "lol");
+	ft_insert(st, "mdr");
+
+	ft_insert(st, "mdr");
+	ft_insert(st, "funny");
+
+	ft_insert(st, "bunny");
+	ft_insert(st, "fizz");
+	ft_insert(st, "buzz");
+
+	ft_insert(st, st.begin(), "fuzzy");
+
+	ft_insert(st2, st2.begin(), "beauty");
+	ft_insert(st2, st2.end(), "Hello");
+	ft_insert(st2, st2.end(), "World");
+
+	return (0);
+}
+
 //std::string
 //printPair(NAMESPACE::set<T1>::const_iterator it)
 //{
@@ -224,16 +288,16 @@
 //	return (0);
 //}
 
-#define T1 int
-
-int		main(void)
-{
-	NAMESPACE::set<T1> st;
-
-	NAMESPACE::set<T1>::iterator ite = st.begin();
-	*ite = 42; // < -- error as well ; T is always const, even with regular iterator
-	return (0);
-}
+//#define T1 int
+//
+//int		main(void)
+//{
+//	NAMESPACE::set<T1> st;
+//
+//	NAMESPACE::set<T1>::iterator ite = st.begin();
+//	*ite = 42; // < -- error as well ; T is always const, even with regular iterator
+//	return (0);
+//}
 
 //template <class T>
 //void	print(NAMESPACE::vector<NAMESPACE::vector<T> >& lst)

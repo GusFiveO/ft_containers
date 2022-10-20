@@ -6,7 +6,7 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 20:55:31 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/10/20 15:59:28 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/20 17:54:39 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,11 @@ namespace ft
 			clock_t	_ticks;
 
 		public:
-			Bench() {this->_ticks = 0;}
-			~Bench() {}
-			void start(void) {this->_ticks = clock();}
-			void displayTime(void) const 
-			{
-				std::cout << "TIME: " << (static_cast<float>(clock() - this->_ticks) / CLOCKS_PER_SEC ) * 1000 << " ms"<< std::endl;
-			}
-			void reset(void) {this->_ticks = clock();}
+			Bench();
+			~Bench();
+			void start(void);
+			void displayTime(void) const;
+			void reset(void);
 	};
 }
 

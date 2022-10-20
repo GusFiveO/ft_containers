@@ -6,14 +6,15 @@
 /*   By: augustinlorain <marvin@42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 20:55:31 by augustinlorai     #+#    #+#             */
-/*   Updated: 2022/09/27 19:09:52 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/20 15:59:28 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BENCH_HPP
 # define BENCH_HPP
 
-#include <ctime>
+# include <ctime>
+# include <iostream>
 
 namespace ft
 {

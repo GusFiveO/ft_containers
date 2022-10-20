@@ -26,10 +26,10 @@ echo "done, launching containers..."
 ./containers > realVector.output
 
 
-echo -e "\n\t\tMY VECTOR\t\t\t\t\t\t\tREAL VECTOR\n"
+echo -e "\n\t\tMY CONTAINERS\t\t\t\t\t\t\tREAL CONTAINERS\n"
 diff -y -s myVector.output realVector.output
 
-DIFF=$(diff -I '^TIME.*' myVector.output realVector.output)
+DIFF=$(diff -I '^TIME.*' -I '^CAPACITY.*' myVector.output realVector.output)
 if [[ -z "$DIFF" ]]
 then
 	echo -e "OK✅!!"

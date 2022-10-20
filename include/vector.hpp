@@ -6,7 +6,7 @@
 /*   By: augustinlorain <augustinlorain@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/13 18:57:01 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 19:06:15 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/20 15:23:58 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ class vector
 
 			size_type size(void) const
 			{
-				return this->_finish - this->_start;
+				return size_type(this->_finish - this->_start);
 			}
 
 			size_type max_size(void) const
@@ -277,7 +277,7 @@ class vector
 
 			bool empty(void) const
 			{
-				return (this->size() == 0);
+				return (_start == _finish);
 			}
 
 			void reserve(size_type n)
@@ -392,8 +392,11 @@ class vector
 
 			void pop_back(void)
 			{
-				--this->_finish;
-				this->_alloc.destroy(this->_finish);
+				if (!empty())
+				{
+					--this->_finish;
+					this->_alloc.destroy(this->_finish);
+				}
 			}
 
 			iterator insert(iterator pos, const value_type& value)
@@ -417,9 +420,6 @@ class vector
 
 			void insert(iterator pos, size_type n, const value_type& val)
 			{
-					size_type	idx;
-
-					idx = std::distance(this->_start, pos.base());
 					if (size() + n > capacity())
 					{
 						vector	tmp;
@@ -456,10 +456,8 @@ class vector
 			template<typename ForwardIt>
 			void _insert_range(iterator pos, ForwardIt first, ForwardIt last, std::forward_iterator_tag)
 			{
-					size_type	idx;
 					size_type	n = std::distance(first, last);
 
-					idx = std::distance(this->_start, pos.base());
 					if (size() + n > capacity())
 					{
 						vector	tmp;

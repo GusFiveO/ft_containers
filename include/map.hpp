@@ -6,7 +6,7 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/13 16:10:27 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 16:04:28 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/20 14:14:29 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,11 +225,13 @@ namespace ft
 			return M_tree.max_size();
 		}
 
+	protected:
 		void
 		M_display()
 		{
 			M_tree.displayTree();
 		}
+	public:
 
 		ft::pair<iterator, bool>
 		insert(const value_type& val)

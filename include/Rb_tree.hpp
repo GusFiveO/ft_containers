@@ -6,12 +6,12 @@
 /*   By: alorain <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 18:25:10 by alorain           #+#    #+#             */
-/*   Updated: 2022/10/19 19:37:25 by alorain          ###   ########.fr       */
+/*   Updated: 2022/10/20 16:24:21 by alorain          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BNR_HPP
-# define BNR_HPP
+#ifndef RB_TREE_HPP
+# define RB_TREE_HPP
 
 # include "pair.hpp"
 # include "Iterator.hpp"
@@ -85,105 +85,108 @@ struct Rb_tree_node : public Rb_tree_node_base
 	}
 };
 
-Rb_tree_node_base*
-Rb_increment(Rb_tree_node_base* x) throw()
-{
-	if (x->M_right)
-	{
-		x = x->M_right;
-		while (x->M_left)
-			x = x->M_left;
-	}
-	else
-	{
-		Rb_tree_node_base* y = x->M_parent;
-		while (x == y->M_right)
-		{
-			x = y;
-			y = y->M_parent;
-		}
-		if (x->M_right != y)
-			x = y;
-	}
-	return x;
-}
-
-
-const Rb_tree_node_base*
-Rb_increment(const Rb_tree_node_base* x) throw()
-{
-	if (x->M_right)
-	{
-		x = x->M_right;
-		while (x->M_left)
-			x = x->M_left;
-	}
-	else
-	{
-		Rb_tree_node_base* y = x->M_parent;
-		while (x == y->M_right)
-		{
-			x = y;
-			y = y->M_parent;
-		}
-		if (x->M_right != y)
-			x = y;
-	}
-	return x;
-}
-
-Rb_tree_node_base*
-Rb_decrement(Rb_tree_node_base* x) throw()
-{
-	//std::cout << "parent left value " << static_cast<Rb_tree_node<int>*>(y->M_left)->M_value_field;
-	if (x->M_color == red
-       && x->M_parent->M_parent == x)
-     x = x->M_right;
-	else if (x->M_left)
-	{
-		x = x->M_left;
-		while (x->M_right)
-			x = x->M_right;
-	}
-	else
-	{
-		Rb_tree_node_base* y = x->M_parent;
-		while (x == y->M_left)
-		{
-			x = y;
-			y = y->M_parent;
-		}
-		if (x->M_left != y)
-			x = y;
-	}
-	return x;
-}
-
-const Rb_tree_node_base*
-Rb_decrement(const Rb_tree_node_base* x) throw()
-{
-	if (x->M_color == red
-       && x->M_parent->M_parent == x)
-     x = x->M_right;
-	else if (x->M_left)
-	{
-		x = x->M_left;
-		while (x->M_right)
-			x = x->M_right;
-	}
-	else
-	{
-		Rb_tree_node_base* y = x->M_parent;
-		while (x == y->M_left)
-		{
-			x = y;
-			y = y->M_parent;
-		}
-		if (x->M_left != y)
-			x = y;
-	}
-	return x;
-}
+//static
+//Rb_tree_node_base*
+//Rb_increment(Rb_tree_node_base* x) throw()
+//{
+//	if (x->M_right)
+//	{
+//		x = x->M_right;
+//		while (x->M_left)
+//			x = x->M_left;
+//	}
+//	else
+//	{
+//		Rb_tree_node_base* y = x->M_parent;
+//		while (x == y->M_right)
+//		{
+//			x = y;
+//			y = y->M_parent;
+//		}
+//		if (x->M_right != y)
+//			x = y;
+//	}
+//	return x;
+//}
+//
+//
+//static
+//const Rb_tree_node_base*
+//Rb_increment(const Rb_tree_node_base* x) throw()
+//{
+//	if (x->M_right)
+//	{
+//		x = x->M_right;
+//		while (x->M_left)
+//			x = x->M_left;
+//	}
+//	else
+//	{
+//		Rb_tree_node_base* y = x->M_parent;
+//		while (x == y->M_right)
+//		{
+//			x = y;
+//			y = y->M_parent;
+//		}
+//		if (x->M_right != y)
+//			x = y;
+//	}
+//	return x;
+//}
+//
+//static
+//Rb_tree_node_base*
+//Rb_decrement(Rb_tree_node_base* x) throw()
+//{
+//	if (x->M_color == red
+//       && x->M_parent->M_parent == x)
+//     x = x->M_right;
+//	else if (x->M_left)
+//	{
+//		x = x->M_left;
+//		while (x->M_right)
+//			x = x->M_right;
+//	}
+//	else
+//	{
+//		Rb_tree_node_base* y = x->M_parent;
+//		while (x == y->M_left)
+//		{
+//			x = y;
+//			y = y->M_parent;
+//		}
+//		if (x->M_left != y)
+//			x = y;
+//	}
+//	return x;
+//}
+//
+//static
+//const Rb_tree_node_base*
+//Rb_decrement(const Rb_tree_node_base* x) throw()
+//{
+//	if (x->M_color == red
+//       && x->M_parent->M_parent == x)
+//     x = x->M_right;
+//	else if (x->M_left)
+//	{
+//		x = x->M_left;
+//		while (x->M_right)
+//			x = x->M_right;
+//	}
+//	else
+//	{
+//		Rb_tree_node_base* y = x->M_parent;
+//		while (x == y->M_left)
+//		{
+//			x = y;
+//			y = y->M_parent;
+//		}
+//		if (x->M_left != y)
+//			x = y;
+//	}
+//	return x;
+//}
 
 template<typename T>
 struct Rb_tree_iterator
@@ -223,7 +226,23 @@ struct Rb_tree_iterator
 		self&
 		operator++()
 		{
-			M_node = Rb_increment(M_node);
+			if (M_node->M_right)
+			{
+				M_node = M_node->M_right;
+				while (M_node->M_left)
+					M_node = M_node->M_left;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_right)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_right != y)
+					M_node = y;
+			}
 			return *this;
 		}
 
@@ -231,14 +250,49 @@ struct Rb_tree_iterator
 		operator++(int)
 		{
 			self tmp = *this;
-			M_node = Rb_increment(M_node);
+			if (M_node->M_right)
+			{
+				M_node = M_node->M_right;
+				while (M_node->M_left)
+					M_node = M_node->M_left;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_right)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_right != y)
+					M_node = y;
+			}
 			return tmp;
 		}
 
 		self&
 		operator--()
 		{
-			M_node = Rb_decrement(M_node);
+			if (M_node->M_color == red
+			   && M_node->M_parent->M_parent == M_node)
+			 M_node = M_node->M_right;
+			else if (M_node->M_left)
+			{
+				M_node = M_node->M_left;
+				while (M_node->M_right)
+					M_node = M_node->M_right;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_left)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_left != y)
+					M_node = y;
+			}
 			return *this;
 		}
 
@@ -246,7 +300,26 @@ struct Rb_tree_iterator
 		operator--(int)
 		{
 			self tmp = *this;
-			M_node = Rb_decrement(M_node);
+			if (M_node->M_color == red
+			   && M_node->M_parent->M_parent == M_node)
+			 M_node = M_node->M_right;
+			else if (M_node->M_left)
+			{
+				M_node = M_node->M_left;
+				while (M_node->M_right)
+					M_node = M_node->M_right;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_left)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_left != y)
+					M_node = y;
+			}
 			return tmp;
 		}
 
@@ -319,7 +392,23 @@ struct Rb_tree_const_iterator
 		self&
 		operator++()
 		{
-			M_node = Rb_increment(M_node);
+			if (M_node->M_right)
+			{
+				M_node = M_node->M_right;
+				while (M_node->M_left)
+					M_node = M_node->M_left;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_right)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_right != y)
+					M_node = y;
+			}
 			return *this;
 		}
 
@@ -327,14 +416,49 @@ struct Rb_tree_const_iterator
 		operator++(int)
 		{
 			self tmp = *this;
-			M_node = Rb_increment(M_node);
+			if (M_node->M_right)
+			{
+				M_node = M_node->M_right;
+				while (M_node->M_left)
+					M_node = M_node->M_left;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_right)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_right != y)
+					M_node = y;
+			}
 			return tmp;
 		}
 
 		self&
 		operator--()
 		{
-			M_node = Rb_decrement(M_node);
+			if (M_node->M_color == red
+			   && M_node->M_parent->M_parent == M_node)
+			 M_node = M_node->M_right;
+			else if (M_node->M_left)
+			{
+				M_node = M_node->M_left;
+				while (M_node->M_right)
+					M_node = M_node->M_right;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_left)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_left != y)
+					M_node = y;
+			}
 			return *this;
 		}
 
@@ -342,7 +466,26 @@ struct Rb_tree_const_iterator
 		operator--(int)
 		{
 			self tmp = *this;
-			M_node = Rb_decrement(M_node);
+			if (M_node->M_color == red
+			   && M_node->M_parent->M_parent == M_node)
+			 M_node = M_node->M_right;
+			else if (M_node->M_left)
+			{
+				M_node = M_node->M_left;
+				while (M_node->M_right)
+					M_node = M_node->M_right;
+			}
+			else
+			{
+				Rb_tree_node_base* y = M_node->M_parent;
+				while (M_node == y->M_left)
+				{
+					M_node = y;
+					y = y->M_parent;
+				}
+				if (M_node->M_left != y)
+					M_node = y;
+			}
 			return tmp;
 		}
 

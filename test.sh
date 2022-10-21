@@ -25,7 +25,6 @@ fi
 echo "done, launching containers..."
 ./containers > realVector.output
 
-
 echo -e "\n\t\tMY CONTAINERS\t\t\t\t\t\t\tREAL CONTAINERS\n"
 diff -y -s myVector.output realVector.output
 
